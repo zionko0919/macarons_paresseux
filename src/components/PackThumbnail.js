@@ -10,14 +10,6 @@ function PackThumbnail({
   image, title, price, numMac, addToCart, packItems, macItems,
   macList, macListDispatch,
 }) {
-  // console.log('numMac: ', numMac);
-  const [macCounter, setMacCounter] = useState(0);
-  const macCounterIncrement = () => {
-    if (macCounter < numMac) {
-      setMacCounter(macCounter + 1);
-    }
-  };
-
   // console.log('macCount: ', macCounter);
 
   const [isModalOneOpen, setIsModalOpen] = useState(false);
@@ -33,6 +25,7 @@ function PackThumbnail({
 
   const handleModalOneClose = () => {
     setIsModalOpen(false);
+    macListDispatch({ type: PackMacListTypes.EMPTY });
     console.log('Closing from Pack Order Modal Page 1 for ', title);
   };
 
@@ -56,7 +49,6 @@ function PackThumbnail({
           macItems={macItems}
           macList={macList}
           macListDispatch={macListDispatch}
-          macCounterIncrement={macCounterIncrement}
         />
       </div>
       <p>{title}</p>

@@ -6,7 +6,7 @@ import PackOrderMacListViewerRow from './PackOrderMacListViewerRow';
 function PackOrderMacListViewer({ macList, macItems, macListDispatch }) {
   // console.log('macList: ', macList);
   return (
-    <div className="pack-order-mac-lis-component">
+    <div className="pack-order-mac-list-component">
       <h3>Current Selection (#Testing)</h3>
       {/* <button type="button">Start Over</button> */}
       <table>

@@ -12,9 +12,11 @@ import PackOrderMacListViewer from './PackOrderMacListViewer';
 
 function PackOrderModalPageOne({
   isModalOneOpen, handleModalOneClose, numMac, addToCart, packTitle, packItems, macItems,
-  macList, macListDispatch, macCounterIncrement,
+  macList, macListDispatch,
 }) {
   const [isModalTwoOpen, setIsModalTwoOpen] = useState(false);
+
+  // console.log('macList from Modal 1: ', macList);
 
   const handleModalTwoOpen = () => {
     setIsModalTwoOpen(true);
@@ -25,6 +27,8 @@ function PackOrderModalPageOne({
     setIsModalTwoOpen(false);
     console.log('Going back to Pack Order Modal Page 1');
   };
+
+  const totalQuantitySelected = macList.reduce((acc, item) => item.quantity + acc, 0);
 
   return (
     <>
@@ -71,12 +75,18 @@ function PackOrderModalPageOne({
                 macListDispatch={macListDispatch}
                 macItems={macItems}
                 numMac={numMac}
-                macCounterIncrement={macCounterIncrement}
+                totalQuantitySelected={totalQuantitySelected}
               />
             ))}
           </DialogContentText>
         </DialogContent>
-        <button type="button" onClick={handleModalTwoOpen}>Next</button>
+        <button
+          type="button"
+          onClick={handleModalTwoOpen}
+          disabled={numMac !== totalQuantitySelected}
+        >
+          Next
+        </button>
       </Dialog>
       <PackOrderModalPageTwo
         isModalTwoOpen={isModalTwoOpen}
@@ -103,7 +113,6 @@ PackOrderModalPageOne.propTypes = {
     quantity: PropTypes.number.isRequired,
   })).isRequired,
   macListDispatch: PropTypes.func.isRequired,
-  macCounterIncrement: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageOne;
