@@ -10,7 +10,7 @@ function Header({ cart }) {
     <header className="header-component">
       <Link to="/">
         <img src={GastonMacaronLogo} alt="gaston macaron logo" />
-        <h1>Macarons Paresseux</h1>
+        <h1>Macarons Paresseux!</h1>
       </Link>
       <div className="menu">
         <Link to="/cart">
