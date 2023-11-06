@@ -1,0 +1,29 @@
+.all-menu-component h1 {
+  font-family: pacifico;
+  font-weight: lighter;
+  padding: 32px 20px;
+  line-height: .1;
+  margin-bottom: -30px;
+}
+
+.all-menu-loading-component {
+  margin-top: 80px;
+}
+
+.all-menu-component h5 {
+  padding: 32px;
+}
+
+/* 
+.all-menu-component .thumbnail-component:nth-child(3n + 2) div {
+  background-color: #9BA699;
+}
+
+.all-menu-component .thumbnail-component:nth-child(3n + 3) div {
+  background-color: #3F3F40;
+} */
+
+@font-face {
+  font-family: pacifico;
+  src: url(../fonts/Pacifico-Regular.ttf);
+}

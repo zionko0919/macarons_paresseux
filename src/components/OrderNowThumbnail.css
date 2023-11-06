@@ -1,0 +1,59 @@
+.order-now-thumbnail-component {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-decoration: none;
+  color: black;
+}
+
+/* .order-now-thumbnail-component div {
+  background-color: #E6E6E6;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 40px;
+} */
+
+.order-now-thumbnail-component .popup-component {
+  background-color: #E6E6E6;
+  border-radius: 20px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+.order-now-thumbnail-component img {
+    height: 106px;
+    /* width: 106px; */
+    transition: transform 333ms ease;
+}
+
+.order-now-thumbnail-component p {
+    font-family: pacifico;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin: 9px 0 0;
+    font-size: 21px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.order-now-thumbnail-component .popup-component:hover img {
+  transform: scale(1.5);
+}
+
+.order-now-thumbnail-component .popup-component .slection-image-component {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-gap: 32px 10px;
+  padding: 32px 20px;
+}
+
+@font-face {
+  font-family: pacifico;
+  src: url(../fonts/Pacifico-Regular.ttf);
+}

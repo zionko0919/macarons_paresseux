@@ -1,0 +1,62 @@
+.menu-detail-item-component {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 20px;
+}
+
+.menu-detail-item-component img {
+  width: 250px;
+  /* height: 250px; */
+  /* filter: invert(75%); */
+}
+
+.menu-detail-item-component h2 {
+  font-size: 36px;
+  font-weight: normal;
+  font-family: pacifico;
+  margin: 0;
+}
+
+.menu-detail-item-component h6 {
+  margin: 0;
+  margin-left: 5px;
+}
+
+.menu-detail-item-component div {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.menu-detail-item-component button {
+  width: max-content;
+  background-color: #737373;
+  color: white;
+  font-size: 26px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 26px;
+  margin: 20px 0;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-detail-item-component button:hover {
+  opacity: 75%;
+}
+
+@media (min-width: 768px) {
+  .menu-detail-item-component {
+      padding: 40px 50px;
+  }
+
+  .menu-detail-item-component img {
+      width: 400px;
+      /* height: 400px; */
+  }
+}
+
+@font-face {
+  font-family: pacifico;
+  src: url(../fonts/Pacifico-Regular.ttf);
+}

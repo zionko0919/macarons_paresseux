@@ -1,0 +1,47 @@
+.not-found-component {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.not-found-component h2 {
+  color: #5d5d5d;
+  font-family: pacifico;
+  font-weight: lighter;
+  font-size: 6em;
+  margin-top: 0;
+}
+
+.not-found-component h3 {
+  color: #5d5d5d;
+  text-align: center;
+  font-family: pacifico;
+  font-size: 2em;
+  font-weight: 100;
+  margin-top: -60px;
+}
+
+.not-found-component a {
+  margin-top: 20px;
+  font-size: 1.5em;
+  font-family: pacifico;
+  color: #737373;
+  align-items: center;
+}
+
+.not-found-component a:hover {
+  background-color: #737373;
+  color: white;
+}
+
+.not-found-component img {
+  margin-top: 20px;
+  height: 300px;
+}
+
+@font-face {
+  font-family: pacifico;
+  src: url(../fonts/Pacifico-Regular.ttf);
+}
