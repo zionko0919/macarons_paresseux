@@ -12,7 +12,7 @@ import PackOrderMacListViewer from './PackOrderMacListViewer';
 
 function PackOrderModalPageOne({
   isModalOneOpen, handleModalOneClose, numMac, addToCart, packTitle, packItems, macItems,
-  macList, macListDispatch,
+  macList, macListDispatch, macCounterIncrement,
 }) {
   const [isModalTwoOpen, setIsModalTwoOpen] = useState(false);
 
@@ -45,7 +45,11 @@ function PackOrderModalPageOne({
           style={{ maxHeight: '120px' }}
           dividers
         >
-          <PackOrderMacListViewer macList={macList} />
+          <PackOrderMacListViewer
+            macList={macList}
+            macItems={macItems}
+            macListDispatch={macListDispatch}
+          />
         </DialogContent>
         <DialogContent
           className="pack-order-modal-page-one-dialog-content"
@@ -66,6 +70,8 @@ function PackOrderModalPageOne({
                 macList={macList}
                 macListDispatch={macListDispatch}
                 macItems={macItems}
+                numMac={numMac}
+                macCounterIncrement={macCounterIncrement}
               />
             ))}
           </DialogContentText>
@@ -97,6 +103,7 @@ PackOrderModalPageOne.propTypes = {
     quantity: PropTypes.number.isRequired,
   })).isRequired,
   macListDispatch: PropTypes.func.isRequired,
+  macCounterIncrement: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageOne;

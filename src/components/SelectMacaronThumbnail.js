@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { PackMacListTypes } from '../reducers/packMacListReducer';
@@ -6,16 +7,16 @@ import './SelectMacaronThumbnail.css';
 
 function SelectMacaronThumbnail({
   itemId, image, title,
-  macList, macListDispatch, macItems,
+  macList, macListDispatch, macItems, numMac, macCounterIncrement,
 }) {
-  const testFunc = () => {
-    console.log('ItemID:\t', itemId, '\nTitle:\t', title);
-  };
+  // const testFunc = () => {
+  //   console.log('ItemID:\t', itemId, '\nTitle:\t', title);
+  // };
 
-  // const selectedMac = macItems.find((item) => item.itemId === itemId);
-
+  // console.log('cur num: ', numMac);
   const addItemToMacList = () => {
     macListDispatch({ type: PackMacListTypes.ADD, itemId });
+    macCounterIncrement();
   };
 
   return (
@@ -40,6 +41,8 @@ SelectMacaronThumbnail.propTypes = {
   })).isRequired,
   macListDispatch: PropTypes.func.isRequired,
   macItems: PropTypes.arrayOf(ItemType).isRequired,
+  numMac: PropTypes.number.isRequired,
+  macCounterIncrement: PropTypes.func.isRequired,
 };
 
 export default SelectMacaronThumbnail;

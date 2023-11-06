@@ -1,14 +1,30 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import './PackThumbnail.css';
 import PackOrderModalPageOne from './PackOrderModalPageOne';
+import { PackMacListTypes } from '../reducers/packMacListReducer';
 import ItemType from '../types/item';
 
 function PackThumbnail({
   image, title, price, numMac, addToCart, packItems, macItems,
   macList, macListDispatch,
 }) {
+  // console.log('numMac: ', numMac);
+  const [macCounter, setMacCounter] = useState(0);
+  const macCounterIncrement = () => {
+    if (macCounter < numMac) {
+      setMacCounter(macCounter + 1);
+    }
+  };
+
+  // console.log('macCount: ', macCounter);
+
   const [isModalOneOpen, setIsModalOpen] = useState(false);
+
+  // const removeItemFromMacList = () => {
+  //   macListDispatch({ type: PackMacListTypes.REMOVE, itemId: macList.itemID });
+  // };
 
   const handleModalOneOpen = () => {
     setIsModalOpen(true);
@@ -40,6 +56,7 @@ function PackThumbnail({
           macItems={macItems}
           macList={macList}
           macListDispatch={macListDispatch}
+          macCounterIncrement={macCounterIncrement}
         />
       </div>
       <p>{title}</p>
