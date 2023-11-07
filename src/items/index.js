@@ -230,3 +230,11 @@ export const macaronPack = [
     price: 32.00,
   },
 ];
+
+export const optionalItems = [
+  {
+    itemId: 'giftwrap',
+    title: 'Gift Wrap Option',
+    price: 1.00,
+  },
+];

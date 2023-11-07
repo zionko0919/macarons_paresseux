@@ -4,7 +4,6 @@ import ItemType from '../types/item';
 import PackOrderMacListViewerRow from './PackOrderMacListViewerRow';
 
 function PackOrderMacListViewer({ macList, macItems, macListDispatch }) {
-  // console.log('macList: ', macList);
   return (
     <div className="pack-order-mac-list-component">
       <h3>Current Selection (#Testing)</h3>
@@ -27,7 +26,6 @@ function PackOrderMacListViewer({ macList, macItems, macListDispatch }) {
           ))}
         </tbody>
       </table>
-
     </div>
   );
 }

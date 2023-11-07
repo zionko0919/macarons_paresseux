@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
   BrowserRouter as Router,
@@ -13,7 +14,7 @@ import NotFound from './components/NotFound';
 import OrderNow from './components/OrderNow';
 import Cart from './components/Cart';
 import { cartReducer, initialCartState, CartTypes } from './reducers/cartReducer';
-import { packMacListReducer, initialPackMacListState } from './reducers/packMacListReducer';
+import { packMacListReducer, initialPackMacListState, PackMacListTypes } from './reducers/packMacListReducer';
 // import MenuDetails from './components/MenuDetails';
 
 function App() {
@@ -38,13 +39,22 @@ function App() {
       .catch(console.error);
   }, []);
 
+  const [optionalItems, setOptionalItems] = useState([]);
+  useEffect(() => {
+    axios.get('api/optionalItems')
+      .then((result) => setOptionalItems(result.data))
+      .catch(console.error);
+  }, []);
+
   const [cart, dispatch] = useReducer(cartReducer, initialCartState);
   const addToCart = (itemId, category) => dispatch(
     { type: CartTypes.ADD, itemId, category },
   );
 
-  // eslint-disable-next-line no-unused-vars
   const [macList, macListDispatch] = useReducer(packMacListReducer, initialPackMacListState);
+  // const addItemToMacList = (itemId) => macListDispatch(
+  //   { type: PackMacListTypes.ADD, itemId },
+  // );
 
   return (
     <Router>
@@ -60,6 +70,9 @@ function App() {
               macItems={macItems}
               drinkItems={drinkItems}
               packItems={packItems}
+              optionalItems={optionalItems}
+              macList={macList}
+              macListDispatch={macListDispatch}
             />
           )}
         />
@@ -79,9 +92,11 @@ function App() {
               packItems={packItems}
               drinkItems={drinkItems}
               macItems={macItems}
+              optionalItems={optionalItems}
               addToCart={addToCart}
               macList={macList}
               macListDispatch={macListDispatch}
+              // addItemToMacList={addItemToMacList}
             />
           )}
         />

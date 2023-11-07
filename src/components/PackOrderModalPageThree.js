@@ -5,6 +5,8 @@ import {
 } from '@mui/material';
 import ItemType from '../types/item';
 import './PackOrderModalPageThree.css';
+import PackOrderMacListViewer from './PackOrderMacListViewerRow';
+import PackOrderModalPageThreeHelper from './PackOrderModalPageThreeHelper';
 
 function PackOrderModalPageThree({
   isModalThreeOpen,
@@ -14,8 +16,20 @@ function PackOrderModalPageThree({
   addToCart,
   packItems,
   packTitle,
+  macList,
+  macItems,
+  macListDispatch,
+  giftMessage,
+  giftFromName,
+  giftOption,
+  setGiftOption,
+  setGiftMessage,
+  setGiftFromName,
 }) {
   const closeAllModals = () => {
+    setGiftOption(false);
+    setGiftMessage('');
+    setGiftFromName('');
     handleModalThreeClose();
     handleModalTwoClose();
     handleModalOneClose();
@@ -41,7 +55,45 @@ function PackOrderModalPageThree({
       <DialogContent className="pack-order-modal-page-three-dialog-content" dividers>
         <DialogContentText className="pack-order-modal-page-three-dialog-content-text">
           (#Should include Pack-Name, list of Macs, GiftOption)
+          {'\n'}
+          {selectedPack.title}
+          {'\n'}
         </DialogContentText>
+        <table>
+          <thead>
+            <tr>
+              <th>Macaron</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {macList.map((item) => (
+              <PackOrderModalPageThreeHelper
+                key={item.itemId}
+                macListItem={item}
+                macItems={macItems}
+              />
+            ))}
+          </tbody>
+        </table>
+        <Box>
+          <DialogContentText>
+            { giftOption ? (
+              <>
+                <DialogContentText>
+                  Message:
+                  {' '}
+                  {giftMessage}
+                </DialogContentText>
+                <DialogContentText>
+                  From:
+                  {' '}
+                  {giftFromName}
+                </DialogContentText>
+              </>
+            ) : ''}
+          </DialogContentText>
+        </Box>
       </DialogContent>
       <Button type="button" onClick={addItemToCart}>ADD TO CART</Button>
       <Button type="button" onClick={handleModalThreeClose}>Go Back</Button>
@@ -57,6 +109,18 @@ PackOrderModalPageThree.propTypes = {
   addToCart: PropTypes.func.isRequired,
   packItems: PropTypes.arrayOf(ItemType).isRequired,
   packTitle: PropTypes.string.isRequired,
+  macList: PropTypes.arrayOf(PropTypes.shape({
+    itemId: PropTypes.string.isRequired,
+    quantity: PropTypes.number.isRequired,
+  })).isRequired,
+  macItems: PropTypes.arrayOf(ItemType).isRequired,
+  macListDispatch: PropTypes.func.isRequired,
+  giftMessage: PropTypes.string.isRequired,
+  giftFromName: PropTypes.string.isRequired,
+  giftOption: PropTypes.bool.isRequired,
+  setGiftOption: PropTypes.func.isRequired,
+  setGiftMessage: PropTypes.func.isRequired,
+  setGiftFromName: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageThree;

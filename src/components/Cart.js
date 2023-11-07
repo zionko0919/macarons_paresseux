@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import ItemType from '../types/item';
 import CartRow from './CartRow';
 import './Cart.css';
 
 function Cart({
-  cart, dispatch, macItems, drinkItems, packItems,
+  cart, dispatch, macItems, drinkItems, packItems, optionalItems, macList, macListDispatch,
 }) {
   // console.log('cart: ', cart);
   const subTotal = cart.reduce((acc, item) => {
@@ -52,6 +53,8 @@ function Cart({
                   drinkItems={drinkItems}
                   packItems={packItems}
                   dispatch={dispatch}
+                  macList={macList}
+                  macListDispatch={macListDispatch}
                 />
               ))}
             </tbody>
@@ -75,6 +78,17 @@ Cart.propTypes = {
   dispatch: PropTypes.func.isRequired,
   drinkItems: PropTypes.arrayOf(ItemType).isRequired,
   packItems: PropTypes.arrayOf(ItemType).isRequired,
+  optionalItems: PropTypes.arrayOf(PropTypes.shape({
+    category: PropTypes.string.isRequired,
+    itemId: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+  })).isRequired,
+  macList: PropTypes.arrayOf(PropTypes.shape({
+    itemId: PropTypes.string.isRequired,
+    quantity: PropTypes.number.isRequired,
+  })).isRequired,
+  macListDispatch: PropTypes.func.isRequired,
 };
 
 export default Cart;

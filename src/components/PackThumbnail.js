@@ -10,23 +10,21 @@ function PackThumbnail({
   image, title, price, numMac, addToCart, packItems, macItems,
   macList, macListDispatch,
 }) {
-  // console.log('macCount: ', macCounter);
-
   const [isModalOneOpen, setIsModalOpen] = useState(false);
 
   // const removeItemFromMacList = () => {
-  //   macListDispatch({ type: PackMacListTypes.REMOVE, itemId: macList.itemID });
+  //   macListDispatch({ type: PackMacListTypes.REMOVE, itemId: macList.itemId });
   // };
 
   const handleModalOneOpen = () => {
     setIsModalOpen(true);
-    console.log('Opening Pack Order Modal Page 1 for ', title);
+    // console.log('Opening Pack Order Modal Page 1 for ', title);
   };
 
   const handleModalOneClose = () => {
     setIsModalOpen(false);
     macListDispatch({ type: PackMacListTypes.EMPTY });
-    console.log('Closing from Pack Order Modal Page 1 for ', title);
+    // console.log('Closing from Pack Order Modal Page 1 for ', title);
   };
 
   return (

@@ -11,7 +11,6 @@ const findMacItem = (macList, itemId) => macList.find((item) => item.itemId === 
 export const packMacListReducer = (state, action) => {
   switch (action.type) {
     case PackMacListTypes.ADD:
-      console.log('action ADD: ', action);
       if (findMacItem(state, action.itemId)) {
         return state.map((item) => (item.itemId === action.itemId
           ? { ...item, quantity: item.quantity + 1 }
@@ -23,11 +22,11 @@ export const packMacListReducer = (state, action) => {
       ];
 
     case PackMacListTypes.REMOVE:
-      console.log('action REMOVE: ', action);
+      // console.log('action REMOVE: ', action);
       return state.filter((item) => item.itemId !== action.itemId);
 
     case PackMacListTypes.EMPTY:
-      console.log('action EMPTY: ', action);
+      // console.log('action EMPTY: ', action);
       return [];
 
     default:

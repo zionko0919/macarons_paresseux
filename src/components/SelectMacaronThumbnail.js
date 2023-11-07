@@ -1,7 +1,6 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { Button } from '@mui/material';
 import { PackMacListTypes } from '../reducers/packMacListReducer';
 import ItemType from '../types/item';
 import './SelectMacaronThumbnail.css';
@@ -10,7 +9,6 @@ function SelectMacaronThumbnail({
   itemId, image, title,
   macList, macListDispatch, macItems, numMac, totalQuantitySelected,
 }) {
-  // const totalQuantitySelected = macList.reduce((acc, item) => item.quantity + acc, 0);
   const addItemToMacList = () => {
     macListDispatch({ type: PackMacListTypes.ADD, itemId });
   };
@@ -18,9 +16,9 @@ function SelectMacaronThumbnail({
   return (
     <div className="select-macaron-thumbnail-component">
       <div>
-        <button type="button" onClick={addItemToMacList} disabled={totalQuantitySelected >= numMac}>
+        <Button type="button" onClick={addItemToMacList} disabled={totalQuantitySelected >= numMac}>
           <img className="select-macaron-thumbnail-image" src={image} alt={title} />
-        </button>
+        </Button>
       </div>
       <p>{title}</p>
     </div>
@@ -39,6 +37,7 @@ SelectMacaronThumbnail.propTypes = {
   macItems: PropTypes.arrayOf(ItemType).isRequired,
   numMac: PropTypes.number.isRequired,
   totalQuantitySelected: PropTypes.number.isRequired,
+  // addItemToMacList: PropTypes.func.isRequired,
 };
 
 export default SelectMacaronThumbnail;

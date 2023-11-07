@@ -17,38 +17,50 @@ import './PackOrderModalPageTwo.css';
 
 function PackOrderModalPageTwo({
   isModalTwoOpen, handleModalTwoClose, handleModalOneClose, addToCart, packItems, packTitle,
+  macList, macItems, macListDispatch,
 }) {
-  const closeAllModals = () => {
-    handleModalOneClose();
-    handleModalTwoClose();
-  };
-
   const [isModalThreeOpen, setIsModalThreeOpen] = useState(false);
+  const [giftOption, setGiftOption] = useState(false);
+  const [giftMessage, setGiftMessage] = useState('');
+  const [giftFromName, setGiftFromName] = useState('');
 
   const handleModalThreeOpen = () => {
     setIsModalThreeOpen(true);
-    console.log('Opening Pack Order Modal Page 3');
+    // console.log('Opening Pack Order Modal Page 3');
   };
 
   const handleModalThreeClose = () => {
     setIsModalThreeOpen(false);
-    console.log('Going back to Pack Order Modal Page 2');
+    // console.log('Going back to Pack Order Modal Page 2');
   };
 
-  const [giftMessage, setGiftMessage] = useState('');
-  const [giftFromName, setGiftFromName] = useState('');
+  const closeAllModals = () => {
+    handleModalOneClose();
+    handleModalTwoClose();
+    setGiftOption(false);
+    setGiftMessage('');
+    setGiftFromName('');
+  };
 
   const handleGiftMessageInput = (e) => {
-    setGiftMessage(e.target.value);
+    setGiftMessage(e.target.value.toUpperCase());
   };
   const handleGiftFromNameInput = (e) => {
-    setGiftFromName(e.target.value);
+    setGiftFromName(e.target.value.toUpperCase());
   };
 
-  const testSubmit = () => {
+  const skipToModalThree = () => {
+    setGiftOption(false);
+    setGiftMessage('');
+    setGiftFromName('');
     handleModalThreeOpen();
-    console.log('message: ', giftMessage.toUpperCase());
-    console.log('from', giftFromName.toUpperCase());
+  };
+
+  const addGiftOption = () => {
+    setGiftOption(true);
+    handleModalThreeOpen();
+    console.log('message: ', giftMessage);
+    console.log('from', giftFromName);
   };
 
   return (
@@ -56,7 +68,7 @@ function PackOrderModalPageTwo({
       <Dialog className="pack-order-modal-page-two-dialog" open={isModalTwoOpen} onClose={handleModalTwoClose}>
         <Button type="button" onClick={closeAllModals}>Close X</Button>
         <DialogTitle className="pack-order-modal-page-two-dialog-title">
-          Gift Option (#Testing)
+          Gift Option +$1.00 (#Testing)
         </DialogTitle>
         <DialogContent className="pack-order-modal-page-two-dialog-content" dividers>
           <Box
@@ -66,7 +78,7 @@ function PackOrderModalPageTwo({
             autoComplete="off"
           >
             <DialogContentText className="pack-order-modal-page-two-dialog-content-text">
-              Gift wrap comes with your personal message inside a special box.
+              Gift option arrives in a special gift box with a personalized message card.
             </DialogContentText>
             <FormControl>
               <TextField
@@ -85,11 +97,18 @@ function PackOrderModalPageTwo({
                 value={giftFromName}
                 onChange={handleGiftFromNameInput}
               />
-              <Button variant="contained" type="button" onClick={testSubmit}>Submit</Button>
+              <Button
+                variant="contained"
+                type="button"
+                onClick={addGiftOption}
+                disabled={!(giftFromName && giftMessage)}
+              >
+                Add Gift Option
+              </Button>
             </FormControl>
           </Box>
         </DialogContent>
-        <Button type="button" onClick={handleModalThreeOpen}>Skip</Button>
+        <Button type="button" onClick={skipToModalThree}>Skip</Button>
         <Button type="button" onClick={handleModalTwoClose}>Go Back</Button>
       </Dialog>
       <PackOrderModalPageThree
@@ -100,6 +119,15 @@ function PackOrderModalPageTwo({
         packItems={packItems}
         packTitle={packTitle}
         addToCart={addToCart}
+        macList={macList}
+        macItems={macItems}
+        macListDispatch={macListDispatch}
+        giftMessage={giftMessage}
+        giftFromName={giftFromName}
+        giftOption={giftOption}
+        setGiftOption={setGiftOption}
+        setGiftMessage={setGiftMessage}
+        setGiftFromName={setGiftFromName}
       />
     </>
   );
@@ -112,6 +140,12 @@ PackOrderModalPageTwo.propTypes = {
   addToCart: PropTypes.func.isRequired,
   packItems: PropTypes.arrayOf(ItemType).isRequired,
   packTitle: PropTypes.string.isRequired,
+  macList: PropTypes.arrayOf(PropTypes.shape({
+    itemId: PropTypes.string.isRequired,
+    quantity: PropTypes.number.isRequired,
+  })).isRequired,
+  macItems: PropTypes.arrayOf(ItemType).isRequired,
+  macListDispatch: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageTwo;

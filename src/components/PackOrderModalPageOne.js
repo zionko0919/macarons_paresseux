@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText,
+  Button, Dialog, DialogTitle, DialogContent, DialogContentText,
 } from '@mui/material';
 import ItemType from '../types/item';
 import { itemImages } from '../items';
@@ -14,18 +15,16 @@ function PackOrderModalPageOne({
   isModalOneOpen, handleModalOneClose, numMac, addToCart, packTitle, packItems, macItems,
   macList, macListDispatch,
 }) {
-  const [isModalTwoOpen, setIsModalTwoOpen] = useState(false);
+  console.log('macList: ', macList);
 
-  // console.log('macList from Modal 1: ', macList);
+  const [isModalTwoOpen, setIsModalTwoOpen] = useState(false);
 
   const handleModalTwoOpen = () => {
     setIsModalTwoOpen(true);
-    console.log('Opening Pack Order Modal Page 2');
   };
 
   const handleModalTwoClose = () => {
     setIsModalTwoOpen(false);
-    console.log('Going back to Pack Order Modal Page 1');
   };
 
   const totalQuantitySelected = macList.reduce((acc, item) => item.quantity + acc, 0);
@@ -37,7 +36,7 @@ function PackOrderModalPageOne({
         open={isModalOneOpen}
         onClose={handleModalOneClose}
       >
-        <button type="button" onClick={handleModalOneClose}>Close X</button>
+        <Button type="button" onClick={handleModalOneClose}>Close X</Button>
         <DialogTitle className="pack-order-modal-page-one-dialog-title">
           {packTitle}
           {'\n'}
@@ -80,13 +79,13 @@ function PackOrderModalPageOne({
             ))}
           </DialogContentText>
         </DialogContent>
-        <button
+        <Button
           type="button"
           onClick={handleModalTwoOpen}
           disabled={numMac !== totalQuantitySelected}
         >
           Next
-        </button>
+        </Button>
       </Dialog>
       <PackOrderModalPageTwo
         isModalTwoOpen={isModalTwoOpen}
@@ -95,6 +94,9 @@ function PackOrderModalPageOne({
         packTitle={packTitle}
         addToCart={addToCart}
         packItems={packItems}
+        macList={macList}
+        macItems={macItems}
+        macListDispatch={macListDispatch}
       />
     </>
   );
