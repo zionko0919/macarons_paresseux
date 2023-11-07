@@ -1,12 +1,19 @@
 /* eslint-disable no-unused-vars */
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import {
   Dialog,
-  DialogContent, DialogContentText,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
+  TextField,
+  Box,
+  Button,
+  FormControl,
 } from '@mui/material';
-import PropTypes from 'prop-types';
-import './PackOrderModalPageTwo.css';
 import ItemType from '../types/item';
+import PackOrderModalPageThree from './PackOrderModalPageThree';
+import './PackOrderModalPageTwo.css';
 
 function PackOrderModalPageTwo({
   isModalTwoOpen, handleModalTwoClose, handleModalOneClose, addToCart, packItems, packTitle,
@@ -14,32 +21,87 @@ function PackOrderModalPageTwo({
   const closeAllModals = () => {
     handleModalOneClose();
     handleModalTwoClose();
-    console.log('Closing All Modals for Pack Orders');
   };
 
-  // console.log('pack items: ', packItems);
-  // console.log('pack title: ', packTitle);
-  const selectedPack = packItems.find((item) => item.title === packTitle);
-  // console.log('selected pack: ', selectedPack);
-  const addItemToCart = () => {
-    addToCart(selectedPack.itemId, selectedPack.category);
-    closeAllModals();
+  const [isModalThreeOpen, setIsModalThreeOpen] = useState(false);
+
+  const handleModalThreeOpen = () => {
+    setIsModalThreeOpen(true);
+    console.log('Opening Pack Order Modal Page 3');
+  };
+
+  const handleModalThreeClose = () => {
+    setIsModalThreeOpen(false);
+    console.log('Going back to Pack Order Modal Page 2');
+  };
+
+  const [giftMessage, setGiftMessage] = useState('');
+  const [giftFromName, setGiftFromName] = useState('');
+
+  const handleGiftMessageInput = (e) => {
+    setGiftMessage(e.target.value);
+  };
+  const handleGiftFromNameInput = (e) => {
+    setGiftFromName(e.target.value);
+  };
+
+  const testSubmit = () => {
+    handleModalThreeOpen();
+    console.log('message: ', giftMessage.toUpperCase());
+    console.log('from', giftFromName.toUpperCase());
   };
 
   return (
-    <Dialog className="pack-order-modal-page-two-dialog" open={isModalTwoOpen} onClose={handleModalTwoClose}>
-      <button type="button" onClick={closeAllModals}>Close X</button>
-      <DialogTitle className="pack-order-modal-page-two-dialog-title">
-        Gift Wrap Option
-      </DialogTitle>
-      <DialogContent className="pack-order-modal-page-two-dialog-content" dividers>
-        <DialogContentText className="pack-order-modal-page-two-dialog-content-text">
-          Testing Out the Content Box
-        </DialogContentText>
-      </DialogContent>
-      <button type="button" onClick={addItemToCart}>Add To Cart</button>
-      <button type="button" onClick={handleModalTwoClose}>Go Back</button>
-    </Dialog>
+    <>
+      <Dialog className="pack-order-modal-page-two-dialog" open={isModalTwoOpen} onClose={handleModalTwoClose}>
+        <Button type="button" onClick={closeAllModals}>Close X</Button>
+        <DialogTitle className="pack-order-modal-page-two-dialog-title">
+          Gift Option (#Testing)
+        </DialogTitle>
+        <DialogContent className="pack-order-modal-page-two-dialog-content" dividers>
+          <Box
+            component="form"
+            sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
+            noValidate
+            autoComplete="off"
+          >
+            <DialogContentText className="pack-order-modal-page-two-dialog-content-text">
+              Gift wrap comes with your personal message inside a special box.
+            </DialogContentText>
+            <FormControl>
+              <TextField
+                label="Your Message: "
+                multiline
+                variant="outlined"
+                rows={4}
+                inputProps={{ maxLength: 100 }}
+                value={giftMessage}
+                onChange={handleGiftMessageInput}
+              />
+              <TextField
+                label="From: "
+                variant="outlined"
+                inputProps={{ maxLength: 30 }}
+                value={giftFromName}
+                onChange={handleGiftFromNameInput}
+              />
+              <Button variant="contained" type="button" onClick={testSubmit}>Submit</Button>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <Button type="button" onClick={handleModalThreeOpen}>Skip</Button>
+        <Button type="button" onClick={handleModalTwoClose}>Go Back</Button>
+      </Dialog>
+      <PackOrderModalPageThree
+        isModalThreeOpen={isModalThreeOpen}
+        handleModalOneClose={handleModalOneClose}
+        handleModalTwoClose={handleModalTwoClose}
+        handleModalThreeClose={handleModalThreeClose}
+        packItems={packItems}
+        packTitle={packTitle}
+        addToCart={addToCart}
+      />
+    </>
   );
 }
 

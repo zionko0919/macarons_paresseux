@@ -12,8 +12,8 @@ function PackOrderMacListViewer({ macListItem, macItems, macListDispatch }) {
 
   return (
     <tr>
-      <td>{macListItem.quantity}</td>
       <td>{item.title}</td>
+      <td>{macListItem.quantity}</td>
       <td>
         <button type="button" onClick={removeItemFromMacList}>X</button>
       </td>
