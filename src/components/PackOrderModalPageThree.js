@@ -4,9 +4,10 @@ import {
   Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText,
 } from '@mui/material';
 import ItemType from '../types/item';
-import './PackOrderModalPageThree.css';
+import { PackMacListTypes } from '../reducers/packMacListReducer';
 import PackOrderMacListViewer from './PackOrderMacListViewerRow';
 import PackOrderModalPageThreeHelper from './PackOrderModalPageThreeHelper';
+import './PackOrderModalPageThree.css';
 
 function PackOrderModalPageThree({
   isModalThreeOpen,
@@ -39,6 +40,7 @@ function PackOrderModalPageThree({
 
   const addItemToCart = () => {
     addToCart(selectedPack.itemId, selectedPack.category);
+    macListDispatch({ type: PackMacListTypes.EMPTY });
     closeAllModals();
   };
 

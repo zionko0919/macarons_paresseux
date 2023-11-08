@@ -23,7 +23,7 @@ function PackThumbnail({
 
   const handleModalOneClose = () => {
     setIsModalOpen(false);
-    macListDispatch({ type: PackMacListTypes.EMPTY });
+    // macListDispatch({ type: PackMacListTypes.EMPTY });
     // console.log('Closing from Pack Order Modal Page 1 for ', title);
   };
 

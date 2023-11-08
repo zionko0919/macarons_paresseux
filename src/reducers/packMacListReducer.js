@@ -22,11 +22,9 @@ export const packMacListReducer = (state, action) => {
       ];
 
     case PackMacListTypes.REMOVE:
-      // console.log('action REMOVE: ', action);
       return state.filter((item) => item.itemId !== action.itemId);
 
     case PackMacListTypes.EMPTY:
-      // console.log('action EMPTY: ', action);
       return [];
 
     default:

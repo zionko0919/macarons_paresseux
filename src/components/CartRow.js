@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types';
 import ItemType from '../types/item';
 import { CartTypes } from '../reducers/cartReducer';
+import CartRowPackOrderHelper from './CartRowPackOrderHelper';
 
 function CartRow({
   cartItem, dispatch, macItems, drinkItems, packItems, macList, macListDispatch,
@@ -16,10 +17,6 @@ function CartRow({
   } else if (cartItem.category === 'pack') {
     item = packItems.find((i) => i.itemId === cartItem.itemId);
   }
-  // console.log('item: ', item);
-
-  // const itemInItemsArr = macItems.find((i) => i.itemId === cartItem.itemId);
-  // const item = itemInItemsArr || drinkItems.find((i) => i.itemId === cartItem.itemId);
 
   const removeItemFromCart = () => {
     dispatch({ type: CartTypes.REMOVE, itemId: item.itemId });
@@ -37,6 +34,9 @@ function CartRow({
         <button type="button" onClick={removeItemFromCart}>
           x
         </button>
+      </td>
+      <td>
+        <CartRowPackOrderHelper macList={macList} macItems={macItems} />
       </td>
     </tr>
   );
