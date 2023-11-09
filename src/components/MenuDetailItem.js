@@ -5,10 +5,8 @@ import ItemType from '../types/item';
 import './MenuDetailItem.css';
 
 function MenuDetailItem({ addToCart, macItems }) {
-  console.log('atc: ', typeof addToCart);
   const { id } = useParams();
   const menuDetailItem = macItems.find((item) => item.itemId === id);
-  console.log('MDI', menuDetailItem);
   const addItemToCart = () => {
     addToCart(menuDetailItem.itemId, menuDetailItem.category);
   };

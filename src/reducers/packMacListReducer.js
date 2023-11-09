@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 export const initialPackMacListState = [];
 
 export const PackMacListTypes = {
@@ -6,9 +7,13 @@ export const PackMacListTypes = {
   EMPTY: 'EMPTY',
 };
 
-const findMacItem = (macList, itemId) => macList.find((item) => item.itemId === itemId);
+const findMacItem = (macList, itemId) => macList.find(
+  (item) => item.itemId === itemId,
+);
 
 export const packMacListReducer = (state, action) => {
+  // console.log('state', state);
+  // console.log('action', action);
   switch (action.type) {
     case PackMacListTypes.ADD:
       if (findMacItem(state, action.itemId)) {

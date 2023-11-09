@@ -12,11 +12,10 @@ import './PackOrderModalPageOne.css';
 import PackOrderMacListViewer from './PackOrderMacListViewer';
 
 function PackOrderModalPageOne({
-  isModalOneOpen, handleModalOneClose, numMac, addToCart, packTitle, packItems, macItems,
-  macList, macListDispatch,
+  isModalOneOpen, handleModalOneClose, handlModalOneCloseAfterAddToCart,
+  numMac, addToCart, packTitle, packItems, macItems,
+  macList, macListDispatch, addToMacList,
 }) {
-  console.log('macList: ', macList);
-
   const [isModalTwoOpen, setIsModalTwoOpen] = useState(false);
 
   const handleModalTwoOpen = () => {
@@ -75,6 +74,7 @@ function PackOrderModalPageOne({
                 macItems={macItems}
                 numMac={numMac}
                 totalQuantitySelected={totalQuantitySelected}
+                addToMacList={addToMacList}
               />
             ))}
           </DialogContentText>
@@ -90,6 +90,7 @@ function PackOrderModalPageOne({
       <PackOrderModalPageTwo
         isModalTwoOpen={isModalTwoOpen}
         handleModalOneClose={handleModalOneClose}
+        handlModalOneCloseAfterAddToCart={handlModalOneCloseAfterAddToCart}
         handleModalTwoClose={handleModalTwoClose}
         packTitle={packTitle}
         addToCart={addToCart}
@@ -97,6 +98,7 @@ function PackOrderModalPageOne({
         macList={macList}
         macItems={macItems}
         macListDispatch={macListDispatch}
+        addToMacList={addToMacList}
       />
     </>
   );
@@ -105,6 +107,7 @@ function PackOrderModalPageOne({
 PackOrderModalPageOne.propTypes = {
   isModalOneOpen: PropTypes.bool.isRequired,
   handleModalOneClose: PropTypes.func.isRequired,
+  handlModalOneCloseAfterAddToCart: PropTypes.func.isRequired,
   numMac: PropTypes.number.isRequired,
   addToCart: PropTypes.func.isRequired,
   packTitle: PropTypes.string.isRequired,
@@ -115,6 +118,7 @@ PackOrderModalPageOne.propTypes = {
     quantity: PropTypes.number.isRequired,
   })).isRequired,
   macListDispatch: PropTypes.func.isRequired,
+  addToMacList: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageOne;

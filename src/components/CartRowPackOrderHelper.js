@@ -2,12 +2,11 @@ import PropTypes from 'prop-types';
 import ItemType from '../types/item';
 
 function CartRowPackOrderHelper({ macList, macItems }) {
-  console.log('hi: ', macList);
   return (
     <div className="cart-row-pack-order-helper-component">
       <thead>
         <tr>
-          <th>Item</th>
+          <th>Macaron</th>
           <th>Quantity</th>
         </tr>
       </thead>

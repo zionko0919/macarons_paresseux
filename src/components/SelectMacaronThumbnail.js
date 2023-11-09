@@ -7,10 +7,11 @@ import './SelectMacaronThumbnail.css';
 
 function SelectMacaronThumbnail({
   itemId, image, title,
-  macList, macListDispatch, macItems, numMac, totalQuantitySelected,
+  macList, macListDispatch, macItems, numMac, totalQuantitySelected, addToMacList,
 }) {
+  const macSingleItem = macItems.find((item) => item.title === title);
   const addItemToMacList = () => {
-    macListDispatch({ type: PackMacListTypes.ADD, itemId });
+    addToMacList(macSingleItem.itemId);
   };
 
   return (
@@ -37,7 +38,7 @@ SelectMacaronThumbnail.propTypes = {
   macItems: PropTypes.arrayOf(ItemType).isRequired,
   numMac: PropTypes.number.isRequired,
   totalQuantitySelected: PropTypes.number.isRequired,
-  // addItemToMacList: PropTypes.func.isRequired,
+  addToMacList: PropTypes.func.isRequired,
 };
 
 export default SelectMacaronThumbnail;

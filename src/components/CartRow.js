@@ -7,8 +7,8 @@ import CartRowPackOrderHelper from './CartRowPackOrderHelper';
 function CartRow({
   cartItem, dispatch, macItems, drinkItems, packItems, macList, macListDispatch,
 }) {
-  console.log('cart Item: ', cartItem);
-  console.log('macList:', macList);
+  // console.log('cart Item: ', cartItem);
+  // console.log('macList:', macList);
   let item = '';
   if (cartItem.category === 'drink') {
     item = drinkItems.find((i) => i.itemId === cartItem.itemId);

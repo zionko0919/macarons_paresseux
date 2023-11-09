@@ -10,10 +10,11 @@ import PackOrderModalPageThreeHelper from './PackOrderModalPageThreeHelper';
 import './PackOrderModalPageThree.css';
 
 function PackOrderModalPageThree({
+  handleModalOneClose,
+  handlModalOneCloseAfterAddToCart,
+  handleModalTwoClose,
   isModalThreeOpen,
   handleModalThreeClose,
-  handleModalTwoClose,
-  handleModalOneClose,
   addToCart,
   packItems,
   packTitle,
@@ -36,12 +37,21 @@ function PackOrderModalPageThree({
     handleModalOneClose();
   };
 
+  const closeAfterAddToCart = () => {
+    setGiftOption(false);
+    setGiftMessage('');
+    setGiftFromName('');
+    handleModalThreeClose();
+    handleModalTwoClose();
+    handlModalOneCloseAfterAddToCart();
+  };
+
   const selectedPack = packItems.find((item) => item.title === packTitle);
 
   const addItemToCart = () => {
     addToCart(selectedPack.itemId, selectedPack.category);
-    macListDispatch({ type: PackMacListTypes.EMPTY });
-    closeAllModals();
+    // macListDispatch({ type: PackMacListTypes.EMPTY });
+    closeAfterAddToCart();
   };
 
   return (
@@ -104,9 +114,10 @@ function PackOrderModalPageThree({
 }
 
 PackOrderModalPageThree.propTypes = {
-  isModalThreeOpen: PropTypes.bool.isRequired,
   handleModalOneClose: PropTypes.func.isRequired,
+  handlModalOneCloseAfterAddToCart: PropTypes.func.isRequired,
   handleModalTwoClose: PropTypes.func.isRequired,
+  isModalThreeOpen: PropTypes.bool.isRequired,
   handleModalThreeClose: PropTypes.func.isRequired,
   addToCart: PropTypes.func.isRequired,
   packItems: PropTypes.arrayOf(ItemType).isRequired,

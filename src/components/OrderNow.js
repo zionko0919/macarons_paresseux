@@ -8,7 +8,7 @@ import './OrderNow.css';
 
 function OrderNow({
   packItems, drinkItems, macItems, addToCart,
-  macList, macListDispatch,
+  macList, macListDispatch, addToMacList,
 }) {
   return (
     <div className="ordernow-component">
@@ -23,6 +23,7 @@ function OrderNow({
               addToCart={addToCart}
               macList={macList}
               macListDispatch={macListDispatch}
+              addToMacList={addToMacList}
             />
           )}
         />
@@ -53,6 +54,7 @@ OrderNow.propTypes = {
     quantity: PropTypes.number.isRequired,
   })).isRequired,
   macListDispatch: PropTypes.func.isRequired,
+  addToMacList: PropTypes.func.isRequired,
 };
 
 export default OrderNow;

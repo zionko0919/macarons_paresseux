@@ -8,7 +8,7 @@ import './Menu.css';
 
 function MacPacks({
   packItems, macItems, addToCart,
-  macList, macListDispatch,
+  macList, macListDispatch, addToMacList,
 }) {
   return (
     <Routes>
@@ -28,6 +28,7 @@ function MacPacks({
                 macItems={macItems}
                 macList={macList}
                 macListDispatch={macListDispatch}
+                addToMacList={addToMacList}
               />
             ))}
           </div>
@@ -47,6 +48,7 @@ MacPacks.propTypes = {
     quantity: PropTypes.number.isRequired,
   })).isRequired,
   macListDispatch: PropTypes.func.isRequired,
+  addToMacList: PropTypes.func.isRequired,
 };
 
 export default MacPacks;

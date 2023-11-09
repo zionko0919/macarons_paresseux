@@ -8,23 +8,27 @@ import ItemType from '../types/item';
 
 function PackThumbnail({
   image, title, price, numMac, addToCart, packItems, macItems,
-  macList, macListDispatch,
+  macList, macListDispatch, addToMacList,
 }) {
-  const [isModalOneOpen, setIsModalOpen] = useState(false);
+  const [isModalOneOpen, setIsModalOneOpen] = useState(false);
 
   // const removeItemFromMacList = () => {
   //   macListDispatch({ type: PackMacListTypes.REMOVE, itemId: macList.itemId });
   // };
 
   const handleModalOneOpen = () => {
-    setIsModalOpen(true);
-    // console.log('Opening Pack Order Modal Page 1 for ', title);
+    setIsModalOneOpen(true);
+    // setIsModalOneOpen.log('Opening Pack Order Modal Page 1 for ', title);
   };
 
   const handleModalOneClose = () => {
-    setIsModalOpen(false);
-    // macListDispatch({ type: PackMacListTypes.EMPTY });
+    setIsModalOneOpen(false);
+    macListDispatch({ type: PackMacListTypes.EMPTY });
     // console.log('Closing from Pack Order Modal Page 1 for ', title);
+  };
+
+  const handlModalOneCloseAfterAddToCart = () => {
+    setIsModalOneOpen(false);
   };
 
   return (
@@ -40,6 +44,7 @@ function PackThumbnail({
         <PackOrderModalPageOne
           isModalOneOpen={isModalOneOpen}
           handleModalOneClose={handleModalOneClose}
+          handlModalOneCloseAfterAddToCart={handlModalOneCloseAfterAddToCart}
           numMac={numMac}
           addToCart={addToCart}
           packTitle={title}
@@ -47,6 +52,7 @@ function PackThumbnail({
           macItems={macItems}
           macList={macList}
           macListDispatch={macListDispatch}
+          addToMacList={addToMacList}
         />
       </div>
       <p>{title}</p>
@@ -71,6 +77,7 @@ PackThumbnail.propTypes = {
     quantity: PropTypes.number.isRequired,
   })).isRequired,
   macListDispatch: PropTypes.func.isRequired,
+  addToMacList: PropTypes.func.isRequired,
 };
 
 export default PackThumbnail;

@@ -17,6 +17,8 @@ import { cartReducer, initialCartState, CartTypes } from './reducers/cartReducer
 import { packMacListReducer, initialPackMacListState, PackMacListTypes } from './reducers/packMacListReducer';
 // import MenuDetails from './components/MenuDetails';
 
+const storageKey = 'cart';
+
 function App() {
   const [macItems, setItems] = useState([]);
   useEffect(() => {
@@ -46,15 +48,33 @@ function App() {
       .catch(console.error);
   }, []);
 
-  const [cart, dispatch] = useReducer(cartReducer, initialCartState);
+  const [cart, dispatch] = useReducer(
+    cartReducer,
+    initialCartState,
+    (initialState) => {
+      try {
+        const storedCart = JSON.parse(localStorage.getItem(storageKey));
+        return storedCart || initialState;
+      } catch (error) {
+        console.log('Error parsing cart', error);
+        return initialState;
+      }
+    },
+  );
   const addToCart = (itemId, category) => dispatch(
     { type: CartTypes.ADD, itemId, category },
   );
 
   const [macList, macListDispatch] = useReducer(packMacListReducer, initialPackMacListState);
-  // const addItemToMacList = (itemId) => macListDispatch(
-  //   { type: PackMacListTypes.ADD, itemId },
-  // );
+  const addToMacList = (itemId) => macListDispatch(
+    { type: PackMacListTypes.ADD, itemId },
+  );
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(cart));
+  });
+  // console.log('cart: ', cart);
+  // console.log('macList', macList);
 
   return (
     <Router>
@@ -96,7 +116,7 @@ function App() {
               addToCart={addToCart}
               macList={macList}
               macListDispatch={macListDispatch}
-              // addItemToMacList={addItemToMacList}
+              addToMacList={addToMacList}
             />
           )}
         />

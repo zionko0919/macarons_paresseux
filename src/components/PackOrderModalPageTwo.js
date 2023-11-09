@@ -16,7 +16,8 @@ import PackOrderModalPageThree from './PackOrderModalPageThree';
 import './PackOrderModalPageTwo.css';
 
 function PackOrderModalPageTwo({
-  isModalTwoOpen, handleModalTwoClose, handleModalOneClose, addToCart, packItems, packTitle,
+  isModalTwoOpen, handleModalOneClose, handlModalOneCloseAfterAddToCart,
+  handleModalTwoClose, addToCart, packItems, packTitle,
   macList, macItems, macListDispatch,
 }) {
   const [isModalThreeOpen, setIsModalThreeOpen] = useState(false);
@@ -114,6 +115,7 @@ function PackOrderModalPageTwo({
       <PackOrderModalPageThree
         isModalThreeOpen={isModalThreeOpen}
         handleModalOneClose={handleModalOneClose}
+        handlModalOneCloseAfterAddToCart={handlModalOneCloseAfterAddToCart}
         handleModalTwoClose={handleModalTwoClose}
         handleModalThreeClose={handleModalThreeClose}
         packItems={packItems}
@@ -135,8 +137,9 @@ function PackOrderModalPageTwo({
 
 PackOrderModalPageTwo.propTypes = {
   isModalTwoOpen: PropTypes.bool.isRequired,
-  handleModalTwoClose: PropTypes.func.isRequired,
   handleModalOneClose: PropTypes.func.isRequired,
+  handlModalOneCloseAfterAddToCart: PropTypes.func.isRequired,
+  handleModalTwoClose: PropTypes.func.isRequired,
   addToCart: PropTypes.func.isRequired,
   packItems: PropTypes.arrayOf(ItemType).isRequired,
   packTitle: PropTypes.string.isRequired,
