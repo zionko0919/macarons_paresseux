@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import axios from 'axios';
+import { useState, useRef } from 'react';
 import ItemType from '../types/item';
 import CartRow from './CartRow';
 import './Cart.css';
@@ -11,9 +12,11 @@ function Cart({
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [zipCode, setZipCode] = useState('');
-
+  const [isEmployeeOfTheMonth, setIsEmployeeOfTheMonth] = useState(false);
+  const debounceRef = useRef(null);
+  const zipRef = useRef(null);
   // console.log('cart: ', cart);
-  const subTotal = cart.reduce((acc, item) => {
+  const subTotal = isEmployeeOfTheMonth ? 0 : cart.reduce((acc, item) => {
     // console.log('curItem: ', item);
     // console.log('curItem Category: ', item.category);
     let detailItem = '';
@@ -25,8 +28,10 @@ function Cart({
       detailItem = packItems.find((i) => i.itemId === item.itemId);
     }
 
+    console.log('salePrice: ', detailItem.salePrice);
+    console.log('price: ', detailItem.price);
     const itemPrice = detailItem.salePrice ?? detailItem.price;
-
+    console.log('itemPrice: ', itemPrice);
     return item.quantity * itemPrice + acc;
   }, 0);
 
@@ -38,9 +43,10 @@ function Cart({
 
   const submitOrder = (event) => {
     event.preventDefault();
-    console.log('name: ', name);
-    console.log('phone: ', phone);
-    console.log('zipcode: ', zipCode);
+    // console.log('name: ', name);
+    // console.log('phone: ', phone);
+    // console.log('zipcode: ', zipCode);
+    // ToDo
   };
 
   const setFormattedPhone = (newNumber) => {
@@ -56,7 +62,25 @@ function Cart({
     } else if (digits.length > 6) {
       formatted = `${formatted}-${digits.substring(6, 10)}`;
     }
+    if (digits.length === 10) {
+      zipRef.current.focus();
+    }
     setPhone(formatted);
+  };
+
+  const onNameChange = (newName) => {
+    setName(newName);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      axios
+        .get(`/api/employees/isEmployeeOfTheMonth?name=${newName}`)
+        .then((response) => setIsEmployeeOfTheMonth(
+          response?.data?.isEmployeeOfTheMonth,
+        ))
+        .catch(console.error);
+    }, 300);
   };
 
   return (
@@ -118,7 +142,7 @@ function Cart({
                 id="name"
                 type="text"
                 value={name}
-                onChange={(event) => setName(event.target.value)}
+                onChange={(event) => onNameChange(event.target.value)}
                 required
               />
             </label>
@@ -129,6 +153,7 @@ function Cart({
                 type="tel"
                 value={phone}
                 onChange={(event) => setFormattedPhone(event.target.value)}
+                aria-label="After a phone number is entered, you will automatically be moved to ZIP Code"
               />
             </label>
             <label htmlFor="zipcode">
@@ -141,6 +166,7 @@ function Cart({
                 value={zipCode}
                 onChange={(event) => setZipCode(event.target.value)}
                 required
+                ref={zipRef}
               />
             </label>
             <button type="submit" disabled={!isFormValid}>

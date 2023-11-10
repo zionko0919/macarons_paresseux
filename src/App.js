@@ -21,6 +21,33 @@ const storageKey = 'cart';
 
 function App() {
   const [macItems, setItems] = useState([]);
+
+  // const [cart, dispatch] = useReducer(
+  //   cartReducer,
+  //   initialCartState,
+  // );
+  const [cart, dispatch] = useReducer(
+    cartReducer,
+    initialCartState,
+    (initialState) => {
+      try {
+        const storedCart = JSON.parse(localStorage.getItem(storageKey));
+        return storedCart || initialState;
+      } catch (error) {
+        console.log('Error parsing cart', error);
+        return initialState;
+      }
+    },
+  );
+
+  const addToCart = (itemId, category) => dispatch(
+    { type: CartTypes.ADD, itemId, category },
+  );
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(cart));
+  }, [cart]);
+
   useEffect(() => {
     axios.get('/api/macaronItems')
       .then((result) => setItems(result.data))
@@ -48,31 +75,11 @@ function App() {
       .catch(console.error);
   }, []);
 
-  const [cart, dispatch] = useReducer(
-    cartReducer,
-    initialCartState,
-    (initialState) => {
-      try {
-        const storedCart = JSON.parse(localStorage.getItem(storageKey));
-        return storedCart || initialState;
-      } catch (error) {
-        console.log('Error parsing cart', error);
-        return initialState;
-      }
-    },
-  );
-  const addToCart = (itemId, category) => dispatch(
-    { type: CartTypes.ADD, itemId, category },
-  );
-
   const [macList, macListDispatch] = useReducer(packMacListReducer, initialPackMacListState);
   const addToMacList = (itemId) => macListDispatch(
     { type: PackMacListTypes.ADD, itemId },
   );
 
-  useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(cart));
-  });
   // console.log('cart: ', cart);
   // console.log('macList', macList);
 
