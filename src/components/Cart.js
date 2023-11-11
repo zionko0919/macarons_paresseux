@@ -4,7 +4,9 @@ import axios from 'axios';
 import { useState, useRef } from 'react';
 import ItemType from '../types/item';
 import CartRow from './CartRow';
+import Alert from './Alert';
 import './Cart.css';
+import { CartTypes } from '../reducers/cartReducer';
 
 function Cart({
   cart, dispatch, macItems, drinkItems, packItems, optionalItems, macList, macListDispatch,
@@ -13,6 +15,9 @@ function Cart({
   const [phone, setPhone] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [isEmployeeOfTheMonth, setIsEmployeeOfTheMonth] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [apiError, setApiError] = useState('');
   const debounceRef = useRef(null);
   const zipRef = useRef(null);
   // console.log('cart: ', cart);
@@ -41,8 +46,25 @@ function Cart({
   const total = subTotal + taxAmount;
   const isFormValid = zipCode.length === 5 && name.trim();
 
-  const submitOrder = (event) => {
+  const submitOrder = async (event) => {
     event.preventDefault();
+    setIsSubmitting(true);
+    setApiError('');
+    try {
+      await axios.post('/api/orders', {
+        items: cart,
+        name,
+        phone,
+        zipCode,
+      });
+      dispatch({ type: CartTypes.EMPTY });
+      setShowSuccessAlert(true);
+    } catch (error) {
+      console.error('Error submitting the order', error);
+      setApiError(error?.response?.data?.error || 'Unknown Error');
+    } finally {
+      setIsSubmitting(false);
+    }
     // console.log('name: ', name);
     // console.log('phone: ', phone);
     // console.log('zipcode: ', zipCode);
@@ -80,11 +102,22 @@ function Cart({
           response?.data?.isEmployeeOfTheMonth,
         ))
         .catch(console.error);
-    }, 300);
+    }, 500);
   };
 
   return (
     <div className="cart-component">
+      <Alert
+        visible={showSuccessAlert}
+        type="success"
+      >
+        Thank you for your order.
+      </Alert>
+      <Alert visible={!!apiError} type="error">
+        <p>There was an error submitting your order.</p>
+        <p>{apiError}</p>
+        <p>Please try again.</p>
+      </Alert>
       <h2>Your Cart</h2>
       {cart.length === 0 ? (
         <div>Your cart is empty.</div>
@@ -169,7 +202,7 @@ function Cart({
                 ref={zipRef}
               />
             </label>
-            <button type="submit" disabled={!isFormValid}>
+            <button type="submit" disabled={!isFormValid || isSubmitting}>
               Place Order
             </button>
           </form>
