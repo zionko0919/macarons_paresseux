@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import PropTypes from 'prop-types';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import { useState, useRef } from 'react';
 import ItemType from '../types/item';
+import { CartTypes } from '../reducers/cartReducer';
 import CartRow from './CartRow';
 import Alert from './Alert';
 import './Cart.css';
-import { CartTypes } from '../reducers/cartReducer';
 
 function Cart({
   cart, dispatch, macItems, drinkItems, packItems, optionalItems, macList, macListDispatch,
@@ -20,11 +20,9 @@ function Cart({
   const [apiError, setApiError] = useState('');
   const debounceRef = useRef(null);
   const zipRef = useRef(null);
-  // console.log('cart: ', cart);
+
   const subTotal = isEmployeeOfTheMonth ? 0 : cart.reduce((acc, item) => {
-    // console.log('curItem: ', item);
-    // console.log('curItem Category: ', item.category);
-    let detailItem = '';
+    let detailItem = {};
     if (item.category === 'macaron') {
       detailItem = macItems.find((i) => i.itemId === item.itemId);
     } else if (item.category === 'drink') {
@@ -33,10 +31,7 @@ function Cart({
       detailItem = packItems.find((i) => i.itemId === item.itemId);
     }
 
-    console.log('salePrice: ', detailItem.salePrice);
-    console.log('price: ', detailItem.price);
     const itemPrice = detailItem.salePrice ?? detailItem.price;
-    console.log('itemPrice: ', itemPrice);
     return item.quantity * itemPrice + acc;
   }, 0);
 
@@ -102,7 +97,7 @@ function Cart({
           response?.data?.isEmployeeOfTheMonth,
         ))
         .catch(console.error);
-    }, 500);
+    }, 300);
   };
 
   return (
