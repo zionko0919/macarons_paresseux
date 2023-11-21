@@ -1,14 +1,17 @@
 /* eslint-disable no-unused-vars */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 import {
-  useEffect, useReducer, useState, useMemo,
+  useCallback, useEffect, useReducer, useState, useMemo,
 } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
 } from 'react-router-dom';
+import { Menu } from '@mui/icons-material';
+import {
+  Drawer, Box, Button, List, ListItem, ListItemButton, ListItemText,
+} from '@mui/material';
 import AllMenu from './components/AllMenu';
 import Cart from './components/Cart';
 import OrderNow from './components/OrderNow';
@@ -48,8 +51,9 @@ function App() {
     { type: PackMacListTypes.ADD, itemId },
   );
 
-  const addToCart = (itemId, category) => dispatch(
-    { type: CartTypes.ADD, itemId, category },
+  const addToCart = useCallback(
+    (itemId, category) => dispatch({ type: CartTypes.ADD, itemId, category }),
+    [],
   );
 
   useEffect(() => {
@@ -129,7 +133,7 @@ function App() {
                     macList={macList}
                     macListDispatch={macListDispatch}
                   />
-          )}
+                )}
               />
               <Route
                 path="/all_menu/*"
@@ -138,7 +142,7 @@ function App() {
                     addToCart={addToCart}
                     macItems={macItems}
                   />
-          )}
+                )}
               />
               <Route
                 path="/ordernow/*"
@@ -153,7 +157,7 @@ function App() {
                     macListDispatch={macListDispatch}
                     addToMacList={addToMacList}
                   />
-          )}
+                )}
               />
               <Route path="*" element={<NotFound />} />
             </Routes>

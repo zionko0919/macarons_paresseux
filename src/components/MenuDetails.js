@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Outlet } from 'react-router-dom';
 import { itemImages } from '../items';
@@ -27,4 +28,4 @@ MenuDetails.propTypes = {
   macItems: PropTypes.arrayOf(ItemType).isRequired,
 };
 
-export default MenuDetails;
+export default memo(MenuDetails);

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { useState, useRef } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import ItemType from '../types/item';
 import { CartTypes } from '../reducers/cartReducer';
 import CartRow from './CartRow';
@@ -34,9 +34,13 @@ function Cart({
     const itemPrice = detailItem.salePrice ?? detailItem.price;
     return item.quantity * itemPrice + acc;
   }, 0);
-
-  const taxPercentage = parseInt(zipCode.substring(0, 1) || '0', 10) + 1;
-  const taxRate = taxPercentage / 100;
+  const taxRate = useMemo(
+    () => {
+      const taxPercentage = parseInt(zipCode.substring(0, 1) || '0', 10) + 1;
+      return taxPercentage / 100;
+    },
+    [zipCode],
+  );
   const taxAmount = subTotal * taxRate;
   const total = subTotal + taxAmount;
   const isFormValid = zipCode.length === 5 && name.trim();
