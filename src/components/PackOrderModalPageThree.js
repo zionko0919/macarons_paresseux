@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText,
 } from '@mui/material';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import { PackMacListTypes } from '../reducers/packMacListReducer';
 import PackOrderMacListViewer from './PackOrderMacListViewerRow';
 import PackOrderModalPageThreeHelper from './PackOrderModalPageThreeHelper';
@@ -15,12 +16,7 @@ function PackOrderModalPageThree({
   handleModalTwoClose,
   isModalThreeOpen,
   handleModalThreeClose,
-  addToCart,
-  packItems,
   packTitle,
-  macList,
-  macItems,
-  macListDispatch,
   giftMessage,
   giftFromName,
   giftOption,
@@ -28,6 +24,8 @@ function PackOrderModalPageThree({
   setGiftMessage,
   setGiftFromName,
 }) {
+  const { packItems, macList, addToCart } = useContext(OrderContext);
+
   const closeAllModals = () => {
     setGiftOption(false);
     setGiftMessage('');
@@ -83,7 +81,6 @@ function PackOrderModalPageThree({
               <PackOrderModalPageThreeHelper
                 key={item.itemId}
                 macListItem={item}
-                macItems={macItems}
               />
             ))}
           </tbody>
@@ -119,15 +116,7 @@ PackOrderModalPageThree.propTypes = {
   handleModalTwoClose: PropTypes.func.isRequired,
   isModalThreeOpen: PropTypes.bool.isRequired,
   handleModalThreeClose: PropTypes.func.isRequired,
-  addToCart: PropTypes.func.isRequired,
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
   packTitle: PropTypes.string.isRequired,
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
   giftMessage: PropTypes.string.isRequired,
   giftFromName: PropTypes.string.isRequired,
   giftOption: PropTypes.bool.isRequired,

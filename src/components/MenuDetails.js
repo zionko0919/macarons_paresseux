@@ -1,12 +1,13 @@
-import { memo } from 'react';
-import PropTypes from 'prop-types';
+import { memo, useContext } from 'react';
 import { Outlet } from 'react-router-dom';
 import { itemImages } from '../items';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import Thumbnail from './Thumbnail';
 import './MenuDetails.css';
 
-function MenuDetails({ macItems }) {
+function MenuDetails() {
+  const { macItems } = useContext(OrderContext);
+
   return (
     <div className="menu-details-component">
       <Outlet />
@@ -23,9 +24,5 @@ function MenuDetails({ macItems }) {
     </div>
   );
 }
-
-MenuDetails.propTypes = {
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-};
 
 export default memo(MenuDetails);

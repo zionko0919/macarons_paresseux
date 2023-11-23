@@ -1,10 +1,12 @@
-import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import { useContext } from 'react';
+import OrderContext from '../context/OrderContext';
 import Thumbnail from './Thumbnail';
 import { itemImages } from '../items';
 import './Menu.css';
 
-function MacMenu({ macItems }) {
+function MacMenu() {
+  const { macItems } = useContext(OrderContext);
+
   return (
     <div className="menu-component">
       {macItems.map((item) => (
@@ -18,9 +20,5 @@ function MacMenu({ macItems }) {
     </div>
   );
 }
-
-MacMenu.propTypes = {
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-};
 
 export default MacMenu;

@@ -1,8 +1,10 @@
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import { PackMacListTypes } from '../reducers/packMacListReducer';
 
-function PackOrderMacListViewer({ macListItem, macItems, macListDispatch }) {
+function PackOrderMacListViewer({ macListItem }) {
+  const { macItems, macListDispatch } = useContext(OrderContext);
   const item = macItems.find((i) => i.itemId === macListItem.itemId);
 
   const removeItemFromMacList = () => {
@@ -26,8 +28,6 @@ PackOrderMacListViewer.propTypes = {
     itemId: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
   })).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
 };
 
 export default PackOrderMacListViewer;

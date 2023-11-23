@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
-import PropTypes from 'prop-types';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import DrinkOrderModal from './DrinkOrderModal';
 import './DrinkThumbnail.css';
-import ItemType from '../types/item';
 
 function DrinkThumbnail({
-  image, title, price, drinkItems, addToCart,
+  drinkImage, drinkTitle, drinkPrice,
 }) {
   const [isDrinkModalOpen, setIsDrinkModalOpen] = useState(false);
 
@@ -26,32 +25,28 @@ function DrinkThumbnail({
           type="button"
           onClick={handleDrinkModalOpen}
         >
-          <img src={image} alt={title} />
+          <img src={drinkImage} alt={drinkTitle} />
         </button>
         <DrinkOrderModal
           isDrinkModalOpen={isDrinkModalOpen}
           handleDrinkModalClose={handleDrinkModalClose}
-          drinkTitle={title}
-          drinkImage={image}
-          addToCart={addToCart}
-          drinkItems={drinkItems}
+          drinkImage={drinkImage}
+          drinkTitle={drinkTitle}
         />
       </div>
-      <p>{title}</p>
+      <p>{drinkTitle}</p>
       <p>
         $
-        {price.toFixed(2)}
+        {drinkPrice.toFixed(2)}
       </p>
     </div>
   );
 }
 
 DrinkThumbnail.propTypes = {
-  image: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  drinkItems: PropTypes.arrayOf(ItemType).isRequired,
-  addToCart: PropTypes.func.isRequired,
+  drinkImage: PropTypes.string.isRequired,
+  drinkTitle: PropTypes.string.isRequired,
+  drinkPrice: PropTypes.number.isRequired,
 };
 
 export default DrinkThumbnail;

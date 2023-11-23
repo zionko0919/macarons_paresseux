@@ -21,13 +21,14 @@ import NotFound from './components/NotFound';
 import { cartReducer, initialCartState, CartTypes } from './reducers/cartReducer';
 import { packMacListReducer, initialPackMacListState, PackMacListTypes } from './reducers/packMacListReducer';
 import CurrentUserContext from './context/CurrentUserContext';
+import OrderContext from './context/OrderContext';
 import Login from './components/Login';
 import Orders from './components/Orders';
 
 const storageKey = 'cart';
 
 function App() {
-  const [macItems, setItems] = useState([]);
+  const [macItems, setMacItems] = useState([]);
   const [packItems, setPackItems] = useState([]);
   const [drinkItems, setDrinkItems] = useState([]);
   const [optionalItems, setOptionalItems] = useState([]);
@@ -47,8 +48,9 @@ function App() {
   );
 
   const [macList, macListDispatch] = useReducer(packMacListReducer, initialPackMacListState);
-  const addToMacList = (itemId) => macListDispatch(
-    { type: PackMacListTypes.ADD, itemId },
+  const addToMacList = useCallback(
+    (itemId) => macListDispatch({ type: PackMacListTypes.ADD, itemId }),
+    [],
   );
 
   const addToCart = useCallback(
@@ -62,7 +64,7 @@ function App() {
 
   useEffect(() => {
     axios.get('/api/macaronItems')
-      .then((result) => setItems(result.data))
+      .then((result) => setMacItems(result.data))
       .catch(console.error);
   }, []);
 
@@ -94,74 +96,76 @@ function App() {
     () => ({ currentUser, setCurrentUser }),
     [currentUser],
   );
-  // console.log('cart: ', cart);
-  // console.log('macList', macList);
+
+  const OrderContextValues = useMemo(
+    () => ({
+      macItems,
+      packItems,
+      drinkItems,
+      optionalItems,
+      addToCart,
+      macList,
+      macListDispatch,
+      addToMacList,
+    }),
+    [
+      macItems,
+      packItems,
+      drinkItems,
+      optionalItems,
+      addToCart,
+      macList,
+      macListDispatch,
+      addToMacList,
+    ],
+  );
 
   return (
     <Router>
       <CurrentUserContext.Provider
         value={currentUserContextValue}
       >
-        <Header cart={cart} />
-        {drinkItems.length === 0 || macItems.length === 0 || packItems.legnth === 0
-          ? <div>Loading...</div>
-          : (
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/orders"
-                element={(
-                  <Orders
-                    macItems={macItems}
-                    drinkItems={drinkItems}
-                    packItems={packItems}
-                    optionalItems={optionalItems}
-                  />
+        <OrderContext.Provider
+          value={OrderContextValues}
+        >
+          <Header cart={cart} />
+          {drinkItems.length === 0 || macItems.length === 0 || packItems.legnth === 0
+            ? <div>Loading...</div>
+            : (
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/orders"
+                  element={(
+                    <Orders />
               )}
-              />
-              <Route
-                path="/cart"
-                element={(
-                  <Cart
-                    cart={cart}
-                    dispatch={dispatch}
-                    macItems={macItems}
-                    drinkItems={drinkItems}
-                    packItems={packItems}
-                    optionalItems={optionalItems}
-                    macList={macList}
-                    macListDispatch={macListDispatch}
-                  />
+                />
+                <Route
+                  path="/cart"
+                  element={(
+                    <Cart
+                      cart={cart}
+                      dispatch={dispatch}
+                    />
                 )}
-              />
-              <Route
-                path="/all_menu/*"
-                element={(
-                  <AllMenu
-                    addToCart={addToCart}
-                    macItems={macItems}
-                  />
+                />
+                <Route
+                  path="/all_menu/*"
+                  element={(
+                    <AllMenu />
                 )}
-              />
-              <Route
-                path="/ordernow/*"
-                element={(
-                  <OrderNow
-                    packItems={packItems}
-                    drinkItems={drinkItems}
-                    macItems={macItems}
-                    optionalItems={optionalItems}
-                    addToCart={addToCart}
-                    macList={macList}
-                    macListDispatch={macListDispatch}
-                    addToMacList={addToMacList}
-                  />
+                />
+                <Route
+                  path="/ordernow/*"
+                  element={(
+                    <OrderNow />
                 )}
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          )}
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            )}
+        </OrderContext.Provider>
       </CurrentUserContext.Provider>
     </Router>
   );

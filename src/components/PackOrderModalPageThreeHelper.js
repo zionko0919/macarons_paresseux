@@ -1,9 +1,13 @@
 /* eslint-disable no-unused-vars */
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import { PackMacListTypes } from '../reducers/packMacListReducer';
 
-function PackOrderModalPageThreeHelper({ macListItem, macItems, macListDispatch }) {
+function PackOrderModalPageThreeHelper({
+  macListItem,
+}) {
+  const { macItems } = useContext(OrderContext);
   const item = macItems.find((i) => i.itemId === macListItem.itemId);
 
   return (
@@ -15,12 +19,10 @@ function PackOrderModalPageThreeHelper({ macListItem, macItems, macListDispatch 
 }
 
 PackOrderModalPageThreeHelper.propTypes = {
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
   macListItem: PropTypes.arrayOf(PropTypes.shape({
     itemId: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
   })).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageThreeHelper;

@@ -1,66 +1,126 @@
 /* eslint-disable no-unused-vars */
+import {
+  useCallback, useContext, useMemo, useState,
+} from 'react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-import './PackThumbnail.css';
+import OrderContext from '../context/OrderContext';
+import PackOrderModalContext from '../context/PackOrderModalContext';
 import PackOrderModalPageOne from './PackOrderModalPageOne';
 import { PackMacListTypes } from '../reducers/packMacListReducer';
-import ItemType from '../types/item';
+import './PackThumbnail.css';
 
 function PackThumbnail({
-  image, title, price, numMac, addToCart, packItems, macItems,
-  macList, macListDispatch, addToMacList,
+  image, title, price, numMac,
 }) {
+  const { macListDispatch } = useContext(OrderContext);
   const [isModalOneOpen, setIsModalOneOpen] = useState(false);
-
-  // const removeItemFromMacList = () => {
-  //   macListDispatch({ type: PackMacListTypes.REMOVE, itemId: macList.itemId });
-  // };
-
   const handleModalOneOpen = () => {
     setIsModalOneOpen(true);
     // setIsModalOneOpen.log('Opening Pack Order Modal Page 1 for ', title);
   };
 
-  const handleModalOneClose = () => {
-    setIsModalOneOpen(false);
-    macListDispatch({ type: PackMacListTypes.EMPTY });
-    // console.log('Closing from Pack Order Modal Page 1 for ', title);
-  };
+  // const handleModalOneClose = () => {
+  //   setIsModalOneOpen(false);
+  //   macListDispatch({ type: PackMacListTypes.EMPTY });
+  //   // console.log('Closing from Pack Order Modal Page 1 for ', title);
+  // };
 
-  const handlModalOneCloseAfterAddToCart = () => {
-    setIsModalOneOpen(false);
+  // const removeItemFromMacList = () => {
+  //   macListDispatch({ type: PackMacListTypes.REMOVE, itemId: macList.itemId });
+  // };
+
+  // const handlModalOneCloseAfterAddToCart = () => {
+  //   setIsModalOneOpen(false);
+  // };
+
+  const [isFirstModalOepn, setIsFirstModalOpen] = useState(false);
+  const testFirstModal = () => {
+    setIsFirstModalOpen(true);
+    console.log('first Modal Open');
   };
+  const handleFirstModalOpen = useCallback(
+    () => testFirstModal,
+    [],
+  );
+  const handleFirstModalClose = useCallback(
+    () => setIsFirstModalOpen(false),
+    [],
+  );
+
+  const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+  const handleSecondModalOepn = useCallback(
+    () => setIsSecondModalOpen(true),
+    [],
+  );
+  const handleSecondModalClose = useCallback(
+    () => setIsSecondModalOpen(false),
+    [],
+  );
+
+  const [isThirdModalOpen, setIsThirdModalOepn] = useState(false);
+  const handleThirdModalOpen = useCallback(
+    () => setIsThirdModalOepn(true),
+    [],
+  );
+  const handleThirdModalClose = useCallback(
+    () => setIsThirdModalOepn(false),
+    [],
+  );
+
+  const PackOrderModalContextValues = useMemo(
+    () => ({
+      isFirstModalOepn,
+      handleFirstModalOpen,
+      handleFirstModalClose,
+      isSecondModalOpen,
+      handleSecondModalOepn,
+      handleSecondModalClose,
+      isThirdModalOpen,
+      handleThirdModalOpen,
+      handleThirdModalClose,
+    }),
+    [
+      isFirstModalOepn,
+      handleFirstModalOpen,
+      handleFirstModalClose,
+      isSecondModalOpen,
+      handleSecondModalOepn,
+      handleSecondModalClose,
+      isThirdModalOpen,
+      handleThirdModalOpen,
+      handleThirdModalClose,
+    ],
+  );
 
   return (
-    <div className="pack-thumbnail-component">
-      <div className="pack-thumbnail-popup-component">
-        <button
-          className="pack-thumbnail-button"
-          type="button"
-          onClick={handleModalOneOpen}
-        >
-          <img className="pack-thumbnail-image" src={image} alt={title} />
-        </button>
-        <PackOrderModalPageOne
-          isModalOneOpen={isModalOneOpen}
-          handleModalOneClose={handleModalOneClose}
-          handlModalOneCloseAfterAddToCart={handlModalOneCloseAfterAddToCart}
-          numMac={numMac}
-          addToCart={addToCart}
-          packTitle={title}
-          packItems={packItems}
-          macItems={macItems}
-          macList={macList}
-          macListDispatch={macListDispatch}
-          addToMacList={addToMacList}
-        />
+    <PackOrderModalContext.Provider
+      value={PackOrderModalContextValues}
+    >
+      <div className="pack-thumbnail-component">
+        <div className="pack-thumbnail-popup-component">
+          <button
+            className="pack-thumbnail-button"
+            type="button"
+            // onClick={handleModalOneOpen}
+            onClick={handleFirstModalOpen}
+          >
+            <img className="pack-thumbnail-image" src={image} alt={title} />
+          </button>
+          <PackOrderModalPageOne
+          // isModalOneOpen={isModalOneOpen}
+          // handleModalOneClose={handleModalOneClose}
+          // handlModalOneCloseAfterAddToCart={handlModalOneCloseAfterAddToCart}
+            numMac={numMac}
+            packTitle={title}
+          />
+        </div>
+        <p>{title}</p>
+        <p>
+          $
+          {price.toFixed(2)}
+        </p>
       </div>
-      <p>{title}</p>
-      <p>
-        $
-        {price.toFixed(2)}
-      </p>
-    </div>
+    </PackOrderModalContext.Provider>
   );
 }
 
@@ -69,15 +129,6 @@ PackThumbnail.propTypes = {
   title: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
   numMac: PropTypes.number.isRequired,
-  addToCart: PropTypes.func.isRequired,
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
-  addToMacList: PropTypes.func.isRequired,
 };
 
 export default PackThumbnail;

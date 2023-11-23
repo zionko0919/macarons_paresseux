@@ -1,17 +1,18 @@
 /* eslint-disable no-unused-vars */
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Dialog, DialogContent, DialogContentText, DialogTitle,
 } from '@mui/material';
+import OrderContext from '../context/OrderContext';
 import './DrinkOrderModal.css';
-import ItemType from '../types/item';
 
 function DrinkOrderModal({
-  isDrinkModalOpen, handleDrinkModalClose, drinkTitle, drinkImage, addToCart, drinkItems,
+  isDrinkModalOpen, handleDrinkModalClose, drinkImage, drinkTitle,
 }) {
+  const { drinkItems, addToCart } = useContext(OrderContext);
+
   const selectedDrink = drinkItems.find((item) => item.title === drinkTitle);
-  // console.log('SD: ', selectedDrink);
-  // console.log('ID Check: ', selectedDrink.category);
   const addItemToCart = () => {
     addToCart(selectedDrink.itemId, selectedDrink.category);
     handleDrinkModalClose();
@@ -37,10 +38,8 @@ function DrinkOrderModal({
 DrinkOrderModal.propTypes = {
   isDrinkModalOpen: PropTypes.bool.isRequired,
   handleDrinkModalClose: PropTypes.func.isRequired,
-  drinkTitle: PropTypes.string.isRequired,
   drinkImage: PropTypes.string.isRequired,
-  addToCart: PropTypes.func.isRequired,
-  drinkItems: PropTypes.arrayOf(ItemType).isRequired,
+  drinkTitle: PropTypes.string.isRequired,
 };
 
 export default DrinkOrderModal;

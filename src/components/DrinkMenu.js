@@ -1,29 +1,24 @@
-import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import { useContext } from 'react';
+import OrderContext from '../context/OrderContext';
 import DrinkThumbnail from './DrinkThumbnail';
 import { itemImages } from '../items';
 import './Menu.css';
 
-function DrinkMenu({ drinkItems, addToCart }) {
+function DrinkMenu() {
+  const { drinkItems } = useContext(OrderContext);
+
   return (
     <div className="menu-component">
       {drinkItems.map((item) => (
         <DrinkThumbnail
           key={item.itemId}
-          image={itemImages[item.imageId]}
-          title={item.title}
-          price={item.price}
-          drinkItems={drinkItems}
-          addToCart={addToCart}
+          drinkImage={itemImages[item.imageId]}
+          drinkTitle={item.title}
+          drinkPrice={item.price}
         />
       ))}
     </div>
   );
 }
-
-DrinkMenu.propTypes = {
-  drinkItems: PropTypes.arrayOf(ItemType).isRequired,
-  addToCart: PropTypes.func.isRequired,
-};
 
 export default DrinkMenu;

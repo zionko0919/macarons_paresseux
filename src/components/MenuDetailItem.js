@@ -1,12 +1,13 @@
-import { memo } from 'react';
+import { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, Link } from 'react-router-dom';
+import OrderContext from '../context/OrderContext';
 import { itemImages } from '../items';
-import ItemType from '../types/item';
 import './MenuDetailItem.css';
 
-function MenuDetailItem({ addToCart, id, macItems }) {
-  // const { id } = useParams();
+function MenuDetailItem({ id }) {
+  const { addToCart, macItems } = useContext(OrderContext);
+
   const menuDetailItem = macItems.find((item) => item.itemId === id);
   const addItemToCart = () => {
     addToCart(menuDetailItem.itemId, menuDetailItem.category);
@@ -49,21 +50,15 @@ function MenuDetailItem({ addToCart, id, macItems }) {
   );
 }
 
-const sharedProps = {
-  addToCart: PropTypes.func.isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-};
-
 MenuDetailItem.propTypes = {
-  // addToCart: PropTypes.func.isRequired,
-  // macItems: PropTypes.arrayOf(ItemType).isRequired,
-  ...sharedProps,
   id: PropTypes.string.isRequired,
 };
 
 const MenuDetailItemMemo = memo(MenuDetailItem);
 
-function MenuDetailsOuter({ addToCart, macItems }) {
+function MenuDetailsOuter() {
+  const { addToCart, macItems } = useContext(OrderContext);
+
   const { id } = useParams();
   return (
     <MenuDetailItemMemo
@@ -74,7 +69,4 @@ function MenuDetailsOuter({ addToCart, macItems }) {
   );
 }
 
-MenuDetailsOuter.propTypes = sharedProps;
-
-// export default MenuDetailItem;
 export default MenuDetailsOuter;

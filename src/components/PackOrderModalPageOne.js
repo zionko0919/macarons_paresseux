@@ -1,21 +1,27 @@
 /* eslint-disable no-unused-vars */
+import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import {
   Button, Dialog, DialogTitle, DialogContent, DialogContentText,
 } from '@mui/material';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import { itemImages } from '../items';
 import SelectMacaronThumbnail from './SelectMacaronThumbnail';
 import PackOrderModalPageTwo from './PackOrderModalPageTwo';
 import './PackOrderModalPageOne.css';
 import PackOrderMacListViewer from './PackOrderMacListViewer';
+import PackOrderModalContext from '../context/PackOrderModalContext';
 
 function PackOrderModalPageOne({
-  isModalOneOpen, handleModalOneClose, handlModalOneCloseAfterAddToCart,
-  numMac, addToCart, packTitle, packItems, macItems,
-  macList, macListDispatch, addToMacList,
+  isModalOneOpen,
+  handleModalOneClose,
+  handlModalOneCloseAfterAddToCart,
+  numMac,
+  packTitle,
 }) {
+  const { macList, macItems } = useContext(OrderContext);
+  const { isFirstModalOpen, handleFirstModalClose } = useContext(PackOrderModalContext);
+
   const [isModalTwoOpen, setIsModalTwoOpen] = useState(false);
 
   const handleModalTwoOpen = () => {
@@ -32,10 +38,19 @@ function PackOrderModalPageOne({
     <>
       <Dialog
         className="pack-order-modal-page-one-dialog"
-        open={isModalOneOpen}
-        onClose={handleModalOneClose}
+        // open={isModalOneOpen}
+        // onClose={handleModalOneClose}
+        open={isFirstModalOpen}
+        onClose={handleFirstModalClose}
       >
-        <Button type="button" onClick={handleModalOneClose}>Close X</Button>
+        <Button
+          type="button"
+          // onClick={handleModalOneClose}
+          onClick={handleFirstModalClose}
+        >
+          Close X
+
+        </Button>
         <DialogTitle className="pack-order-modal-page-one-dialog-title">
           {packTitle}
           {'\n'}
@@ -47,11 +62,7 @@ function PackOrderModalPageOne({
           style={{ maxHeight: '120px' }}
           dividers
         >
-          <PackOrderMacListViewer
-            macList={macList}
-            macItems={macItems}
-            macListDispatch={macListDispatch}
-          />
+          <PackOrderMacListViewer />
         </DialogContent>
         <DialogContent
           className="pack-order-modal-page-one-dialog-content"
@@ -69,12 +80,8 @@ function PackOrderModalPageOne({
                 itemId={item.itemId}
                 image={itemImages[item.imageId]}
                 title={item.title}
-                macList={macList}
-                macListDispatch={macListDispatch}
-                macItems={macItems}
                 numMac={numMac}
                 totalQuantitySelected={totalQuantitySelected}
-                addToMacList={addToMacList}
               />
             ))}
           </DialogContentText>
@@ -93,12 +100,6 @@ function PackOrderModalPageOne({
         handlModalOneCloseAfterAddToCart={handlModalOneCloseAfterAddToCart}
         handleModalTwoClose={handleModalTwoClose}
         packTitle={packTitle}
-        addToCart={addToCart}
-        packItems={packItems}
-        macList={macList}
-        macItems={macItems}
-        macListDispatch={macListDispatch}
-        addToMacList={addToMacList}
       />
     </>
   );
@@ -109,16 +110,7 @@ PackOrderModalPageOne.propTypes = {
   handleModalOneClose: PropTypes.func.isRequired,
   handlModalOneCloseAfterAddToCart: PropTypes.func.isRequired,
   numMac: PropTypes.number.isRequired,
-  addToCart: PropTypes.func.isRequired,
   packTitle: PropTypes.string.isRequired,
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
-  addToMacList: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageOne;

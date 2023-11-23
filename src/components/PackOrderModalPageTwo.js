@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import PropTypes from 'prop-types';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Dialog,
   DialogContent,
@@ -11,14 +11,12 @@ import {
   Button,
   FormControl,
 } from '@mui/material';
-import ItemType from '../types/item';
 import PackOrderModalPageThree from './PackOrderModalPageThree';
 import './PackOrderModalPageTwo.css';
 
 function PackOrderModalPageTwo({
   isModalTwoOpen, handleModalOneClose, handlModalOneCloseAfterAddToCart,
-  handleModalTwoClose, addToCart, packItems, packTitle,
-  macList, macItems, macListDispatch,
+  handleModalTwoClose, packTitle,
 }) {
   const [isModalThreeOpen, setIsModalThreeOpen] = useState(false);
   const [giftOption, setGiftOption] = useState(false);
@@ -118,12 +116,7 @@ function PackOrderModalPageTwo({
         handlModalOneCloseAfterAddToCart={handlModalOneCloseAfterAddToCart}
         handleModalTwoClose={handleModalTwoClose}
         handleModalThreeClose={handleModalThreeClose}
-        packItems={packItems}
         packTitle={packTitle}
-        addToCart={addToCart}
-        macList={macList}
-        macItems={macItems}
-        macListDispatch={macListDispatch}
         giftMessage={giftMessage}
         giftFromName={giftFromName}
         giftOption={giftOption}
@@ -140,15 +133,7 @@ PackOrderModalPageTwo.propTypes = {
   handleModalOneClose: PropTypes.func.isRequired,
   handlModalOneCloseAfterAddToCart: PropTypes.func.isRequired,
   handleModalTwoClose: PropTypes.func.isRequired,
-  addToCart: PropTypes.func.isRequired,
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
   packTitle: PropTypes.string.isRequired,
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
 };
 
 export default PackOrderModalPageTwo;

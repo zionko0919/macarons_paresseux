@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import { CartTypes } from '../reducers/cartReducer';
 import CartRowPackOrderHelper from './CartRowPackOrderHelper';
 
 function CartRow({
-  cartItem, dispatch, macItems, drinkItems, packItems, macList, macListDispatch,
+  cartItem, dispatch,
 }) {
-  // console.log('cart Item: ', cartItem);
-  // console.log('macList:', macList);
+  const {
+    macItems, drinkItems, packItems, macList, macListDispatch,
+  } = useContext(OrderContext);
   let item = '';
   if (cartItem.category === 'drink') {
     item = drinkItems.find((i) => i.itemId === cartItem.itemId);
@@ -36,7 +38,7 @@ function CartRow({
         </button>
       </td>
       <td>
-        <CartRowPackOrderHelper macList={macList} macItems={macItems} />
+        <CartRowPackOrderHelper />
       </td>
     </tr>
   );
@@ -49,14 +51,6 @@ CartRow.propTypes = {
     category: PropTypes.string.isRequired,
   }).isRequired,
   dispatch: PropTypes.func.isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  drinkItems: PropTypes.arrayOf(ItemType).isRequired,
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
 };
 
 export default CartRow;

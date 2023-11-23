@@ -1,9 +1,12 @@
 /* eslint-disable no-unused-vars */
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import PackOrderMacListViewerRow from './PackOrderMacListViewerRow';
 
-function PackOrderMacListViewer({ macList, macItems, macListDispatch }) {
+function PackOrderMacListViewer() {
+  const { macList } = useContext(OrderContext);
+
   return (
     <div className="pack-order-mac-list-component">
       <h3>Current Selection (#Testing)</h3>
@@ -20,8 +23,6 @@ function PackOrderMacListViewer({ macList, macItems, macListDispatch }) {
             <PackOrderMacListViewerRow
               key={item.itemId}
               macListItem={item}
-              macItems={macItems}
-              macListDispatch={macListDispatch}
             />
           ))}
         </tbody>
@@ -29,15 +30,5 @@ function PackOrderMacListViewer({ macList, macItems, macListDispatch }) {
     </div>
   );
 }
-
-PackOrderMacListViewer.propTypes = {
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
-
-};
 
 export default PackOrderMacListViewer;

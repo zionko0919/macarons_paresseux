@@ -1,14 +1,15 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import { useEffect, useState, useContext } from 'react';
+import OrderContext from '../context/OrderContext';
 import './Orders.css';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 
-function Orders({
-  macItems, drinkItems, packItems, optionalItems,
-}) {
+function Orders() {
+  const {
+    macItems, drinkItems, packItems, optionalItems,
+  } = useContext(OrderContext);
+
   const [orders, setOrders] = useState([]);
 
   const { currentUser } = useCurrentUserContext();
@@ -96,17 +97,5 @@ function Orders({
     </div>
   );
 }
-
-Orders.propTypes = {
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
-  drinkItems: PropTypes.arrayOf(ItemType).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  optionalItems: PropTypes.arrayOf(PropTypes.shape({
-    category: PropTypes.string.isRequired,
-    itemId: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-  })).isRequired,
-};
 
 export default Orders;

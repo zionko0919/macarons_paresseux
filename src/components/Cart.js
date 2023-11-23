@@ -1,16 +1,22 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
+import {
+  useMemo, useState, useRef, useContext,
+} from 'react';
 import PropTypes from 'prop-types';
-import { useMemo, useState, useRef } from 'react';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import { CartTypes } from '../reducers/cartReducer';
 import CartRow from './CartRow';
 import Alert from './Alert';
 import './Cart.css';
 
 function Cart({
-  cart, dispatch, macItems, drinkItems, packItems, optionalItems, macList, macListDispatch,
+  cart, dispatch,
 }) {
+  const {
+    macItems, drinkItems, packItems, optionalItems, macList,
+  } = useContext(OrderContext);
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [zipCode, setZipCode] = useState('');
@@ -135,12 +141,6 @@ function Cart({
                 <CartRow
                   key={item.itemId}
                   cartItem={item}
-                  macItems={macItems}
-                  drinkItems={drinkItems}
-                  packItems={packItems}
-                  dispatch={dispatch}
-                  macList={macList}
-                  macListDispatch={macListDispatch}
                 />
               ))}
             </tbody>
@@ -216,21 +216,7 @@ Cart.propTypes = {
     itemId: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
   })).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
   dispatch: PropTypes.func.isRequired,
-  drinkItems: PropTypes.arrayOf(ItemType).isRequired,
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
-  optionalItems: PropTypes.arrayOf(PropTypes.shape({
-    category: PropTypes.string.isRequired,
-    itemId: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-  })).isRequired,
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
 };
 
 export default Cart;

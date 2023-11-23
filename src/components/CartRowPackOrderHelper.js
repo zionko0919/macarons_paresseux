@@ -1,7 +1,9 @@
-import PropTypes from 'prop-types';
-import ItemType from '../types/item';
+import { useContext } from 'react';
+import OrderContext from '../context/OrderContext';
 
-function CartRowPackOrderHelper({ macList, macItems }) {
+function CartRowPackOrderHelper() {
+  const { macItems, macList } = useContext(OrderContext);
+
   return (
     <div className="cart-row-pack-order-helper-component">
       <thead>
@@ -21,13 +23,5 @@ function CartRowPackOrderHelper({ macList, macItems }) {
     </div>
   );
 }
-
-CartRowPackOrderHelper.propTypes = {
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-};
 
 export default CartRowPackOrderHelper;

@@ -1,15 +1,14 @@
 /* eslint-disable no-unused-vars */
-import PropTypes from 'prop-types';
+import { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import ItemType from '../types/item';
+import OrderContext from '../context/OrderContext';
 import PackThumbnail from './PackThumbnail';
 import { itemImages } from '../items';
 import './Menu.css';
 
-function MacPacks({
-  packItems, macItems, addToCart,
-  macList, macListDispatch, addToMacList,
-}) {
+function MacPacks() {
+  const { packItems } = useContext(OrderContext);
+
   return (
     <Routes>
       <Route
@@ -23,12 +22,6 @@ function MacPacks({
                 title={item.title}
                 price={item.price}
                 numMac={item.numMac}
-                addToCart={addToCart}
-                packItems={packItems}
-                macItems={macItems}
-                macList={macList}
-                macListDispatch={macListDispatch}
-                addToMacList={addToMacList}
               />
             ))}
           </div>
@@ -38,17 +31,5 @@ function MacPacks({
 
   );
 }
-
-MacPacks.propTypes = {
-  packItems: PropTypes.arrayOf(ItemType).isRequired,
-  addToCart: PropTypes.func.isRequired,
-  macItems: PropTypes.arrayOf(ItemType).isRequired,
-  macList: PropTypes.arrayOf(PropTypes.shape({
-    itemId: PropTypes.string.isRequired,
-    quantity: PropTypes.number.isRequired,
-  })).isRequired,
-  macListDispatch: PropTypes.func.isRequired,
-  addToMacList: PropTypes.func.isRequired,
-};
 
 export default MacPacks;
