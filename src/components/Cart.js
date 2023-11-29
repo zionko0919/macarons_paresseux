@@ -141,6 +141,7 @@ function Cart({
                 <CartRow
                   key={item.itemId}
                   cartItem={item}
+                  dispatch={dispatch}
                 />
               ))}
             </tbody>

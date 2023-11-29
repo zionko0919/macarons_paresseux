@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import OrderContext from '../context/OrderContext';
+import OrderContext from '../../../../context/OrderContext';
 import PackThumbnail from './PackThumbnail';
-import { itemImages } from '../items';
-import './Menu.css';
+import { itemImages } from '../../../../items';
+import '../Menu.css';
 
 function MacPacks() {
   const { packItems } = useContext(OrderContext);

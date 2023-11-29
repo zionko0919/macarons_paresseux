@@ -1,9 +1,11 @@
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
-import OrderContext from '../context/OrderContext';
-import { PackMacListTypes } from '../reducers/packMacListReducer';
+import OrderContext from '../../../../context/OrderContext';
+import { PackMacListTypes } from '../../../../reducers/packMacListReducer';
 
-function PackOrderMacListViewer({ macListItem }) {
+function PackOrderMacListViewerRow({ macListItem }) {
+  // console.log('type of macListItem: ', typeof macListItem);
+  // console.log('macListItem: ', macListItem);
   const { macItems, macListDispatch } = useContext(OrderContext);
   const item = macItems.find((i) => i.itemId === macListItem.itemId);
 
@@ -23,11 +25,18 @@ function PackOrderMacListViewer({ macListItem }) {
   );
 }
 
-PackOrderMacListViewer.propTypes = {
-  macListItem: PropTypes.arrayOf(PropTypes.shape({
+// PackOrderMacListViewerRow.propTypes = {
+//   macListItem: PropTypes.arrayOf(PropTypes.shape({
+//     itemId: PropTypes.string.isRequired,
+//     quantity: PropTypes.number.isRequired,
+//   })).isRequired,
+// };
+
+PackOrderMacListViewerRow.propTypes = {
+  macListItem: PropTypes.shape({
     itemId: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
-  })).isRequired,
+  }).isRequired,
 };
 
-export default PackOrderMacListViewer;
+export default PackOrderMacListViewerRow;

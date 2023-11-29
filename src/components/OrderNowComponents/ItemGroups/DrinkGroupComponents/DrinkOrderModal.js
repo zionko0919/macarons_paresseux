@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   Dialog, DialogContent, DialogContentText, DialogTitle,
 } from '@mui/material';
-import OrderContext from '../context/OrderContext';
+import OrderContext from '../../../../context/OrderContext';
 import './DrinkOrderModal.css';
 
 function DrinkOrderModal({

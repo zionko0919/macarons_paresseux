@@ -1,8 +1,8 @@
 import { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, Link } from 'react-router-dom';
-import OrderContext from '../context/OrderContext';
-import { itemImages } from '../items';
+import OrderContext from '../../context/OrderContext';
+import { itemImages } from '../../items';
 import './MenuDetailItem.css';
 
 function MenuDetailItem({ id }) {

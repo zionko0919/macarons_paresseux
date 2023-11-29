@@ -1,7 +1,7 @@
 import { memo, useContext } from 'react';
 import { Outlet } from 'react-router-dom';
-import { itemImages } from '../items';
-import OrderContext from '../context/OrderContext';
+import { itemImages } from '../../items';
+import OrderContext from '../../context/OrderContext';
 import Thumbnail from './Thumbnail';
 import './MenuDetails.css';
 

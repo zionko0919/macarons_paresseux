@@ -1,4 +1,4 @@
-.order-now-thumbnail-component {
+.drink-thumbnail-component{  
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -15,7 +15,7 @@
   padding: 20px 40px;
 } */
 
-.order-now-thumbnail-component .popup-component {
+.drink-thumbnail-component .drink-thumbnail-popup-component {
   background-color: #E6E6E6;
   border-radius: 20px;
   display: grid;
@@ -24,13 +24,12 @@
   padding: 20px 40px;
 }
 
-.order-now-thumbnail-component img {
+/* .drink-thumbnail-component img {
     height: 106px;
-    /* width: 106px; */
     transition: transform 333ms ease;
-}
+} */
 
-.order-now-thumbnail-component p {
+.drink-thumbnail-component p {
     font-family: pacifico;
     display: flex;
     width: 100%;
@@ -42,18 +41,29 @@
     white-space: nowrap;
 }
 
-.order-now-thumbnail-component .popup-component:hover img {
-  transform: scale(1.5);
+.drink-thumbnail-button {
+  background: none;  
+  border-style: none;
 }
 
-.order-now-thumbnail-component .popup-component .slection-image-component {
+.drink-thumbnail-button img {
+  height: 90px;
+  width: auto;
+  transition: transform 333ms ease;
+}
+
+.drink-thumbnail-component .drink-thumbnail-popup-component:hover img {
+  transform: scale(1.2);
+}
+
+.drink-thumbnail-component .drink-thumbnail-popup-component .slection-image-component {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   grid-gap: 32px 10px;
   padding: 32px 20px;
 }
 
 @font-face {
   font-family: pacifico;
-  src: url(../fonts/Pacifico-Regular.ttf);
+  src: url(../../../../fonts/Pacifico-Regular.ttf);
 }

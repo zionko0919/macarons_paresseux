@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import MacMenu from './MacMenu';
 import MenuDetails from './MenuDetails';
 import MenuDetailItem from './MenuDetailItem';
-import OrderContext from '../context/OrderContext';
+import OrderContext from '../../context/OrderContext';
 import './AllMenu.css';
 
 function AllMenu() {

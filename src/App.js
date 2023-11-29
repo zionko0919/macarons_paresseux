@@ -8,13 +8,9 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
-import { Menu } from '@mui/icons-material';
-import {
-  Drawer, Box, Button, List, ListItem, ListItemButton, ListItemText,
-} from '@mui/material';
-import AllMenu from './components/AllMenu';
+import AllMenu from './components/MenuComponents/AllMenu';
 import Cart from './components/Cart';
-import OrderNow from './components/OrderNow';
+import OrderNow from './components/OrderNowComponents/OrderNow';
 import Header from './components/Header';
 import Home from './components/Home';
 import NotFound from './components/NotFound';
@@ -32,7 +28,11 @@ function App() {
   const [packItems, setPackItems] = useState([]);
   const [drinkItems, setDrinkItems] = useState([]);
   const [optionalItems, setOptionalItems] = useState([]);
+  const [isGiftOptionSelected, setIsGiftOptionSelected] = useState(false);
+  const [giftMessage, setGiftMessage] = useState('');
+  const [giftSenderName, setGiftSenderName] = useState('');
   const [currentUser, setCurrentUser] = useState({});
+
   const [cart, dispatch] = useReducer(
     cartReducer,
     initialCartState,
@@ -46,15 +46,14 @@ function App() {
       }
     },
   );
+  const addToCart = useCallback(
+    (itemId, category) => dispatch({ type: CartTypes.ADD, itemId, category }),
+    [],
+  );
 
   const [macList, macListDispatch] = useReducer(packMacListReducer, initialPackMacListState);
   const addToMacList = useCallback(
     (itemId) => macListDispatch({ type: PackMacListTypes.ADD, itemId }),
-    [],
-  );
-
-  const addToCart = useCallback(
-    (itemId, category) => dispatch({ type: CartTypes.ADD, itemId, category }),
     [],
   );
 
@@ -107,6 +106,12 @@ function App() {
       macList,
       macListDispatch,
       addToMacList,
+      isGiftOptionSelected,
+      setIsGiftOptionSelected,
+      giftMessage,
+      setGiftMessage,
+      giftSenderName,
+      setGiftSenderName,
     }),
     [
       macItems,
@@ -117,6 +122,12 @@ function App() {
       macList,
       macListDispatch,
       addToMacList,
+      isGiftOptionSelected,
+      setIsGiftOptionSelected,
+      giftMessage,
+      setGiftMessage,
+      giftSenderName,
+      setGiftSenderName,
     ],
   );
 

@@ -5,7 +5,7 @@ function CartRowPackOrderHelper() {
   const { macItems, macList } = useContext(OrderContext);
 
   return (
-    <div className="cart-row-pack-order-helper-component">
+    <table className="cart-row-pack-order-helper-component">
       <thead>
         <tr>
           <th>Macaron</th>
@@ -20,7 +20,7 @@ function CartRowPackOrderHelper() {
           </tr>
         ))}
       </tbody>
-    </div>
+    </table>
   );
 }
 

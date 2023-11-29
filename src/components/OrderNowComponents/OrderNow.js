@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Route, Routes } from 'react-router-dom';
-import MacPacks from './MacPacks';
-import DrinkMenu from './DrinkMenu';
+import MacPacks from './ItemGroups/MacPackGroupComponents/MacPacks';
+import DrinkMenu from './ItemGroups/DrinkGroupComponents/DrinkMenu';
 import './OrderNow.css';
 
 function OrderNow() {

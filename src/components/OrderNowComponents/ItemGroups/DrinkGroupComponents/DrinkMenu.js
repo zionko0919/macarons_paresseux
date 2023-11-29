@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import OrderContext from '../context/OrderContext';
+import OrderContext from '../../../../context/OrderContext';
 import DrinkThumbnail from './DrinkThumbnail';
-import { itemImages } from '../items';
-import './Menu.css';
+import { itemImages } from '../../../../items';
+import '../Menu.css';
 
 function DrinkMenu() {
   const { drinkItems } = useContext(OrderContext);

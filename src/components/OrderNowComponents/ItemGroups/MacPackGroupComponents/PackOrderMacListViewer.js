@@ -1,16 +1,34 @@
 /* eslint-disable no-unused-vars */
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
-import OrderContext from '../context/OrderContext';
+import OrderContext from '../../../../context/OrderContext';
 import PackOrderMacListViewerRow from './PackOrderMacListViewerRow';
 
-function PackOrderMacListViewer() {
+function PackOrderMacListViewer({ numMac, totalQuantitySelected }) {
   const { macList } = useContext(OrderContext);
+
+  const testingOrderArray = macList.map((item) => (
+    <PackOrderMacListViewerRow
+      key={item.itemId}
+      macListItem={item}
+    />
+  ));
+
+  console.log('testingOrderArr: ', testingOrderArray);
 
   return (
     <div className="pack-order-mac-list-component">
-      <h3>Current Selection (#Testing)</h3>
-      {/* <button type="button">Start Over</button> */}
+      <p>
+        Select Your
+        {' '}
+        {numMac > 1 ? 'Macarons' : 'Macaron'}
+      </p>
+      <p>
+        {' '}
+        {numMac - totalQuantitySelected}
+        {' '}
+        Left
+      </p>
       <table>
         <thead>
           <tr>
@@ -30,5 +48,10 @@ function PackOrderMacListViewer() {
     </div>
   );
 }
+
+PackOrderMacListViewer.propTypes = {
+  numMac: PropTypes.number.isRequired,
+  totalQuantitySelected: PropTypes.number.isRequired,
+};
 
 export default PackOrderMacListViewer;
