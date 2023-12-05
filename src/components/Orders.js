@@ -5,6 +5,17 @@ import OrderContext from '../context/OrderContext';
 import './Orders.css';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 
+const tableStyle = {
+  borderCollapse: 'collapse',
+  marginTop: '10px', // Adjust the margin as needed
+};
+
+const itemStyle = {
+  borderTop: '1px solid #ddd', // Add a border between each item
+  borderBottom: '1px solid #ddd',
+  padding: '8px',
+};
+
 function Orders() {
   const {
     macItems, drinkItems, packItems, optionalItems,
@@ -44,7 +55,7 @@ function Orders() {
 
   return (
     <div className="orders-component">
-      <h2>Exisiting Orders</h2>
+      <h2>Existing Orders</h2>
       {orders.length === 0
         ? (
           <div>
@@ -55,7 +66,13 @@ function Orders() {
         )
         : orders.map((order) => (
           <div className="order" key={order.id}>
-            <table>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th>Order Date:</th>
+                  <td>{order.orderTimeLog}</td>
+                </tr>
+              </thead>
               <thead>
                 <tr>
                   <th>Customer</th>
@@ -71,8 +88,35 @@ function Orders() {
                 </tr>
               </tbody>
               <tbody>
+                <tr>
+                  <th>Subtotal</th>
+                  <th>Sales Tax</th>
+                  <th>Total</th>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
+                  <td>
+                    $
+                    {order.subTotal.toFixed(2)}
+                  </td>
+                  <td>
+                    $
+                    {order.taxAmount.toFixed(2)}
+                    {' '}
+                    (
+                    {(order.taxRate * 100).toFixed(3)}
+                    %)
+                  </td>
+                  <td>
+                    $
+                    {order.total.toFixed(2)}
+                  </td>
+                </tr>
+              </tbody>
+              <tbody>
                 {order.items.map((item) => (
-                  <tr key={item.itemId}>
+                  <tr key={item.key} style={itemStyle}>
                     <td>{item.quantity}</td>
                     <td>
                       {
@@ -82,6 +126,51 @@ function Orders() {
                         || (optionalItems.find((i) => i.itemId === item.itemId)?.title)
                       }
                     </td>
+                    {item.category === 'pack' && (
+                    <tr>
+                      <td colSpan="3">
+                        <b>Subitems:</b>
+                      </td>
+                    </tr>
+                    )}
+                    {item.category === 'pack' && (
+                      item.subItem.map((mac) => (
+                        <tr key={mac.itemId}>
+                          <td>{(macItems.find((i) => i.itemId === mac.itemId)?.title)}</td>
+                          <td colSpan="2">{mac.quantity}</td>
+                        </tr>
+                      ))
+                    )}
+                    {item.giftOption && (
+                      <tr>
+                        <td>
+                          <b>Gift-Wrap</b>
+                        </td>
+                        <td>
+                          {item.giftOption.isGiftOptionSelected ? 'Yes' : 'No'}
+                        </td>
+                      </tr>
+                    )}
+                    {item.giftOption && item.giftOption.isGiftOptionSelected && (
+                      <tr>
+                        <td>
+                          <b>Message: </b>
+                        </td>
+                        <td>
+                          {item.giftOption.giftMessage}
+                        </td>
+                      </tr>
+                    )}
+                    {item.giftOption && item.giftOption.isGiftOptionSelected && (
+                      <tr>
+                        <td>
+                          <b>From: </b>
+                        </td>
+                        <td>
+                          {item.giftOption.giftSenderName}
+                        </td>
+                      </tr>
+                    )}
                   </tr>
                 ))}
               </tbody>

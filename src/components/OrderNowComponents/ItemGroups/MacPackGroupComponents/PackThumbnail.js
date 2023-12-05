@@ -15,74 +15,50 @@ function PackThumbnail({
   image, title, price, numMac,
 }) {
   const {
-    macListDispatch, isGiftOptionSelected, setIsGiftOptionSelected,
+    macListDispatch, macList, isGiftOptionSelected,
+    setIsGiftOptionSelected, setGiftMessage, setGiftSenderName,
   } = useContext(OrderContext);
 
   // const removeItemFromMacList = () => {
   //   macListDispatch({ type: PackMacListTypes.REMOVE, itemId: macList.itemId });
   // };
 
-  const [isSelectMacModalOpen, setIsSelectMacModalOpen] = useState(false);
-  const [isGiftOptionModalOpen, setIsGiftOptionModalOpen] = useState(false);
-  const [isOrderSummaryModalOpen, setIsOrderSummaryModalOpen] = useState(false);
-  const handleSelectMacModalOpen = useCallback(
-    () => {
-      setIsSelectMacModalOpen(true);
-    },
-    [],
-  );
+  const clearPreview = () => {
+    macListDispatch({ type: PackMacListTypes.EMPTY });
+    setIsGiftOptionSelected(false);
+    setGiftMessage('');
+    setGiftSenderName('');
+  };
 
-  const handleGiftOptionModalOpen = useCallback(
-    () => {
-      setIsGiftOptionModalOpen(true);
-    },
-    [],
-  );
+  const [isSelectMacModalOpen, setIsSelectMacModalOpen] = useState(false); // First Modal
+  const [isGiftOptionModalOpen, setIsGiftOptionModalOpen] = useState(false); // Second Modal
+  const [isOrderSummaryModalOpen, setIsOrderSummaryModalOpen] = useState(false); // Third Modal
 
-  const handleOrderSummaryModalOpen = useCallback(
-    () => {
-      setIsOrderSummaryModalOpen(true);
-    },
-    [],
-  );
-
-  const handleSelectMacModalClose = useCallback(
-    () => setIsSelectMacModalOpen(false),
-    [],
-  );
-
-  const handleGiftOptionModalClose = useCallback(
-    () => setIsGiftOptionModalOpen(false),
-    [],
-  );
-
-  const handleOrderSummaryModalClose = useCallback(
-    () => setIsOrderSummaryModalOpen(false),
-    [],
-  );
+  const handleSelectMacModalOpen = useCallback(() => setIsSelectMacModalOpen(true), []);
+  const handleSelectMacModalClose = useCallback(() => setIsSelectMacModalOpen(false), []);
+  const handleGiftOptionModalClose = useCallback(() => setIsGiftOptionModalOpen(false), []);
+  const handleOrderSummaryModalClose = useCallback(() => setIsOrderSummaryModalOpen(false), []);
 
   const proceedToSecondModal = useCallback(() => {
-    setIsSelectMacModalOpen(false);
+    handleSelectMacModalClose();
     setIsGiftOptionModalOpen(true);
-  }, []);
+  }, [handleSelectMacModalClose]);
 
   const recedeToFirstModal = useCallback(() => {
-    setIsGiftOptionModalOpen(false);
+    handleGiftOptionModalClose();
     setIsSelectMacModalOpen(true);
-  }, []);
+  }, [handleGiftOptionModalClose]);
 
   const proceedToThirdModal = useCallback(() => {
-    setIsGiftOptionModalOpen(false);
+    handleGiftOptionModalClose();
     setIsOrderSummaryModalOpen(true);
-  }, []);
+  }, [handleGiftOptionModalClose]);
 
   const recedeToSecondModal = useCallback(() => {
-    setIsGiftOptionSelected(false);
-    setIsOrderSummaryModalOpen(false);
+    handleGiftOptionModalClose();
+    handleOrderSummaryModalClose();
     setIsGiftOptionModalOpen(true);
-  }, [setIsGiftOptionSelected]);
-
-  // console.log('isGifitOptSelcted: ', isGiftOptionSelected);
+  }, [handleGiftOptionModalClose, handleOrderSummaryModalClose]);
 
   const PackOrderModalContextValues = useMemo(
     () => ({
@@ -90,10 +66,8 @@ function PackThumbnail({
       handleSelectMacModalOpen,
       handleSelectMacModalClose,
       isGiftOptionModalOpen,
-      handleGiftOptionModalOpen,
       handleGiftOptionModalClose,
       isOrderSummaryModalOpen,
-      handleOrderSummaryModalOpen,
       handleOrderSummaryModalClose,
       closeSecondOpenThird: proceedToThirdModal,
     }),
@@ -102,10 +76,8 @@ function PackThumbnail({
       handleSelectMacModalOpen,
       handleSelectMacModalClose,
       isGiftOptionModalOpen,
-      handleGiftOptionModalOpen,
       handleGiftOptionModalClose,
       isOrderSummaryModalOpen,
-      handleOrderSummaryModalOpen,
       handleOrderSummaryModalClose,
       proceedToThirdModal,
     ],
@@ -120,7 +92,6 @@ function PackThumbnail({
           <button
             className="pack-thumbnail-button"
             type="button"
-            // onClick={handleModalOneOpen}
             onClick={handleSelectMacModalOpen}
           >
             <img className="pack-thumbnail-image" src={image} alt={title} />
@@ -137,6 +108,7 @@ function PackThumbnail({
           <OrderPreviewModal
             title={title}
             onPrevious={recedeToSecondModal}
+            clearPreview={clearPreview}
           />
         </div>
         <p>{title}</p>

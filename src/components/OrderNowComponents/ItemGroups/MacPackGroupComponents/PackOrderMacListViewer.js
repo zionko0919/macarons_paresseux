@@ -14,7 +14,8 @@ function PackOrderMacListViewer({ numMac, totalQuantitySelected }) {
     />
   ));
 
-  console.log('testingOrderArr: ', testingOrderArray);
+  // console.log('testingOrderArr: ', testingOrderArray);
+  // console.log('macList: ', macList);
 
   return (
     <div className="pack-order-mac-list-component">

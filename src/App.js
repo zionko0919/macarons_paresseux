@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import {
-  useCallback, useEffect, useReducer, useState, useMemo,
+  useCallback, useEffect, useReducer, useState, useMemo, useRef,
 } from 'react';
 import {
   BrowserRouter as Router,
@@ -28,11 +28,34 @@ function App() {
   const [packItems, setPackItems] = useState([]);
   const [drinkItems, setDrinkItems] = useState([]);
   const [optionalItems, setOptionalItems] = useState([]);
+
   const [isGiftOptionSelected, setIsGiftOptionSelected] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
   const [giftSenderName, setGiftSenderName] = useState('');
+
   const [currentUser, setCurrentUser] = useState({});
 
+  // console.log('GiftOption?: ', isGiftOptionSelected);
+  // console.log('GiftMSG: ', giftMessage);
+  // console.log('GiftSender:', giftSenderName);
+  const giftOptionInfo = useMemo(() => ({
+    isGiftOptionSelected,
+    giftMessage,
+    giftSenderName,
+  }), [isGiftOptionSelected, giftMessage, giftSenderName]);
+  // console.log(giftOptionInfo);
+
+  // const giftOptionInfo = useMemo(
+  //   () => (
+  //     [{ isGiftOptionSelected }, { giftMessage }, { giftSenderName }]),
+  //   [isGiftOptionSelected, giftMessage, giftSenderName],
+  // );
+
+  const [macList, macListDispatch] = useReducer(packMacListReducer, initialPackMacListState);
+  const addToMacList = useCallback(
+    (itemId) => macListDispatch({ type: PackMacListTypes.ADD, itemId }),
+    [],
+  );
   const [cart, dispatch] = useReducer(
     cartReducer,
     initialCartState,
@@ -47,15 +70,18 @@ function App() {
     },
   );
   const addToCart = useCallback(
-    (itemId, category) => dispatch({ type: CartTypes.ADD, itemId, category }),
-    [],
+    (itemId, category) => dispatch({
+      type: CartTypes.ADD,
+      itemId,
+      category,
+      macList,
+      giftOptionInfo,
+    }),
+    [macList, giftOptionInfo],
   );
 
-  const [macList, macListDispatch] = useReducer(packMacListReducer, initialPackMacListState);
-  const addToMacList = useCallback(
-    (itemId) => macListDispatch({ type: PackMacListTypes.ADD, itemId }),
-    [],
-  );
+  // console.log('macList test in App: ', macList);
+  // console.log('cart: ', cart);
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(cart));

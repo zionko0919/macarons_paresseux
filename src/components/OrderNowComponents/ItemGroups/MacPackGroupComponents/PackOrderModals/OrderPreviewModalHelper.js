@@ -7,8 +7,8 @@ function OrderPreviewModalHelper({ macListItem }) {
   const { macItems } = useContext(OrderContext);
   const item = macItems.find((i) => i.itemId === macListItem.itemId);
 
-  console.log('type of macListItem: ', typeof macListItem);
-  console.log('macListItem: ', macListItem);
+  // console.log('type of macListItem: ', typeof macListItem);
+  // console.log('macListItem: ', macListItem);
 
   return (
     <tr>

@@ -10,26 +10,31 @@ import PackOrderModalContext from '../../../../../context/PackOrderModalContext'
 import OrderPreviewModalHelper from './OrderPreviewModalHelper';
 import './OrderPreviewModal.css';
 
-function OrderPreviewModal({ title, onPrevious }) {
+function OrderPreviewModal({ title, onPrevious, clearPreview }) {
   const {
-    isGiftOptionSelected, giftMessage, giftSenderName, macList, packItems, addToCart,
+    isGiftOptionSelected,
+    giftMessage,
+    giftSenderName,
+    macList,
+    packItems,
+    addToCart,
   } = useContext(OrderContext);
-
   const {
     isOrderSummaryModalOpen,
     handleOrderSummaryModalClose,
   } = useContext(PackOrderModalContext);
 
   const selectedPack = packItems.find((item) => item.title === title);
-
+  // console.log('selectedPack: ', selectedPack);
   const addItemToCart = () => {
     addToCart(selectedPack.itemId, selectedPack.category);
+    clearPreview();
     handleOrderSummaryModalClose();
   };
 
   return (
     <Dialog
-      className="order-Preview-modal-component"
+      className="order-preview-modal-component"
       open={isOrderSummaryModalOpen}
       onClose={handleOrderSummaryModalClose}
     >
@@ -85,6 +90,7 @@ function OrderPreviewModal({ title, onPrevious }) {
 OrderPreviewModal.propTypes = {
   title: PropTypes.string.isRequired,
   onPrevious: PropTypes.func.isRequired,
+  clearPreview: PropTypes.func.isRequired,
 };
 
 export default OrderPreviewModal;

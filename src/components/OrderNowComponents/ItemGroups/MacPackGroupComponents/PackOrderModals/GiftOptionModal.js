@@ -10,12 +10,6 @@ import PackOrderModalContext from '../../../../../context/PackOrderModalContext'
 
 function GiftOptionModal({ onPrevious, onNext }) {
   const {
-    isGiftOptionModalOpen,
-    handleGiftOptionModalClose,
-    closeSecondOpenThird,
-  } = useContext(PackOrderModalContext);
-
-  const {
     isGiftOptionSelected,
     setIsGiftOptionSelected,
     giftMessage,
@@ -23,6 +17,11 @@ function GiftOptionModal({ onPrevious, onNext }) {
     giftSenderName,
     setGiftSenderName,
   } = useContext(OrderContext);
+  const {
+    isGiftOptionModalOpen,
+    handleGiftOptionModalClose,
+    closeSecondOpenThird,
+  } = useContext(PackOrderModalContext);
 
   const handleGiftMessageInput = (e) => {
     setGiftMessage(e.target.value.toUpperCase());
@@ -35,8 +34,8 @@ function GiftOptionModal({ onPrevious, onNext }) {
   const addGiftOption = () => {
     setIsGiftOptionSelected(true);
     closeSecondOpenThird();
-    console.log('message: ', giftMessage);
-    console.log('from', giftSenderName);
+    // console.log('message: ', giftMessage);
+    // console.log('from', giftSenderName);
   };
 
   const skipGiftOption = () => {
@@ -63,6 +62,7 @@ function GiftOptionModal({ onPrevious, onNext }) {
           variant="outlined"
           rows={8}
           inputProps={{ maxLength: 120 }}
+          helperText={`${giftMessage.length}/${120}`}
           value={giftMessage}
           onChange={handleGiftMessageInput}
         />
@@ -72,6 +72,7 @@ function GiftOptionModal({ onPrevious, onNext }) {
           variant="outlined"
           rows={2}
           inputProps={{ maxLength: 30 }}
+          helperText={`${giftSenderName.length}/${30}`}
           value={giftSenderName}
           onChange={handleGiftSenderNameInput}
         />

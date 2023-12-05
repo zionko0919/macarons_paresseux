@@ -12,12 +12,8 @@ import SelectMacaronThumbnail from './SelectMacaronThumbnail';
 import './SelectMacModal.css';
 
 function SelectMacModal({ title, numMac, onNext }) {
-  const {
-    isSelectMacModalOpen,
-    handleSelectMacModalClose,
-  } = useContext(PackOrderModalContext);
-
   const { macList, macItems } = useContext(OrderContext);
+  const { isSelectMacModalOpen, handleSelectMacModalClose } = useContext(PackOrderModalContext);
 
   const totalQuantitySelected = macList.reduce((acc, item) => item.quantity + acc, 0);
 
@@ -53,7 +49,7 @@ function SelectMacModal({ title, numMac, onNext }) {
         <Button
           type="button"
           onClick={onNext}
-          // disabled={numMac !== totalQuantitySelected}
+          disabled={numMac !== totalQuantitySelected}
         >
           Next
         </Button>

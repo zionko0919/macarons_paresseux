@@ -27,6 +27,9 @@ function Cart({
   const debounceRef = useRef(null);
   const zipRef = useRef(null);
 
+  // console.log('cart: ', cart);
+  // console.log('cart.key: ', cart.key);
+
   const subTotal = isEmployeeOfTheMonth ? 0 : cart.reduce((acc, item) => {
     let detailItem = {};
     if (item.category === 'macaron') {
@@ -47,9 +50,39 @@ function Cart({
     },
     [zipCode],
   );
+
+  // const apiKey = '3qMWDxIFQDjuMGl7G0dUnw==CSKNGN3OaFZ9r3nI'; // Replace with your actual API key
+
+  // async function getSalesTax() {
+  //   try {
+  //     const response = await fetch(`https://api.api-ninjas.com/v1/salestax?zip_code=${zipCode}`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'X-Api-Key': apiKey,
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`Error: ${response.statusText}`);
+  //     }
+
+  //     const taxResult = await response.json();
+  //     console.log(taxResult);
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //   }
+  // }
+
+  // getSalesTax();
+
   const taxAmount = subTotal * taxRate;
   const total = subTotal + taxAmount;
   const isFormValid = zipCode.length === 5 && name.trim();
+
+  const orderCreatedTime = new Date();
+  const orderTimeLog = orderCreatedTime.toLocaleString('en-US', { timeZone: 'America/Chicago' });
+  console.log('hi: ', orderTimeLog);
 
   const submitOrder = async (event) => {
     event.preventDefault();
@@ -61,6 +94,11 @@ function Cart({
         name,
         phone,
         zipCode,
+        total,
+        orderTimeLog,
+        subTotal,
+        taxAmount,
+        taxRate,
       });
       dispatch({ type: CartTypes.EMPTY });
       setShowSuccessAlert(true);
@@ -134,12 +172,15 @@ function Cart({
                 <th>Quantity</th>
                 <th>Item</th>
                 <th>Price</th>
+                <th>More Info</th>
+                <th>Remove</th>
               </tr>
             </thead>
             <tbody>
               {cart.map((item) => (
                 <CartRow
-                  key={item.itemId}
+                  // key={item.itemId}
+                  key={item.key}
                   cartItem={item}
                   dispatch={dispatch}
                 />
