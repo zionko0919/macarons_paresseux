@@ -40,9 +40,15 @@ function Cart({
       detailItem = packItems.find((i) => i.itemId === item.itemId);
     }
 
-    const itemPrice = detailItem.salePrice ?? detailItem.price;
+    let itemPrice = detailItem.salePrice ?? detailItem.price;
+
+    if (item.giftOption && item.giftOption.isGiftOptionSelected) {
+      itemPrice += 1.5;
+    }
+
     return item.quantity * itemPrice + acc;
   }, 0);
+
   const taxRate = useMemo(
     () => {
       const taxPercentage = parseInt(zipCode.substring(0, 1) || '0', 10) + 1;
@@ -82,7 +88,6 @@ function Cart({
 
   const orderCreatedTime = new Date();
   const orderTimeLog = orderCreatedTime.toLocaleString('en-US', { timeZone: 'America/Chicago' });
-  console.log('hi: ', orderTimeLog);
 
   const submitOrder = async (event) => {
     event.preventDefault();
@@ -172,6 +177,7 @@ function Cart({
                 <th>Quantity</th>
                 <th>Item</th>
                 <th>Price</th>
+                <th>Gift Box</th>
                 <th>More Info</th>
                 <th>Remove</th>
               </tr>

@@ -12,6 +12,8 @@ const findItem = (cart, itemId, category) => cart.find(
 
 export const cartReducer = (state, action) => {
   // console.log('state: ', state);
+  console.log('state.key: ', state);
+  console.log('action.key: ', action);
   switch (action.type) {
     case CartTypes.ADD:
       if (action.category !== 'pack') {
@@ -49,7 +51,11 @@ export const cartReducer = (state, action) => {
       ];
 
     case CartTypes.REMOVE:
-      return state.filter((item) => item.itemId !== action.itemId);
+      return state.filter(
+        (item) => item.key !== action.key,
+      );
+
+      // return state.filter((item) => item.itemId !== action.itemId);
 
       // return state.filter(
       //   (item) => !(item.itemId === action.itemId && item.category === action.category),

@@ -10,7 +10,7 @@ import OrderContext from '../context/OrderContext';
 import './CartItemViewMoreModal.css';
 
 function CartItemViewMoreModal({
-  open, onClose, subItem, giftOption,
+  itemTitle, open, onClose, subItem, giftOption,
 }) {
   // console.log('giftOption: ', giftOption);
   const { macItems } = useContext(OrderContext);
@@ -23,7 +23,13 @@ function CartItemViewMoreModal({
     >
       <Button type="button" onClick={onClose}>Close X</Button>
       <Divider />
-      <DialogTitle>Your Order Detail</DialogTitle>
+      <DialogTitle>
+        Your
+        {' '}
+        {itemTitle}
+        {' '}
+        Information
+      </DialogTitle>
       <Divider />
       <table>
         <thead>
@@ -42,28 +48,33 @@ function CartItemViewMoreModal({
         </tbody>
       </table>
       <Divider />
-      <DialogContent>Gift Wrap:</DialogContent>
-      <DialogContentText>
-        {giftOption.isGiftOptionSelected
-          ? 'Yes'
-          : 'No'}
-      </DialogContentText>
+      <DialogContent>
+        <DialogContentText>
+          Gift Box:
+          {' '}
+          {giftOption.isGiftOptionSelected
+            ? 'Yes'
+            : 'No'}
+        </DialogContentText>
+        {giftOption.isGiftOptionSelected && (
+        <>
+          <DialogContentText>Message:</DialogContentText>
+          <DialogContentText>{giftOption.giftMessage}</DialogContentText>
+          <DialogContentText>From:</DialogContentText>
+          <DialogContentText>{giftOption.giftSenderName}</DialogContentText>
+        </>
+        )}
+      </DialogContent>
 
-      {giftOption.isGiftOptionSelected && (
-      <>
-        <DialogContent>Message:</DialogContent>
-        <DialogContentText>{giftOption.giftMessage}</DialogContentText>
-        <DialogContent>From:</DialogContent>
-        <DialogContentText>{giftOption.giftSenderName}</DialogContentText>
-        <Button type="button">Edit</Button>
-      </>
-      )}
+      <Divider />
+      <Button type="button">Edit</Button>
     </Dialog>
 
   );
 }
 
 CartItemViewMoreModal.propTypes = {
+  itemTitle: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   subItem: PropTypes.arrayOf(PropTypes.shape({

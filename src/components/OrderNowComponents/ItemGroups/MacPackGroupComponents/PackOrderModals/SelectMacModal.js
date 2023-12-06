@@ -11,11 +11,18 @@ import { itemImages } from '../../../../../items';
 import SelectMacaronThumbnail from './SelectMacaronThumbnail';
 import './SelectMacModal.css';
 
-function SelectMacModal({ title, numMac, onNext }) {
+function SelectMacModal({
+  title, numMac, onNext, clearPreview,
+}) {
   const { macList, macItems } = useContext(OrderContext);
   const { isSelectMacModalOpen, handleSelectMacModalClose } = useContext(PackOrderModalContext);
 
   const totalQuantitySelected = macList.reduce((acc, item) => item.quantity + acc, 0);
+
+  const clearPreviewAndCloseModal = () => {
+    clearPreview();
+    handleSelectMacModalClose();
+  };
 
   return (
     <Dialog
@@ -23,7 +30,7 @@ function SelectMacModal({ title, numMac, onNext }) {
       open={isSelectMacModalOpen}
       onClose={handleSelectMacModalClose}
     >
-      <Button type="button" onClick={handleSelectMacModalClose}>Close X</Button>
+      <Button type="button" onClick={clearPreviewAndCloseModal}>Close X</Button>
       <DialogTitle>
         {title}
       </DialogTitle>
@@ -62,6 +69,7 @@ SelectMacModal.propTypes = {
   title: PropTypes.string.isRequired,
   numMac: PropTypes.number.isRequired,
   onNext: PropTypes.func.isRequired,
+  clearPreview: PropTypes.func.isRequired,
 };
 
 export default SelectMacModal;

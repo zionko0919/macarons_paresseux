@@ -15,6 +15,9 @@ function DrinkMenu() {
           drinkImage={itemImages[item.imageId]}
           drinkTitle={item.title}
           drinkPrice={item.price}
+          drinkDescription={item.description}
+          drinkCalories={item.calories}
+          drinkSize={item.size}
         />
       ))}
     </div>

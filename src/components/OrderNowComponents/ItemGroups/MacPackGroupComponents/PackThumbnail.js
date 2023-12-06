@@ -100,13 +100,16 @@ function PackThumbnail({
             title={title}
             numMac={numMac}
             onNext={proceedToSecondModal}
+            clearPreview={clearPreview}
           />
           <GiftOptionModal
             onPrevious={recedeToFirstModal}
             onNext={proceedToThirdModal}
+            clearPreview={clearPreview}
           />
           <OrderPreviewModal
             title={title}
+            price={price}
             onPrevious={recedeToSecondModal}
             clearPreview={clearPreview}
           />

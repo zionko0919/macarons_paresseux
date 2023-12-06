@@ -10,7 +10,9 @@ import PackOrderModalContext from '../../../../../context/PackOrderModalContext'
 import OrderPreviewModalHelper from './OrderPreviewModalHelper';
 import './OrderPreviewModal.css';
 
-function OrderPreviewModal({ title, onPrevious, clearPreview }) {
+function OrderPreviewModal({
+  title, price, onPrevious, clearPreview,
+}) {
   const {
     isGiftOptionSelected,
     giftMessage,
@@ -24,8 +26,13 @@ function OrderPreviewModal({ title, onPrevious, clearPreview }) {
     handleOrderSummaryModalClose,
   } = useContext(PackOrderModalContext);
 
+  const clearPreviewAndCloseModal = () => {
+    clearPreview();
+    handleOrderSummaryModalClose();
+  };
+
   const selectedPack = packItems.find((item) => item.title === title);
-  // console.log('selectedPack: ', selectedPack);
+
   const addItemToCart = () => {
     addToCart(selectedPack.itemId, selectedPack.category);
     clearPreview();
@@ -38,8 +45,14 @@ function OrderPreviewModal({ title, onPrevious, clearPreview }) {
       open={isOrderSummaryModalOpen}
       onClose={handleOrderSummaryModalClose}
     >
-      <Button type="button" onClick={handleOrderSummaryModalClose}>Close X</Button>
-      <DialogTitle>Your Box Preview</DialogTitle>
+      <Button type="button" onClick={clearPreviewAndCloseModal}>Close X</Button>
+      <DialogTitle>
+        Your
+        {' '}
+        {title}
+        {' '}
+        Preview
+      </DialogTitle>
       <DialogContent>Is this Correct?</DialogContent>
       <Divider />
       <table>
@@ -59,25 +72,54 @@ function OrderPreviewModal({ title, onPrevious, clearPreview }) {
         </tbody>
       </table>
       <Divider />
-      <DialogContentText>
-        Gift Wrap:
-        {' '}
-        {isGiftOptionSelected === true ? 'Yes' : 'No'}
-      </DialogContentText>
-      { isGiftOptionSelected ? (
-        <>
-          <DialogContentText>
-            Message:
-            {' '}
-            {giftMessage}
-          </DialogContentText>
-          <DialogContentText>
-            From:
-            {' '}
-            {giftSenderName}
-          </DialogContentText>
-        </>
-      ) : ''}
+      <DialogContent>
+        <DialogContentText>
+          Gift Box:
+          {' '}
+          {isGiftOptionSelected ? 'Yes' : 'No'}
+        </DialogContentText>
+        {isGiftOptionSelected ? (
+          <>
+            <DialogContentText>
+              Message:
+              {' '}
+              {giftMessage}
+            </DialogContentText>
+            <DialogContentText>
+              From:
+              {' '}
+              {giftSenderName}
+            </DialogContentText>
+          </>
+        ) : ''}
+      </DialogContent>
+      <Divider />
+      <DialogContent>
+        <table style={{ borderCollapse: 'collapse' }}>
+          <tbody>
+            <tr>
+              <td>Item: </td>
+              <td>
+                $
+                {' '}
+                {price.toFixed(2)}
+              </td>
+            </tr>
+            <tr>
+              <td>Gift Box:</td>
+              <td>{isGiftOptionSelected ? '$ 1.50' : '$ 0.00'}</td>
+            </tr>
+            <tr style={{ borderTop: '1px solid #ddd' }}>
+              <td>Total:</td>
+              <td>
+                $
+                {' '}
+                {isGiftOptionSelected ? (price + 1.5).toFixed(2) : price.toFixed(2)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </DialogContent>
       <Divider />
       <DialogActions>
         <Button type="button" onClick={onPrevious}>Back</Button>
@@ -89,6 +131,7 @@ function OrderPreviewModal({ title, onPrevious, clearPreview }) {
 
 OrderPreviewModal.propTypes = {
   title: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
   onPrevious: PropTypes.func.isRequired,
   clearPreview: PropTypes.func.isRequired,
 };

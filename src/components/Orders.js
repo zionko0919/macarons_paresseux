@@ -12,7 +12,7 @@ const tableStyle = {
 
 const itemStyle = {
   borderTop: '1px solid #ddd', // Add a border between each item
-  borderBottom: '1px solid #ddd',
+  // borderBottom: '1px solid #ddd',
   padding: '8px',
 };
 
@@ -96,6 +96,13 @@ function Orders() {
               </tbody>
               <tbody>
                 <tr>
+                  <th>Subtotal</th>
+                  <th>Sales Tax</th>
+                  <th>Total</th>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
                   <td>
                     $
                     {order.subTotal.toFixed(2)}
@@ -114,66 +121,64 @@ function Orders() {
                   </td>
                 </tr>
               </tbody>
-              <tbody>
-                {order.items.map((item) => (
-                  <tr key={item.key} style={itemStyle}>
+              {order.items.map((item) => (
+                <tbody key={item.key}>
+                  <tr style={itemStyle}>
                     <td>{item.quantity}</td>
                     <td>
-                      {
-                        (macItems.find((i) => i.itemId === item.itemId)?.title)
+                      {(macItems.find((i) => i.itemId === item.itemId)?.title)
                         || (packItems.find((i) => i.itemId === item.itemId)?.title)
                         || (drinkItems.find((i) => i.itemId === item.itemId)?.title)
-                        || (optionalItems.find((i) => i.itemId === item.itemId)?.title)
-                      }
+                        || (optionalItems.find((i) => i.itemId === item.itemId)?.title)}
                     </td>
-                    {item.category === 'pack' && (
+                  </tr>
+                  {item.category === 'pack' && (
                     <tr>
                       <td colSpan="3">
                         <b>Subitems:</b>
                       </td>
                     </tr>
-                    )}
-                    {item.category === 'pack' && (
-                      item.subItem.map((mac) => (
-                        <tr key={mac.itemId}>
-                          <td>{(macItems.find((i) => i.itemId === mac.itemId)?.title)}</td>
-                          <td colSpan="2">{mac.quantity}</td>
-                        </tr>
-                      ))
-                    )}
-                    {item.giftOption && (
-                      <tr>
-                        <td>
-                          <b>Gift-Wrap</b>
-                        </td>
-                        <td>
-                          {item.giftOption.isGiftOptionSelected ? 'Yes' : 'No'}
-                        </td>
+                  )}
+                  {item.category === 'pack' && (
+                    item.subItem.map((mac) => (
+                      <tr key={mac.itemId}>
+                        <td>{(macItems.find((i) => i.itemId === mac.itemId)?.title)}</td>
+                        <td colSpan="2">{mac.quantity}</td>
                       </tr>
-                    )}
-                    {item.giftOption && item.giftOption.isGiftOptionSelected && (
-                      <tr>
-                        <td>
-                          <b>Message: </b>
-                        </td>
-                        <td>
-                          {item.giftOption.giftMessage}
-                        </td>
-                      </tr>
-                    )}
-                    {item.giftOption && item.giftOption.isGiftOptionSelected && (
-                      <tr>
-                        <td>
-                          <b>From: </b>
-                        </td>
-                        <td>
-                          {item.giftOption.giftSenderName}
-                        </td>
-                      </tr>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
+                    ))
+                  )}
+                  {item.giftOption && (
+                    <tr>
+                      <td>
+                        <b>Gift-Wrap</b>
+                      </td>
+                      <td>
+                        {item.giftOption.isGiftOptionSelected ? 'Yes' : 'No'}
+                      </td>
+                    </tr>
+                  )}
+                  {item.giftOption && item.giftOption.isGiftOptionSelected && (
+                    <tr>
+                      <td>
+                        <b>Message: </b>
+                      </td>
+                      <td>
+                        {item.giftOption.giftMessage}
+                      </td>
+                    </tr>
+                  )}
+                  {item.giftOption && item.giftOption.isGiftOptionSelected && (
+                    <tr>
+                      <td>
+                        <b>From: </b>
+                      </td>
+                      <td>
+                        {item.giftOption.giftSenderName}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              ))}
             </table>
             <button
               type="button"

@@ -8,7 +8,7 @@ import {
 import OrderContext from '../../../../../context/OrderContext';
 import PackOrderModalContext from '../../../../../context/PackOrderModalContext';
 
-function GiftOptionModal({ onPrevious, onNext }) {
+function GiftOptionModal({ onPrevious, onNext, clearPreview }) {
   const {
     isGiftOptionSelected,
     setIsGiftOptionSelected,
@@ -24,23 +24,26 @@ function GiftOptionModal({ onPrevious, onNext }) {
   } = useContext(PackOrderModalContext);
 
   const handleGiftMessageInput = (e) => {
-    setGiftMessage(e.target.value.toUpperCase());
+    setGiftMessage(e.target.value);
   };
 
   const handleGiftSenderNameInput = (e) => {
-    setGiftSenderName(e.target.value.toUpperCase());
+    setGiftSenderName(e.target.value);
   };
 
   const addGiftOption = () => {
     setIsGiftOptionSelected(true);
     closeSecondOpenThird();
-    // console.log('message: ', giftMessage);
-    // console.log('from', giftSenderName);
   };
 
   const skipGiftOption = () => {
     setIsGiftOptionSelected(false);
     onNext();
+  };
+
+  const clearPreviewAndCloseModal = () => {
+    clearPreview();
+    handleGiftOptionModalClose();
   };
 
   return (
@@ -49,20 +52,20 @@ function GiftOptionModal({ onPrevious, onNext }) {
       open={isGiftOptionModalOpen}
       onClose={handleGiftOptionModalClose}
     >
-      <Button type="button" onClick={handleGiftOptionModalClose}>Close X</Button>
-      <DialogTitle>Gift Option (Testing)</DialogTitle>
+      <Button type="button" onClick={clearPreviewAndCloseModal}>Close X</Button>
+      <DialogTitle>Gift Box Option ($1.50)</DialogTitle>
       <Divider />
       <DialogContent>
         <DialogContentText>
-          Gift option arrives in a special gift box with a personalized message card.
+          Adds a special gift box with your personalized message card.
         </DialogContentText>
         <TextField
           label="Your Message: "
           multiline
           variant="outlined"
           rows={8}
-          inputProps={{ maxLength: 120 }}
-          helperText={`${giftMessage.length}/${120}`}
+          inputProps={{ maxLength: 280 }}
+          helperText={`${giftMessage.length}/${280}`}
           value={giftMessage}
           onChange={handleGiftMessageInput}
         />
@@ -82,7 +85,7 @@ function GiftOptionModal({ onPrevious, onNext }) {
           onClick={addGiftOption}
           disabled={!(giftSenderName && giftMessage)}
         >
-          Add Gift Option
+          Add Gift Box
         </Button>
       </DialogContent>
       <DialogActions>
@@ -96,6 +99,7 @@ function GiftOptionModal({ onPrevious, onNext }) {
 GiftOptionModal.propTypes = {
   onPrevious: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
+  clearPreview: PropTypes.func.isRequired,
 };
 
 export default GiftOptionModal;

@@ -13,6 +13,7 @@ function CartRow({
   const {
     macItems, drinkItems, packItems, macList, macListDispatch,
   } = useContext(OrderContext);
+
   let item = '';
   if (cartItem.category === 'drink') {
     item = drinkItems.find((i) => i.itemId === cartItem.itemId);
@@ -22,8 +23,11 @@ function CartRow({
     item = packItems.find((i) => i.itemId === cartItem.itemId);
     // item.key = Date.now();
   }
+
+  console.log(cartItem.key);
+
   const removeItemFromCart = () => {
-    dispatch({ type: CartTypes.REMOVE, itemId: item.itemId });
+    dispatch({ type: CartTypes.REMOVE, itemId: item.itemId, key: cartItem.key });
   };
 
   const [isViewMoreModalOpen, setIsViewMoreModalOpen] = useState(false);
@@ -34,6 +38,15 @@ function CartRow({
     setIsViewMoreModalOpen(false);
   };
 
+  const handleItemPriceWithGiftOption = () => {
+    let itemPrice = (item.salPrice ?? item.price);
+    if (cartItem.giftOption && cartItem.giftOption.isGiftOptionSelected) {
+      itemPrice += 1.5;
+    }
+    itemPrice *= cartItem.quantity;
+    return itemPrice;
+  };
+
   // console.log(cartItem.subItem);
   // console.log(cartItem.giftOption);
   return (
@@ -42,19 +55,24 @@ function CartRow({
       <td>{item.title}</td>
       <td>
         $
-        {((item.salePrice ?? item.price) * cartItem.quantity).toFixed(2)}
+        {handleItemPriceWithGiftOption().toFixed(2)}
+      </td>
+      <td>
+        {!cartItem.giftOption ? 'n/a' : null}
+        {cartItem.giftOption && (cartItem.giftOption.isGiftOptionSelected ? 'Yes' : 'No')}
       </td>
       {cartItem.category === 'pack' ? (
         <td>
           <button type="button" onClick={handleViewMoreModalOpen}>...</button>
           <CartItemViewMoreModal
+            itemTitle={item.title}
             subItem={cartItem.subItem}
             open={isViewMoreModalOpen}
             onClose={handleViewMoreModalClose}
             giftOption={cartItem.giftOption}
           />
         </td>
-      ) : <td>N/A</td>}
+      ) : <td>n/a</td>}
       <td>
         <button type="button" onClick={removeItemFromCart}>
           x

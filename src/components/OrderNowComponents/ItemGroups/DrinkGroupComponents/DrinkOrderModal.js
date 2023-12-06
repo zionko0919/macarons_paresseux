@@ -2,13 +2,14 @@
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Dialog, DialogContent, DialogContentText, DialogTitle,
+  Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider,
 } from '@mui/material';
 import OrderContext from '../../../../context/OrderContext';
 import './DrinkOrderModal.css';
 
 function DrinkOrderModal({
-  isDrinkModalOpen, handleDrinkModalClose, drinkImage, drinkTitle,
+  isDrinkModalOpen, handleDrinkModalClose, drinkImage,
+  drinkTitle, drinkDescription, drinkCalories, drinkSize,
 }) {
   const { drinkItems, addToCart } = useContext(OrderContext);
 
@@ -20,17 +21,31 @@ function DrinkOrderModal({
 
   return (
     <Dialog open={isDrinkModalOpen} onClose={handleDrinkModalClose}>
-      <button type="button" onClick={handleDrinkModalClose}>Close X</button>
-      <DialogTitle>
-        {drinkTitle}
-      </DialogTitle>
+      <Button type="button" onClick={handleDrinkModalClose}>Close X</Button>
+      <Divider />
+      <img src={drinkImage} alt={drinkTitle} align="center" />
       <DialogContent>
-        <img src={drinkImage} alt={drinkTitle} />
+        <DialogTitle align="center">
+          {drinkTitle}
+        </DialogTitle>
         <DialogContentText>
-          TESTING DRINK MODAL
+          {drinkDescription}
+        </DialogContentText>
+        <DialogContentText>
+          Calories:
+          {' '}
+          {drinkCalories}
+        </DialogContentText>
+        <DialogContentText>
+          Size:
+          {' '}
+          {drinkSize}
+          {' '}
+          fl oz
         </DialogContentText>
       </DialogContent>
-      <button type="button" onClick={addItemToCart}>Add To Cart</button>
+      <Divider />
+      <Button type="button" onClick={addItemToCart}>Add To Cart</Button>
     </Dialog>
   );
 }
@@ -40,6 +55,9 @@ DrinkOrderModal.propTypes = {
   handleDrinkModalClose: PropTypes.func.isRequired,
   drinkImage: PropTypes.string.isRequired,
   drinkTitle: PropTypes.string.isRequired,
+  drinkDescription: PropTypes.string.isRequired,
+  drinkCalories: PropTypes.number.isRequired,
+  drinkSize: PropTypes.number.isRequired,
 };
 
 export default DrinkOrderModal;
