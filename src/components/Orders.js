@@ -106,7 +106,7 @@ function Orders() {
                     {order.couponDiscountPrice.toFixed(2)}
                     {' '}
                     (
-                    {order.couponDiscountPercentage * 100}
+                    {order.couponDiscountPercentage.toFixed(1)}
                     %)
                   </td>
                   <td>

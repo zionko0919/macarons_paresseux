@@ -59,19 +59,36 @@ function Cart({
 
   const setCouponCodeForDiscount = (newCoupon) => {
     setCurrentCoupon(newCoupon);
+    // console.log(currentCoupon);
   };
 
-  const enteredCoupon = couponCodes.find((item) => item.code === currentCoupon.toUpperCase());
   let isCouponUsed = false;
   const applyCouponCodes = () => {
-    if ((couponCodes.find((item) => item.code === currentCoupon.toUpperCase()))
-    && !isCouponUsed) {
-      const discountPercentageDecimal = enteredCoupon.percentage;
-      const appliedDiscount = subTotal * discountPercentageDecimal;
-      isCouponUsed = true;
-      setCouponDiscountPercentage(enteredCoupon.percentage);
-      setCouponDiscountPrice(appliedDiscount);
-      setDiscountedSubTotal(subTotal - appliedDiscount);
+    const enteredCoupon = couponCodes.find(
+      (item) => item.promoCode === currentCoupon.toUpperCase(),
+    );
+
+    if (enteredCoupon && !isCouponUsed) {
+      if (!enteredCoupon.minPurchase || (subTotal >= enteredCoupon.minPurchase)) {
+        isCouponUsed = true;
+        let appliedDiscount;
+        if (enteredCoupon.promoType === 'percentageOff') {
+          const discountPercentageDecimal = enteredCoupon.percentage;
+          appliedDiscount = subTotal * discountPercentageDecimal;
+        } else if (enteredCoupon.promoType === 'amountOff') {
+          appliedDiscount = enteredCoupon.discount;
+        } else {
+          console.log('error!');
+          return;
+        }
+
+        setCouponDiscountPercentage((appliedDiscount / subTotal) * 100);
+        setCouponDiscountPrice(appliedDiscount);
+        setDiscountedSubTotal(subTotal - appliedDiscount);
+      } else if (enteredCoupon.minPurchase && subTotal < enteredCoupon.minPurchase) {
+        isCouponUsed = false;
+        console.log(`You need to purchase at least $${enteredCoupon.minPurchase.toFixed(2)} to apply this promo code`);
+      }
     } else {
       console.log('Invalid Coupon Code');
     }
@@ -236,7 +253,7 @@ function Cart({
             {couponDiscountPrice.toFixed(2)}
             {' '}
             (
-            {couponDiscountPercentage * 100}
+            {couponDiscountPercentage.toFixed(1)}
             %)
           </div>
           <div>
