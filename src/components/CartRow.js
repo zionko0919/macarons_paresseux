@@ -2,7 +2,8 @@
 /* eslint-disable no-unused-vars */
 import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
+import { Delete, MoreHoriz } from '@mui/icons-material';
 import OrderContext from '../context/OrderContext';
 import { CartTypes } from '../reducers/cartReducer';
 import CartItemViewMoreModal from './CartItemViewMoreModal';
@@ -24,7 +25,7 @@ function CartRow({
     // item.key = Date.now();
   }
 
-  console.log(cartItem.key);
+  // console.log(cartItem.key);
 
   const removeItemFromCart = () => {
     dispatch({ type: CartTypes.REMOVE, itemId: item.itemId, key: cartItem.key });
@@ -63,7 +64,9 @@ function CartRow({
       </td>
       {cartItem.category === 'pack' ? (
         <td>
-          <button type="button" onClick={handleViewMoreModalOpen}>...</button>
+          <IconButton type="button" onClick={handleViewMoreModalOpen}>
+            <MoreHoriz />
+          </IconButton>
           <CartItemViewMoreModal
             itemTitle={item.title}
             subItem={cartItem.subItem}
@@ -74,9 +77,9 @@ function CartRow({
         </td>
       ) : <td>n/a</td>}
       <td>
-        <button type="button" onClick={removeItemFromCart}>
-          x
-        </button>
+        <IconButton type="button" onClick={removeItemFromCart}>
+          <Delete />
+        </IconButton>
       </td>
     </tr>
   );

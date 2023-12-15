@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
@@ -13,8 +12,9 @@ function CartItemViewMoreModal({
   itemTitle, open, onClose, subItem, giftOption,
 }) {
   // console.log('giftOption: ', giftOption);
-  const { macItems } = useContext(OrderContext);
+  // console.log(typeof giftOption);
 
+  const { macItems } = useContext(OrderContext);
   return (
     <Dialog
       className="cart-item-view-more-modal-component"
@@ -65,7 +65,6 @@ function CartItemViewMoreModal({
         </>
         )}
       </DialogContent>
-
       <Divider />
       <Button type="button">Edit</Button>
     </Dialog>
@@ -81,6 +80,12 @@ CartItemViewMoreModal.propTypes = {
     itemId: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
   })),
+  giftOption: PropTypes.shape({
+    isGiftOptionSelected: PropTypes.bool,
+    giftMessage: PropTypes.string,
+    giftSenderName: PropTypes.string,
+  }).isRequired,
+
 };
 
 CartItemViewMoreModal.defaultProps = {

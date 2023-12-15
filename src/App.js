@@ -28,6 +28,7 @@ function App() {
   const [packItems, setPackItems] = useState([]);
   const [drinkItems, setDrinkItems] = useState([]);
   const [optionalItems, setOptionalItems] = useState([]);
+  const [couponCodes, setCouponCodes] = useState([]);
 
   const [isGiftOptionSelected, setIsGiftOptionSelected] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
@@ -112,6 +113,12 @@ function App() {
   }, []);
 
   useEffect(() => {
+    axios.get('api/couponCodes')
+      .then(((result) => setCouponCodes(result.data)))
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
     axios.get('api/auth/current-user')
       .then((result) => setCurrentUser(result.data))
       .catch(console.error);
@@ -128,6 +135,7 @@ function App() {
       packItems,
       drinkItems,
       optionalItems,
+      couponCodes,
       addToCart,
       macList,
       macListDispatch,
@@ -144,6 +152,7 @@ function App() {
       packItems,
       drinkItems,
       optionalItems,
+      couponCodes,
       addToCart,
       macList,
       macListDispatch,

@@ -4,6 +4,8 @@ import {
   useMemo, useState, useRef, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
+import { Button, Callout, TextField } from '@radix-ui/themes';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
 import OrderContext from '../context/OrderContext';
 import { CartTypes } from '../reducers/cartReducer';
 import CartRow from './CartRow';
@@ -14,9 +16,12 @@ function Cart({
   cart, dispatch,
 }) {
   const {
-    macItems, drinkItems, packItems, optionalItems, macList,
+    macItems, drinkItems, packItems, couponCodes,
   } = useContext(OrderContext);
 
+  const [currentCoupon, setCurrentCoupon] = useState('');
+  const [couponDiscountPercentage, setCouponDiscountPercentage] = useState(0);
+  const [couponDiscountPrice, setCouponDiscountPrice] = useState(0);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [zipCode, setZipCode] = useState('');
@@ -48,6 +53,37 @@ function Cart({
 
     return item.quantity * itemPrice + acc;
   }, 0);
+
+  const originalSubTotal = subTotal;
+  const [discountedSubTotal, setDiscountedSubTotal] = useState(subTotal);
+
+  const setCouponCodeForDiscount = (newCoupon) => {
+    setCurrentCoupon(newCoupon);
+  };
+
+  const enteredCoupon = couponCodes.find((item) => item.code === currentCoupon.toUpperCase());
+  let isCouponUsed = false;
+  const applyCouponCodes = () => {
+    if ((couponCodes.find((item) => item.code === currentCoupon.toUpperCase()))
+    && !isCouponUsed) {
+      const discountPercentageDecimal = enteredCoupon.percentage;
+      const appliedDiscount = subTotal * discountPercentageDecimal;
+      isCouponUsed = true;
+      setCouponDiscountPercentage(enteredCoupon.percentage);
+      setCouponDiscountPrice(appliedDiscount);
+      setDiscountedSubTotal(subTotal - appliedDiscount);
+    } else {
+      console.log('Invalid Coupon Code');
+    }
+  };
+
+  const resetCouponCodes = () => {
+    setCurrentCoupon('');
+    isCouponUsed = false;
+    setCouponDiscountPercentage(0);
+    setCouponDiscountPrice(0);
+    setDiscountedSubTotal(originalSubTotal);
+  };
 
   const taxRate = useMemo(
     () => {
@@ -82,8 +118,8 @@ function Cart({
 
   // getSalesTax();
 
-  const taxAmount = subTotal * taxRate;
-  const total = subTotal + taxAmount;
+  const taxAmount = (discountedSubTotal < subTotal ? discountedSubTotal : subTotal) * taxRate;
+  const total = (discountedSubTotal < subTotal ? discountedSubTotal : subTotal) + taxAmount;
   const isFormValid = zipCode.length === 5 && name.trim();
 
   const orderCreatedTime = new Date();
@@ -101,7 +137,10 @@ function Cart({
         zipCode,
         total,
         orderTimeLog,
+        couponDiscountPercentage,
+        couponDiscountPrice,
         subTotal,
+        discountedSubTotal,
         taxAmount,
         taxRate,
       });
@@ -113,10 +152,6 @@ function Cart({
     } finally {
       setIsSubmitting(false);
     }
-    // console.log('name: ', name);
-    // console.log('phone: ', phone);
-    // console.log('zipcode: ', zipCode);
-    // ToDo
   };
 
   const setFormattedPhone = (newNumber) => {
@@ -162,9 +197,12 @@ function Cart({
         Thank you for your order.
       </Alert>
       <Alert visible={!!apiError} type="error">
-        <p>There was an error submitting your order.</p>
-        <p>{apiError}</p>
-        <p>Please try again.</p>
+        <p>There was an error submitting your order. Please try again.</p>
+        <p>
+          Error:
+          {' '}
+          {apiError}
+        </p>
       </Alert>
       <h2>Your Cart</h2>
       {cart.length === 0 ? (
@@ -194,8 +232,16 @@ function Cart({
             </tbody>
           </table>
           <div>
+            Discount: $
+            {couponDiscountPrice.toFixed(2)}
+            {' '}
+            (
+            {couponDiscountPercentage * 100}
+            %)
+          </div>
+          <div>
             Subtotal: $
-            {subTotal.toFixed(2)}
+            {discountedSubTotal.toFixed(2)}
           </div>
           { zipCode.length === 5
             ? (
@@ -212,8 +258,29 @@ function Cart({
                 </div>
               </>
             ) : (
-              <div className="warning">Enter ZIP Code to get total</div>
+              <Callout.Root color="red" role="alert">
+                <Callout.Icon>
+                  <InfoCircledIcon />
+                </Callout.Icon>
+                <Callout.Text>
+                  Enter your ZIP Code to get the total price.
+                </Callout.Text>
+              </Callout.Root>
             )}
+          <h2>Promo Code</h2>
+          <TextField.Root>
+            <TextField.Input
+              placeholder="Promo Code Here"
+              size="3"
+              type="text"
+              value={currentCoupon}
+              onChange={(event) => setCouponCodeForDiscount(event.target.value)}
+            />
+            <TextField.Slot>
+              <Button type="button" onClick={applyCouponCodes}>Apply</Button>
+              <Button type="button" onClick={resetCouponCodes}>Reset</Button>
+            </TextField.Slot>
+          </TextField.Root>
           <h2>Checkout</h2>
           <form onSubmit={submitOrder}>
             <label htmlFor="name">

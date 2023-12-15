@@ -12,8 +12,8 @@ const findItem = (cart, itemId, category) => cart.find(
 
 export const cartReducer = (state, action) => {
   // console.log('state: ', state);
-  console.log('state.key: ', state);
-  console.log('action.key: ', action);
+  // console.log('state.key: ', state);
+  // console.log('action.key: ', action);
   switch (action.type) {
     case CartTypes.ADD:
       if (action.category !== 'pack') {

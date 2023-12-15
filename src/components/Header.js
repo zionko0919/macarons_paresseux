@@ -35,7 +35,6 @@ function Header({ cart }) {
           <div className="badge">{cartQuantity}</div>
         </Link>
         <UserDetails />
-
       </div>
     </header>
   );

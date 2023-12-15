@@ -90,13 +90,7 @@ function Orders() {
               <tbody>
                 <tr>
                   <th>Subtotal</th>
-                  <th>Sales Tax</th>
-                  <th>Total</th>
-                </tr>
-              </tbody>
-              <tbody>
-                <tr>
-                  <th>Subtotal</th>
+                  <th>Discounts</th>
                   <th>Sales Tax</th>
                   <th>Total</th>
                 </tr>
@@ -108,7 +102,15 @@ function Orders() {
                     {order.subTotal.toFixed(2)}
                   </td>
                   <td>
-                    $
+                    - $
+                    {order.couponDiscountPrice.toFixed(2)}
+                    {' '}
+                    (
+                    {order.couponDiscountPercentage * 100}
+                    %)
+                  </td>
+                  <td>
+                    + $
                     {order.taxAmount.toFixed(2)}
                     {' '}
                     (
@@ -116,8 +118,10 @@ function Orders() {
                     %)
                   </td>
                   <td>
-                    $
-                    {order.total.toFixed(2)}
+                    <b>
+                      $
+                      {order.total.toFixed(2)}
+                    </b>
                   </td>
                 </tr>
               </tbody>
