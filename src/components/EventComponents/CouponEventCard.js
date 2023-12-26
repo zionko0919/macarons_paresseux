@@ -7,10 +7,22 @@ function CouponEventCard() {
   return (
     <Grid columns="2" gap="1" width="auto">
       <Box>
-        <Text as="p" size="5">Promotional Coupons</Text>
-        <Text as="p" size="3">EVERYTHINGOFF20</Text>
-        <Text as="p" size="3">BIGBIG40</Text>
-        <Text as="p" size="3">SPECIAL5</Text>
+        <Text as="label" size="5">Promotional Coupons</Text>
+        <Text as="p" size="3">
+          20% Off:
+          {' '}
+          <strong>EVERYTHINGOFF20</strong>
+        </Text>
+        <Text as="p" size="3">
+          40% Off on $30+:
+          {' '}
+          <strong>BIGBIG40</strong>
+        </Text>
+        <Text as="p" size="3">
+          $5 Off:
+          {' '}
+          <strong>SPECIAL5</strong>
+        </Text>
 
       </Box>
       <Box>

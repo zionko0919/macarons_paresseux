@@ -40,6 +40,9 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
     timestamp <= endTime.getTime();
     timestamp += interval * 60 * 1000) {
     const currentTimestamp = new Date(timestamp);
+    const isPastTime = pickUpDate === 'date0' && currentTimestamp < currentDateTime;
+    const isCloseToCurrentTime = pickUpDate === 'date0' && currentTimestamp <= new Date(currentDateTime.getTime() + 25 * 60 * 1000);
+    const isDisabled = isPastTime || isCloseToCurrentTime;
     const time = currentTimestamp.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: 'numeric',
@@ -48,7 +51,7 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
 
     timeStamps.push(
       <React.Fragment key={time}>
-        <Select.Item value={time}>
+        <Select.Item value={time} disabled={isDisabled}>
           {time}
         </Select.Item>
         {time === '11:30 AM' && <Select.Separator />}
@@ -76,14 +79,20 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
   };
 
   const handleTimeChange = (value) => {
-    const selectedDateTime = new Date(`${pickUpDateString} ${value}`);
-    if (selectedDateTime < currentDateTime) {
-      // Display an alert if the selected time is in the past
-      setShowTimeSelectionError(true);
-    } else {
-      // Hide the alert and set the selected time
+    if (value === 'ASAP') {
+      // If ASAP is selected, hide the alert and set the selected time
       setShowTimeSelectionError(false);
       setPickUpTime(value);
+    } else {
+      const selectedDateTime = new Date(`${pickUpDateString} ${value}`);
+      if (selectedDateTime < currentDateTime) {
+        // Display an alert if the selected time is in the past
+        setShowTimeSelectionError(true);
+      } else {
+        // Hide the alert and set the selected time
+        setShowTimeSelectionError(false);
+        setPickUpTime(value);
+      }
     }
   };
 
