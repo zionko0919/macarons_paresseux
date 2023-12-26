@@ -28,11 +28,14 @@ function App() {
   const [packItems, setPackItems] = useState([]);
   const [drinkItems, setDrinkItems] = useState([]);
   const [optionalItems, setOptionalItems] = useState([]);
-  const [couponCodes, setCouponCodes] = useState([]);
 
   const [isGiftOptionSelected, setIsGiftOptionSelected] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
   const [giftSenderName, setGiftSenderName] = useState('');
+
+  const [pickUpDate, setPickUpDate] = useState('date0'); // Initial value for today
+  const [pickUpTime, setPickUpTime] = useState('ASAP');
+  const [pickUpDateString, setPickUpDateString] = useState('');
 
   const [currentUser, setCurrentUser] = useState({});
 
@@ -113,12 +116,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    axios.get('api/couponCodes')
-      .then(((result) => setCouponCodes(result.data)))
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
     axios.get('api/auth/current-user')
       .then((result) => setCurrentUser(result.data))
       .catch(console.error);
@@ -135,7 +132,6 @@ function App() {
       packItems,
       drinkItems,
       optionalItems,
-      couponCodes,
       addToCart,
       macList,
       macListDispatch,
@@ -146,13 +142,18 @@ function App() {
       setGiftMessage,
       giftSenderName,
       setGiftSenderName,
+      pickUpDate,
+      setPickUpDate,
+      pickUpTime,
+      setPickUpTime,
+      pickUpDateString,
+      setPickUpDateString,
     }),
     [
       macItems,
       packItems,
       drinkItems,
       optionalItems,
-      couponCodes,
       addToCart,
       macList,
       macListDispatch,
@@ -163,8 +164,17 @@ function App() {
       setGiftMessage,
       giftSenderName,
       setGiftSenderName,
+      pickUpDate,
+      setPickUpDate,
+      pickUpTime,
+      setPickUpTime,
+      pickUpDateString,
+      setPickUpDateString,
     ],
   );
+
+  // console.log(pickUpDateString);
+  // console.log(pickUpTime);
 
   return (
     <Router>

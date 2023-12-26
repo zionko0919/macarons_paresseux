@@ -1,27 +1,42 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import {
-  useMemo, useState, useRef, useContext,
+  useMemo, useState, useRef, useContext, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Callout, TextField } from '@radix-ui/themes';
-import { InfoCircledIcon } from '@radix-ui/react-icons';
+import {
+  CheckIcon, InfoCircledIcon, ResetIcon,
+} from '@radix-ui/react-icons';
 import OrderContext from '../context/OrderContext';
 import { CartTypes } from '../reducers/cartReducer';
 import CartRow from './CartRow';
 import Alert from './Alert';
 import './Cart.css';
+import DeliveryAddress from './DeliveryAddress';
+import DateTime from './DateTime';
 
 function Cart({
   cart, dispatch,
 }) {
   const {
-    macItems, drinkItems, packItems, couponCodes,
+    macItems, drinkItems, packItems, pickUpDateString, pickUpTime, setPickUpTime,
   } = useContext(OrderContext);
+
+  const [couponCodes, setCouponCodes] = useState([]);
+  useEffect(() => {
+    axios.get('api/couponCodes')
+      .then(((result) => setCouponCodes(result.data)))
+      .catch(console.error);
+  }, []);
 
   const [currentCoupon, setCurrentCoupon] = useState('');
   const [couponDiscountPercentage, setCouponDiscountPercentage] = useState(0);
   const [couponDiscountPrice, setCouponDiscountPrice] = useState(0);
+  const [couponSuccessAlert, setCouponSuccessAlert] = useState(false);
+  const [couponErrorAlert, setCouponErrorAlert] = useState(false);
+  const [couponErrorMessage, setCouponErrorMessage] = useState('');
+  const [dateTimeErrorAlert, setDateTimeErrorAlert] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [zipCode, setZipCode] = useState('');
@@ -59,11 +74,18 @@ function Cart({
 
   const setCouponCodeForDiscount = (newCoupon) => {
     setCurrentCoupon(newCoupon);
-    // console.log(currentCoupon);
   };
 
   let isCouponUsed = false;
+  const [isCouponInputDisabled, setIsCouponInputDisabled] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const applyCouponCodes = () => {
+    if (currentCoupon.length === 0) {
+      setCouponErrorAlert(true);
+      setCouponErrorMessage('Please Enter your Promo Code');
+    }
+    setCouponErrorAlert(false);
+    setCouponSuccessAlert(false);
     const enteredCoupon = couponCodes.find(
       (item) => item.promoCode === currentCoupon.toUpperCase(),
     );
@@ -71,6 +93,7 @@ function Cart({
     if (enteredCoupon && !isCouponUsed) {
       if (!enteredCoupon.minPurchase || (subTotal >= enteredCoupon.minPurchase)) {
         isCouponUsed = true;
+        setCouponSuccessAlert(true);
         let appliedDiscount;
         if (enteredCoupon.promoType === 'percentageOff') {
           const discountPercentageDecimal = enteredCoupon.percentage;
@@ -78,23 +101,36 @@ function Cart({
         } else if (enteredCoupon.promoType === 'amountOff') {
           appliedDiscount = enteredCoupon.discount;
         } else {
-          console.log('error!');
+          setCouponErrorAlert(true);
+          setCouponErrorMessage('We are sorry, we have encountered an unknown error.');
           return;
         }
 
         setCouponDiscountPercentage((appliedDiscount / subTotal) * 100);
         setCouponDiscountPrice(appliedDiscount);
         setDiscountedSubTotal(subTotal - appliedDiscount);
+        setIsCouponInputDisabled(true);
+        setIsButtonDisabled(true);
       } else if (enteredCoupon.minPurchase && subTotal < enteredCoupon.minPurchase) {
         isCouponUsed = false;
+        setCouponErrorAlert(true);
+        setCouponErrorMessage(`You need to purchase at least 
+        $${enteredCoupon.minPurchase.toFixed(2)} to apply this promo code`);
         console.log(`You need to purchase at least $${enteredCoupon.minPurchase.toFixed(2)} to apply this promo code`);
       }
     } else {
-      console.log('Invalid Coupon Code');
+      setCouponErrorAlert(true);
+      setCouponErrorMessage(`
+      ${currentCoupon} is Invalid`);
     }
   };
 
   const resetCouponCodes = () => {
+    setIsCouponInputDisabled(false);
+    setIsButtonDisabled(false);
+    setCouponSuccessAlert(false);
+    setCouponErrorAlert(false);
+    setCouponErrorMessage('');
     setCurrentCoupon('');
     isCouponUsed = false;
     setCouponDiscountPercentage(0);
@@ -160,6 +196,8 @@ function Cart({
         discountedSubTotal,
         taxAmount,
         taxRate,
+        pickUpDateString,
+        pickUpTime,
       });
       dispatch({ type: CartTypes.EMPTY });
       setShowSuccessAlert(true);
@@ -170,6 +208,8 @@ function Cart({
       setIsSubmitting(false);
     }
   };
+
+  // console.log(pickUpDateString, pickUpTime);
 
   const setFormattedPhone = (newNumber) => {
     const digits = newNumber.replace(/\D/g, '');
@@ -204,6 +244,9 @@ function Cart({
         .catch(console.error);
     }, 300);
   };
+
+  const [showTimeSelectionError, setShowTimeSelectionError] = useState(false);
+  // console.log(showTimeSelectionError);
 
   return (
     <div className="cart-component">
@@ -292,12 +335,41 @@ function Cart({
               type="text"
               value={currentCoupon}
               onChange={(event) => setCouponCodeForDiscount(event.target.value)}
+              disabled={isCouponInputDisabled}
+              radius="full"
             />
             <TextField.Slot>
-              <Button type="button" onClick={applyCouponCodes}>Apply</Button>
-              <Button type="button" onClick={resetCouponCodes}>Reset</Button>
+              <Button
+                type="button"
+                onClick={applyCouponCodes}
+                disabled={isButtonDisabled}
+                radius="full"
+              >
+                <CheckIcon />
+              </Button>
+              <Button
+                type="button"
+                hidden
+                onClick={resetCouponCodes}
+                radius="full"
+              >
+                <ResetIcon />
+              </Button>
             </TextField.Slot>
           </TextField.Root>
+          <Alert visible={couponSuccessAlert} type="success">
+            {currentCoupon.toUpperCase()}
+            {' '}
+            is activiated.
+          </Alert>
+          <Alert visible={couponErrorAlert} type="error">
+            {couponErrorMessage}
+          </Alert>
+          <h2>Store Pick-Up</h2>
+          <DateTime
+            showTimeSelectionError={showTimeSelectionError}
+            setShowTimeSelectionError={setShowTimeSelectionError}
+          />
           <h2>Checkout</h2>
           <form onSubmit={submitOrder}>
             <label htmlFor="name">
@@ -333,7 +405,7 @@ function Cart({
                 ref={zipRef}
               />
             </label>
-            <button type="submit" disabled={!isFormValid || isSubmitting}>
+            <button type="submit" disabled={!isFormValid || isSubmitting || showTimeSelectionError}>
               Place Order
             </button>
           </form>

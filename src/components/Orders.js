@@ -75,6 +75,16 @@ function Orders() {
               </thead>
               <thead>
                 <tr>
+                  <th>
+                    Pick Up Date/Time:
+                  </th>
+                  {order.pickUpDateString}
+                  {' '}
+                  {order.pickUpTime}
+                </tr>
+              </thead>
+              <thead>
+                <tr>
                   <th>Customer</th>
                   <th>ZIP Code</th>
                   {order.phone && <th>Phone</th>}

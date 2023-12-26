@@ -7,8 +7,11 @@ function CouponEventCard() {
   return (
     <Grid columns="2" gap="1" width="auto">
       <Box>
-        <Text as="p" size="5">Use this Coupon</Text>
+        <Text as="p" size="5">Promotional Coupons</Text>
         <Text as="p" size="3">EVERYTHINGOFF20</Text>
+        <Text as="p" size="3">BIGBIG40</Text>
+        <Text as="p" size="3">SPECIAL5</Text>
+
       </Box>
       <Box>
         <img
