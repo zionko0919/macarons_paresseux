@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import {
+  Card, CardActionArea, CardMedia, CardContent, Typography,
+} from '@mui/material';
 import './Thumbnail.css';
 
 function Thumbnail({
@@ -9,11 +12,27 @@ function Thumbnail({
     <Link
       className="thumbnail-component"
       to={`/all_menu/details/${itemId}`}
+      style={{ textDecoration: 'none' }} // Remove underline from the link
     >
-      <div>
-        <img src={image} alt={title} />
-      </div>
-      <p>{title}</p>
+      <Card>
+        <CardActionArea>
+          <CardMedia
+            component="img"
+            image={image}
+            alt={title}
+          />
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h6"
+              color="black"
+              sx={{ textAlign: 'center', fontFamily: 'pacifico' }}
+            >
+              {title}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
     </Link>
   );
 }

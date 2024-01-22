@@ -6,6 +6,7 @@ import {
   Drawer, Box, Button, List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText,
 } from '@mui/material';
 import { ArrowRight } from '@mui/icons-material/';
+import UserDetails from './UserDetails';
 import './Sidebar.css';
 
 function Sidebar({ isSidebarOpen, onClose }) {

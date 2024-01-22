@@ -22,8 +22,8 @@ function UserDetails() {
       { currentUser.username
         ? (
           <div>
-            {currentUser.access === 'associate'
-              ? <Link to="/orders">Orders</Link>
+            {currentUser.access === 'admin'
+              ? <Link to="/orders">Dashboard</Link>
               : null}
             <img src={Profile} alt="profile" />
             <p>{currentUser.username}</p>
@@ -31,7 +31,7 @@ function UserDetails() {
               Log Out
             </button>
           </div>
-        ) : <Link to="/login">Log In</Link>}
+        ) : <Link to="/login">Admin Sign-in</Link>}
     </div>
   );
 }

@@ -4,15 +4,15 @@ import {
   useMemo, useState, useRef, useContext, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Callout, TextField } from '@radix-ui/themes';
 import {
-  CheckIcon, InfoCircledIcon, ResetIcon,
-} from '@radix-ui/react-icons';
+  Button, IconButton, TextField, Container, Box, InputBase, Paper, Alert as AlertMUI,
+} from '@mui/material';
+import { Check, Replay, InfoOutlined } from '@mui/icons-material';
 import OrderContext from '../context/OrderContext';
 import { CartTypes } from '../reducers/cartReducer';
 import CartRow from './CartRow';
 import Alert from './Alert';
-import './Cart.css';
+// import './Cart.css';
 import DeliveryAddress from './DeliveryAddress';
 import DateTime from './DateTime';
 
@@ -20,7 +20,8 @@ function Cart({
   cart, dispatch,
 }) {
   const {
-    macItems, drinkItems, packItems, pickUpDateString, pickUpTime, setPickUpTime,
+    macItems, drinkItems, packItems, pickUpDateString,
+    pickUpTime, setPickUpTime, pickUpDateTime, setPickUpDateTime,
   } = useContext(OrderContext);
 
   const [couponCodes, setCouponCodes] = useState([]);
@@ -40,6 +41,9 @@ function Cart({
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [zipCode, setZipCode] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardNumberAlert, setCardNumberAlert] = useState(false);
+  const [cardNumberAlertMessage, setCardNumberAlertMessage] = useState('');
   const [isEmployeeOfTheMonth, setIsEmployeeOfTheMonth] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
@@ -75,6 +79,12 @@ function Cart({
   const setCouponCodeForDiscount = (newCoupon) => {
     setCurrentCoupon(newCoupon);
   };
+
+  // if (cardNumber.length < 15) {
+  //   setCardNumberAlert(true);
+  //   setCardNumberAlertMessage
+  // ('Plese check your card and try again. It should be at least 15-digits');
+  // }
 
   let isCouponUsed = false;
   const [isCouponInputDisabled, setIsCouponInputDisabled] = useState(false);
@@ -177,7 +187,7 @@ function Cart({
 
   const orderCreatedTime = new Date();
   const orderTimeLog = orderCreatedTime.toLocaleString('en-US', { timeZone: 'America/Chicago' });
-
+  const invoiceNumber = Date.now();
   const submitOrder = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -198,6 +208,8 @@ function Cart({
         taxRate,
         pickUpDateString,
         pickUpTime,
+        pickUpDateTime,
+        invoiceNumber,
       });
       dispatch({ type: CartTypes.EMPTY });
       setShowSuccessAlert(true);
@@ -318,45 +330,46 @@ function Cart({
                 </div>
               </>
             ) : (
-              <Callout.Root color="red" role="alert">
-                <Callout.Icon>
-                  <InfoCircledIcon />
-                </Callout.Icon>
-                <Callout.Text>
-                  Enter your ZIP Code to get the total price.
-                </Callout.Text>
-              </Callout.Root>
+
+              <AlertMUI icon={<InfoOutlined fontSize="inherit" />} severity="error" variant="filled">
+                Enter your ZIP Code to get the total price.
+              </AlertMUI>
             )}
           <h2>Promo Code</h2>
-          <TextField.Root>
-            <TextField.Input
-              placeholder="Promo Code Here"
-              size="3"
-              type="text"
-              value={currentCoupon}
-              onChange={(event) => setCouponCodeForDiscount(event.target.value)}
-              disabled={isCouponInputDisabled}
-              radius="full"
-            />
-            <TextField.Slot>
+          <Container>
+            <Box
+              component="text"
+              sx={{
+                '& > :not(style)': { m: 1 },
+              }}
+            >
+              <TextField
+                label="Promo Code"
+                type="text"
+                value={currentCoupon}
+                onChange={(event) => setCouponCodeForDiscount(event.target.value)}
+                disabled={isCouponInputDisabled}
+              />
               <Button
                 type="button"
+                size="large"
+                variant="outlined"
                 onClick={applyCouponCodes}
                 disabled={isButtonDisabled}
-                radius="full"
               >
-                <CheckIcon />
+                <Check />
               </Button>
               <Button
                 type="button"
-                hidden
+                size="large"
+                variant="outlined"
                 onClick={resetCouponCodes}
-                radius="full"
+                hidden
               >
-                <ResetIcon />
+                <Replay />
               </Button>
-            </TextField.Slot>
-          </TextField.Root>
+            </Box>
+          </Container>
           <Alert visible={couponSuccessAlert} type="success">
             {currentCoupon.toUpperCase()}
             {' '}
@@ -393,7 +406,7 @@ function Cart({
               />
             </label>
             <label htmlFor="zipcode">
-              ZIP Code
+              Billing ZIP Code
               <input
                 id="zipcode"
                 type="text"
@@ -403,6 +416,26 @@ function Cart({
                 onChange={(event) => setZipCode(event.target.value)}
                 required
                 ref={zipRef}
+              />
+            </label>
+            <label htmlFor="payment">
+              Card Number
+              {cardNumber.length === 0
+                ? (
+                  <Alert visible={setCardNumberAlert} type="warning">
+                    Do not enter real card numbers.
+                    This is a demo app; entered numbers will not be stored.
+                    You can proceed without a card number.
+                  </Alert>
+                ) : null }
+
+              <input
+                id="cardnumber"
+                type="text"
+                maxLength="16"
+                inputMode="numeric"
+                value={cardNumber}
+                onChange={(event) => setCardNumber(event.target.value)}
               />
             </label>
             <button type="submit" disabled={!isFormValid || isSubmitting || showTimeSelectionError}>

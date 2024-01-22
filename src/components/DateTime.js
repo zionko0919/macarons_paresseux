@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import React, {
   useContext, useState, useMemo, useEffect,
 } from 'react';
-import { Select } from '@radix-ui/themes';
+import {
+  Select, MenuItem, Divider, InputLabel, FormControl, Box, Container,
+} from '@mui/material';
 import OrderContext from '../context/OrderContext';
 import Alert from './Alert';
 
@@ -15,9 +17,10 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
     setPickUpTime,
     pickUpDateString,
     setPickUpDateString,
+    pickUpDateTime,
+    setPickUpDateTime,
   } = useContext(OrderContext);
 
-  // const [showTimeSelectionError, setShowTimeSelectionError] = useState(false);
   const currentDateTime = useMemo(() => new Date(), []); // Initialize currentDateTime using useMemo
 
   const dateStamps = Array.from({ length: 7 }, (_, i) => {
@@ -50,24 +53,30 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
     });
 
     timeStamps.push(
-      <React.Fragment key={time}>
-        <Select.Item value={time} disabled={isDisabled}>
-          {time}
-        </Select.Item>
-        {time === '11:30 AM' && <Select.Separator />}
-      </React.Fragment>,
+      <MenuItem key={time} value={time} disabled={isDisabled}>
+        {time}
+      </MenuItem>,
+    );
+    if (time === '11:30 AM') {
+      timeStamps.push(<Divider key={`${time}-divider`} />);
+    }
+  }
+
+  // Add 'ASAP' as the first option in your timeStamps array only if the selected date is today
+  if (pickUpDate === 'date0') {
+    timeStamps.unshift(
+      <MenuItem key="ASAP" value="ASAP">
+        ASAP
+      </MenuItem>,
     );
   }
 
-  // console.log(pickUpDate);
-  // console.log(pickUpDateString);
-  // console.log(pickUpTime);
-  const handleDateChange = (value) => {
+  const handleDateChange = (event) => {
+    const { value } = event.target;
     setPickUpDate(value);
     if (value === 'date0') {
       // If the selected date is today
       const selectedDateTime = new Date(`${pickUpDateString} ${pickUpTime}`);
-      // console.log(selectedDateTime);
       if (selectedDateTime < currentDateTime) {
         // Display an alert if the selected time is in the past
         setShowTimeSelectionError(true);
@@ -78,7 +87,8 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
     }
   };
 
-  const handleTimeChange = (value) => {
+  const handleTimeChange = (event) => {
+    const { value } = event.target;
     if (value === 'ASAP') {
       // If ASAP is selected, hide the alert and set the selected time
       setShowTimeSelectionError(false);
@@ -117,66 +127,55 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
     }
   }, [pickUpDate, pickUpDateString, pickUpTime, currentDateTime, setShowTimeSelectionError]);
 
+  useEffect(() => {
+    if (pickUpTime === 'ASAP') {
+      // If pickUpTime is ASAP, set pickUpDateTime to currentDateTime plus 25 minutes
+      const newDateTime = new Date(currentDateTime.getTime() + 25 * 60 * 1000);
+      const chicagoDateTimeString = newDateTime.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+      });
+      setPickUpDateTime((chicagoDateTimeString));
+    } else {
+      // Otherwise, set pickUpDateTime based on the selected date and time
+      const selectedDateTime = new Date(`${pickUpDateString} ${pickUpTime}`);
+      const chicagoDateTimeString = selectedDateTime.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+      });
+      setPickUpDateTime((chicagoDateTimeString));
+    }
+  }, [pickUpTime, currentDateTime, pickUpDateString, setPickUpDateTime]);
+
   return (
-    <div>
-      When would you like to pick up your order?
-      <div>
-        <Select.Root value={pickUpDate} onValueChange={handleDateChange}>
-          <Select.Trigger />
-          <Select.Content position="popper">
-            <Select.Group>
-              <Select.Label>SET DATE</Select.Label>
-              {dateStamps.map((day) => (
-                <Select.Item key={day.id} value={day.id}>
-                  {day.date.toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    month: 'short',
-                    day: 'numeric',
-                    timeZone: 'America/Chicago',
-                  })}
-                </Select.Item>
-              ))}
-            </Select.Group>
-          </Select.Content>
-        </Select.Root>
-      </div>
-      {pickUpDate === 'date0' && (
-        <div>
-          <Select.Root value={pickUpTime} onValueChange={handleTimeChange}>
-            <Select.Trigger placeholder="Set Time" />
-            <Select.Content>
-              <Select.Group>
-                <Select.Label>SET TIME</Select.Label>
-                <Select.Item key="asap" value="ASAP">
-                  ASAP (25mins)
-                </Select.Item>
-                {timeStamps}
-              </Select.Group>
-            </Select.Content>
-          </Select.Root>
-        </div>
-      )}
-      {pickUpDate !== 'date0' && (
-        <div>
-          <Select.Root value={pickUpTime} onValueChange={handleTimeChange}>
-            <Select.Trigger placeholder="Set Time" />
-            <Select.Content>
-              <Select.Group>
-                <Select.Label>Set Time</Select.Label>
-                {timeStamps}
-              </Select.Group>
-            </Select.Content>
-          </Select.Root>
-        </div>
-      )}
-      {showTimeSelectionError && (
-        <div>
-          <Alert visible={showTimeSelectionError} type="error">
-            Please select a different time. The selected time is in the past.
-          </Alert>
-        </div>
-      )}
-    </div>
+    <Container>
+
+      <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel>Set Date</InputLabel>
+        <Select
+          value={pickUpDate}
+          onChange={handleDateChange}
+          label="Set Date"
+        >
+          {dateStamps.map(({ id, date }) => (
+            <MenuItem key={id} value={id}>
+              {date.toLocaleDateString()}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel>Set Time</InputLabel>
+        <Select
+          value={pickUpTime}
+          onChange={handleTimeChange}
+          label="Set Time"
+        >
+          {timeStamps}
+        </Select>
+      </FormControl>
+
+      {showTimeSelectionError && <Alert severity="error">The selected time is in the past. Please select a future time.</Alert>}
+    </Container>
   );
 }
 

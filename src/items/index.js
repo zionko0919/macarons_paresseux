@@ -1,26 +1,26 @@
-import AlmondMac from './macaron_images/almondMac.PNG';
-import BlackberryMac from './macaron_images/blackberryMac.PNG';
-import LemonMac from './macaron_images/lemonMac.PNG';
-import GreenteaMac from './macaron_images/greenteaMac.PNG';
-import CaramelMac from './macaron_images/caramelMac.PNG';
-import CherryMac from './macaron_images/cherryMac.PNG';
-import GrapeMac from './macaron_images/grapeMac.PNG';
-import MintMac from './macaron_images/mintMac.PNG';
-import OrangeMac from './macaron_images/orangeMac.PNG';
-import RaspberryMac from './macaron_images/raspberryMac.PNG';
-import ChocolateMac from './macaron_images/chocolateMac.PNG';
-import BlueBerryMac from './macaron_images/blueberryMac.PNG';
-import Coffee from './drinks_image/coffee.svg';
-import IcedCoffee from './drinks_image/iced-coffee.svg';
-import Latte from './drinks_image/latte.svg';
-import Tea from './drinks_image/tea.svg';
-import Milk from './drinks_image/milk.svg';
-import SinglePack from './box_images/singlepack.PNG';
-import TwoPack from './box_images/twopack.PNG';
-import FourPack from './box_images/fourpack.PNG';
-import EightPack from './box_images/eightpack.PNG';
-import TwelvePack from './box_images/twelvepack.PNG';
-import PartyPack from './box_images/partypack.PNG';
+import AlmondMac from './macaron_images/almondMac.jpg';
+import BlackberryMac from './macaron_images/blackberryMac.jpg';
+import LemonMac from './macaron_images/lemonMac.jpg';
+import GreenteaMac from './macaron_images/greenteaMac.jpg';
+import CaramelMac from './macaron_images/caramelMac.jpg';
+import CherryMac from './macaron_images/cherryMac.jpg';
+import GrapeMac from './macaron_images/grapeMac.jpg';
+import MintMac from './macaron_images/mintMac.jpg';
+import OrangeMac from './macaron_images/orangeMac.jpg';
+import RaspberryMac from './macaron_images/raspberryMac.jpg';
+import ChocolateMac from './macaron_images/chocolateMac.jpg';
+import BlueBerryMac from './macaron_images/blueberryMac.jpg';
+import Coffee from './drinks_image/coffee.jpg';
+import IcedCoffee from './drinks_image/iced_coffee.jpg';
+import Latte from './drinks_image/latte.jpg';
+import Tea from './drinks_image/tea.jpg';
+import Milk from './drinks_image/milk.jpg';
+import SinglePack from './box_images/SinglePack.jpg';
+import TwoPack from './box_images/TwoPack.jpg';
+import FourPack from './box_images/FourPack.jpg';
+import EightPack from './box_images/EightPack.jpg';
+import TwelvePack from './box_images/TwelvePack.jpg';
+import PartyPack from './box_images/PartyPack.jpg';
 
 export const itemImages = {
   almond: AlmondMac,
@@ -60,18 +60,18 @@ export const items = [
   },
   {
     id: 1,
-    itemId: 'blackberry',
-    imageId: 'blackberry',
-    title: 'Blackberry',
+    itemId: 'lemon',
+    imageId: 'lemon',
+    title: 'Lemon',
     price: 2.50,
     calories: 100,
     description: 'EGG, CREAM, ALMOND',
   },
   {
     id: 2,
-    itemId: 'lemon',
-    imageId: 'lemon',
-    title: 'Lemon',
+    itemId: 'blackberry',
+    imageId: 'blackberry',
+    title: 'Blackberry',
     price: 2.50,
     calories: 100,
     description: 'EGG, CREAM, ALMOND',

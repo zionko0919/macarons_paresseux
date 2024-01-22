@@ -2,7 +2,8 @@
 import { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider,
+  Button, Paper, Container, Box, Dialog, DialogActions,
+  DialogContent, DialogContentText, DialogTitle, Divider,
 } from '@mui/material';
 import OrderContext from '../../../../context/OrderContext';
 import './DrinkOrderModal.css';

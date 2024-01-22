@@ -8,10 +8,12 @@ import {
   Routes,
   Route,
 } from 'react-router-dom';
+import { Container } from '@mui/material';
 import AllMenu from './components/MenuComponents/AllMenu';
 import Cart from './components/Cart';
 import OrderNow from './components/OrderNowComponents/OrderNow';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './components/Home';
 import NotFound from './components/NotFound';
 import { cartReducer, initialCartState, CartTypes } from './reducers/cartReducer';
@@ -36,6 +38,7 @@ function App() {
   const [pickUpDate, setPickUpDate] = useState('date0'); // Initial value for today
   const [pickUpTime, setPickUpTime] = useState('ASAP');
   const [pickUpDateString, setPickUpDateString] = useState('');
+  const [pickUpDateTime, setPickUpDateTime] = useState('');
 
   const [currentUser, setCurrentUser] = useState({});
 
@@ -148,6 +151,8 @@ function App() {
       setPickUpTime,
       pickUpDateString,
       setPickUpDateString,
+      pickUpDateTime,
+      setPickUpDateTime,
     }),
     [
       macItems,
@@ -170,6 +175,8 @@ function App() {
       setPickUpTime,
       pickUpDateString,
       setPickUpDateString,
+      pickUpDateTime,
+      setPickUpDateTime,
     ],
   );
 
@@ -185,42 +192,45 @@ function App() {
           value={OrderContextValues}
         >
           <Header cart={cart} />
-          {drinkItems.length === 0 || macItems.length === 0 || packItems.legnth === 0
-            ? <div>Loading...</div>
-            : (
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route
-                  path="/orders"
-                  element={(
-                    <Orders />
+          <Container>
+            {drinkItems.length === 0 || macItems.length === 0 || packItems.legnth === 0
+              ? <div>Loading...</div>
+              : (
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route
+                    path="/orders"
+                    element={(
+                      <Orders />
               )}
-                />
-                <Route
-                  path="/cart"
-                  element={(
-                    <Cart
-                      cart={cart}
-                      dispatch={dispatch}
-                    />
+                  />
+                  <Route
+                    path="/cart"
+                    element={(
+                      <Cart
+                        cart={cart}
+                        dispatch={dispatch}
+                      />
                 )}
-                />
-                <Route
-                  path="/all_menu/*"
-                  element={(
-                    <AllMenu />
+                  />
+                  <Route
+                    path="/all_menu/*"
+                    element={(
+                      <AllMenu />
                 )}
-                />
-                <Route
-                  path="/ordernow/*"
-                  element={(
-                    <OrderNow />
+                  />
+                  <Route
+                    path="/ordernow/*"
+                    element={(
+                      <OrderNow />
                 )}
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            )}
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              )}
+          </Container>
+          <Footer />
         </OrderContext.Provider>
       </CurrentUserContext.Provider>
     </Router>
