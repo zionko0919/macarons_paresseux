@@ -275,9 +275,6 @@ function CurrentOrderTable() {
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
                       <Collapse in={expandedRow === row} timeout="auto" unmountOnExit>
                         <Box margin={1}>
-                          <Typography variant="h6" gutterBottom component="div">
-                            Information
-                          </Typography>
                           <OrdersTableEntryInfo order={row} />
                         </Box>
                       </Collapse>

@@ -18,12 +18,12 @@ function SubitemTable({ subitem }) {
   } = useContext(OrderContext);
 
   return (
-    <TableContainer component={Paper} variant="outlined">
+    <TableContainer component={Paper} variant="none">
       <Table size="small" sx={{ '& td': { border: 0 } }}>
         {/* <TableHead>
           <TableRow>
-            <TableCell align="center">Macarons:</TableCell>
-            <TableCell aligh="center">Qty:</TableCell>
+            <TableCell align="right">Macarons:</TableCell>
+            <TableCell aligh="right">Qty:</TableCell>
           </TableRow>
         </TableHead> */}
         <TableBody>
@@ -32,7 +32,7 @@ function SubitemTable({ subitem }) {
               <TableCell align="right">
                 {(macItems.find((i) => i.itemId === mac.itemId)?.title)}
               </TableCell>
-              <TableCell align="left" width="20%">
+              <TableCell align="right" width="20%">
                 {mac.quantity}
               </TableCell>
             </TableRow>
