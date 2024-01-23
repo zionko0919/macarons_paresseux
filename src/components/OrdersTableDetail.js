@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
@@ -11,6 +13,7 @@ import {
 } from '@mui/material';
 import OrderContext from '../context/OrderContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
+import SubitemTable from './OrdersItemSubitems';
 
 function OrdersTableEntryInfo({ order }) {
   const {
@@ -42,29 +45,29 @@ function OrdersTableEntryInfo({ order }) {
 
   return (
     <Box>
-      <Box>
-        <TableContainer component={Paper}>
-          {/* {order} */}
-          {order.items.map((item) => (
-            <Table>
+      {order.items.map((item) => (
+        <Box marginTop={2}>
+          <TableContainer component={Paper} variant="outlined">
+            <Table size="small">
               <TableHead>
-                <TableRow>
-                  <TableCell>
+                <TableRow component={Paper} variant="none">
+                  <TableCell align="center" width="40%">Item</TableCell>
+                  <TableCell align="center" width="15%">Quantity</TableCell>
+                  <TableCell align="center" width="15%">Price (ea.)</TableCell>
+                  <TableCell align="center" width="15%">Gift-wrap</TableCell>
+                  <TableCell align="center" width="15%">Total</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow component={Paper} variant="none">
+                  <TableCell align="center">
                     {(macItems.find((i) => i.itemId === item.itemId)?.title)
                         || (packItems.find((i) => i.itemId === item.itemId)?.title)
                         || (drinkItems.find((i) => i.itemId === item.itemId)?.title)
                         || (optionalItems.find((i) => i.itemId === item.itemId)?.title)}
                   </TableCell>
-                  {item.giftOption && (
-                    <>
-                      <TableCell align="right">Gift-Wrap: </TableCell>
-                      <TableCell>{item.giftOption.isGiftOptionSelected ? 'Yes' : 'No'}</TableCell>
-                    </>
-                  )}
-                  <TableCell align="right">Quantity: </TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell align="right">Price:</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">{item.quantity}</TableCell>
+                  <TableCell align="center">
                     $
                     {' '}
                     {(macItems.find((i) => i.itemId === item.itemId)?.price.toFixed(2))
@@ -72,37 +75,74 @@ function OrdersTableEntryInfo({ order }) {
                         || (drinkItems.find((i) => i.itemId === item.itemId)?.price.toFixed(2))
                         || (optionalItems.find((i) => i.itemId === item.itemId)?.price.toFixed(2))}
                   </TableCell>
+                  {item.giftOption && (
+                  <TableCell align="center">{item.giftOption.isGiftOptionSelected ? '+ $ 2.00' : 'X'}</TableCell>
+                  )}
+                  <TableCell align="center">
+                    $
+                    {' '}
+                    {((macItems.find((i) => i.itemId === item.itemId)?.price.toFixed(2))
+                      || (packItems.find((i) => i.itemId === item.itemId)?.price.toFixed(2))
+                      || (drinkItems.find((i) => i.itemId === item.itemId)?.price.toFixed(2))
+                      || (optionalItems.find((i) => i.itemId === item.itemId)?.price.toFixed(2)))}
+                  </TableCell>
                 </TableRow>
-                <TableRow>
-                  <TableCell>Subitems</TableCell>
-                  <TableCell>Quantity</TableCell>
-                </TableRow>
-              </TableHead>
+              </TableBody>
               {item.category === 'pack' && (
                 <TableBody>
                   <TableRow>
-                    {item.category === 'pack' && (
-                      item.subItem.map((mac) => (
-                        <TableRow key={mac.itemId}>
-                          <TableCell align="right" colSpan={6}>
-                            {(macItems.find((i) => i.itemId === mac.itemId)?.title)}
-                          </TableCell>
-                          <TableCell align="right">{mac.quantity}</TableCell>
-                        </TableRow>
-                      ))
+                    <TableCell align="right">
+                      {item.category === 'pack' && <SubitemTable subitem={item.subItem} />}
+                    </TableCell>
+                    {item.giftOption && item.giftOption.isGiftOptionSelected && (
+                      <TableCell colSpan={4}>
+                        <TableContainer component={Paper} variant="outlined">
+                          <Table size="small" sx={{ '& td': { border: 0 } }}>
+                            <TableBody>
+                              <TableRow>
+                                <TableCell sx={{ verticalAlign: 'top' }} width="20%">Gift Sender: </TableCell>
+                                <TableCell>{item.giftOption.giftSenderName}</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell sx={{ verticalAlign: 'top' }}>Message:</TableCell>
+                                <TableCell>{item.giftOption.giftMessage}</TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </TableCell>
                     )}
                   </TableRow>
+                  {/* {item.giftOption && item.giftOption.isGiftOptionSelected && (
+                  <>
+                    <TableRow sx={{ '& td': { border: 0 } }}>
+                      <TableCell>
+                        Gift Message:
+                      </TableCell>
+                      <TableCell colSpan={4}>
+                        {item.giftOption.giftMessage}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={5}>{item.giftOption.giftMessage}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>{item.giftOption.giftSenderName}</TableCell>
+                    </TableRow>
+                  </>
+                  )} */}
                 </TableBody>
               )}
             </Table>
-          ))}
-        </TableContainer>
-      </Box>
+          </TableContainer>
+        </Box>
+      ))}
+
       <Box marginTop={2}>
-        <TableContainer component={Paper}>
-          <Table>
+        <TableContainer component={Paper} variant="outlined">
+          <Table size="small">
             <TableHead>
-              <TableRow>
+              <TableRow component={Paper}>
                 <TableCell align="center">Billing ZIPcode</TableCell>
                 <TableCell align="right">Subtotal</TableCell>
                 <TableCell align="right">
@@ -122,7 +162,7 @@ function OrdersTableEntryInfo({ order }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
+              <TableRow component={Paper} variant="none">
                 <TableCell align="center">{order.zipCode}</TableCell>
                 <TableCell align="right">
                   $

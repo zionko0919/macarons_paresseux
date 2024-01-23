@@ -72,7 +72,7 @@ function CurrentOrderTable() {
   useEffect(() => {
     const interval = setInterval(() => {
       loadOrders();
-    }, 500000); // Polling interval in milliseconds (e.g., 5000ms = 5 seconds)
+    }, 5000000); // Polling interval in milliseconds (e.g., 5000ms = 5 seconds)
 
     return () => clearInterval(interval);
   }, []); // Run only once on mount
@@ -133,13 +133,45 @@ function CurrentOrderTable() {
   //     return 0;
   //   });
 
+  // const sortedData = useMemo(() => {
+  //   const startIndex = page * rowsPerPage;
+  //   const endIndex = startIndex + rowsPerPage;
+  //   return orders
+  //     .filter(
+  //       (row) => row.invoiceNumber.toString().toLowerCase().includes(searchValue.toLowerCase())
+  //           || row.name.toLowerCase().includes(searchValue.toLowerCase())
+  //           || row.phone.toString().toLowerCase().includes(searchValue.toLowerCase()),
+  //     )
+  //     .sort((a, b) => {
+  //       if (sortConfig.key !== null) {
+  //         if (a[sortConfig.key] < b[sortConfig.key]) {
+  //           return sortConfig.direction === 'ascending' ? -1 : 1;
+  //         }
+  //         if (a[sortConfig.key] > b[sortConfig.key]) {
+  //           return sortConfig.direction === 'ascending' ? 1 : -1;
+  //         }
+  //       }
+  //       return 0;
+  //     })
+  //     .slice(startIndex, endIndex);
+  // }, [orders, searchValue, sortConfig, page, rowsPerPage]);
+
   const sortedData = useMemo(() => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
+    const searchValueWithoutHyphens = searchValue.replace(/-/g, ''); // Remove hyphens from the search value
     return orders
       .filter(
-        (row) => row.invoiceNumber.toString().toLowerCase().includes(searchValue.toLowerCase())
-            || row.name.toLowerCase().includes(searchValue.toLowerCase()),
+        (row) => {
+          // Remove hyphens from the phone number for search comparison
+          const phoneNumberWithoutHyphens = row.phone.replace(/-/g, '');
+          return row.invoiceNumber.toString().toLowerCase().includes(
+            searchValueWithoutHyphens.toLowerCase(),
+          ) || row.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
+            || phoneNumberWithoutHyphens.toLowerCase().includes(
+              searchValueWithoutHyphens.toLowerCase(),
+            );
+        },
       )
       .sort((a, b) => {
         if (sortConfig.key !== null) {
@@ -168,8 +200,7 @@ function CurrentOrderTable() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell />
-                <TableCell>
+                <TableCell align="center">
                   <div>
                     Invoice Number
                     <button type="button" onClick={() => handleSort('invoiceNumber')}>
@@ -181,7 +212,7 @@ function CurrentOrderTable() {
                     </button>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <div>
                     Customer Name
                     <button type="button" onClick={() => handleSort('name')}>
@@ -193,7 +224,10 @@ function CurrentOrderTable() {
                     </button>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
+                  Phone
+                </TableCell>
+                <TableCell align="center">
                   <div>
                     Order Date/Time
                     <button type="button" onClick={() => handleSort('orderTimeLog')}>
@@ -205,7 +239,7 @@ function CurrentOrderTable() {
                     </button>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <div>
                     Pickup Date/Time
                     <button type="button" onClick={() => handleSort('pickUpDateTime')}>
@@ -217,18 +251,17 @@ function CurrentOrderTable() {
                     </button>
                   </div>
                 </TableCell>
-                <TableCell>To Do</TableCell>
+                <TableCell align="center">Time Left</TableCell>
+                <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {sortedData.map((row) => (
                 <Fragment key={row.invoiceNumber}>
                   <TableRow onClick={() => handleRowClick(row)}>
-                    <TableCell>
-                      <Checkbox />
-                    </TableCell>
                     <TableCell>{row.invoiceNumber}</TableCell>
                     <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.phone}</TableCell>
                     <TableCell>{row.orderTimeLog}</TableCell>
                     <TableCell>{row.pickUpDateTime}</TableCell>
                     <TableCell><CountdownTimer targetDateTime={row.pickUpDateTime} /></TableCell>
