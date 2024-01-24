@@ -1,6 +1,9 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
+import {
+  Container, Box, Typography, Paper,
+} from '@mui/material';
 import OrderContext from '../context/OrderContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import CurrentOrderTable from './OrdersCurrentTable';
@@ -58,7 +61,10 @@ function Orders() {
   console.log(orders);
 
   return (
-    <CurrentOrderTable />
+    <Container>
+      <Typography variant="h5">Order Queue</Typography>
+      <CurrentOrderTable />
+    </Container>
   );
 
   // return (

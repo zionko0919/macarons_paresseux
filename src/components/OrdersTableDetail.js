@@ -96,29 +96,6 @@ function OrdersTableEntryInfo({ order }) {
                       && item.giftOption.isGiftOptionSelected ? 2 : 0)).toFixed(2)}
                     </TableCell>
                   </TableRow>
-                  {item.category === 'pack' && (
-                    <TableRow>
-                      <TableCell align="right" colSpan={5}>
-                        <SubitemTable subitem={item.subItem} />
-                        {item.giftOption && item.giftOption.isGiftOptionSelected && (
-                          <TableContainer component={Paper} variant="none">
-                            <Table size="small">
-                              <TableBody>
-                                <TableRow>
-                                  <TableCell>Gift Sender: </TableCell>
-                                  <TableCell>{item.giftOption.giftSenderName}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                  <TableCell>Message:</TableCell>
-                                  <TableCell>{item.giftOption.giftMessage}</TableCell>
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </Fragment>
               ))}
               {packOrderItems.map((item) => (
@@ -153,12 +130,12 @@ function OrdersTableEntryInfo({ order }) {
                             <Table size="small">
                               <TableBody>
                                 <TableRow>
-                                  <TableCell>Gift Sender: </TableCell>
-                                  <TableCell>{item.giftOption.giftSenderName}</TableCell>
-                                </TableRow>
-                                <TableRow>
                                   <TableCell>Message:</TableCell>
                                   <TableCell>{item.giftOption.giftMessage}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                  <TableCell>Gift From: </TableCell>
+                                  <TableCell>{item.giftOption.giftSenderName}</TableCell>
                                 </TableRow>
                               </TableBody>
                             </Table>

@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
+import { Alert, Typography } from '@mui/material';
+import { SentimentSatisfiedAlt, SentimentVeryDissatisfied } from '@mui/icons-material';
 
 function CountdownTimer({ targetDateTime }) {
   const calculateTimeLeft = () => {
@@ -14,7 +16,7 @@ function CountdownTimer({ targetDateTime }) {
     }
 
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    timeLeft.days = days > 0 ? `${days} ${days === 1 ? 'day' : 'days'}` : '';
+    timeLeft.days = days > 0 ? `${days} ${days === 1 ? 'd' : 'd'}` : '';
 
     const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
     timeLeft.hours = (`0${hours}`).slice(-2);
@@ -43,26 +45,26 @@ function CountdownTimer({ targetDateTime }) {
   } = timeLeft;
 
   return (
-    <div>
+    <Typography component="div">
       {!isCountdownOver && (
-      <p>
-        -
-        {' '}
-        {`${days} ${hours} : ${minutes} : ${seconds}`}
-        {' '}
-        left
-      </p>
+      <Alert security="success" icon={<SentimentSatisfiedAlt ontSize="inherit" />}>
+        <Typography component="p" sx={{ fontSize: 14 }}>
+          -
+          {' '}
+          {`${days} ${hours} : ${minutes} : ${seconds}`}
+        </Typography>
+      </Alert>
       )}
       {isCountdownOver && (
-      <p>
-        +
-        {' '}
-        {`${days} ${hours} : ${minutes} : ${seconds}`}
-        {' '}
-        passed
-      </p>
+      <Alert severity="error" icon={<SentimentVeryDissatisfied fontSize="inherit" />}>
+        <Typography component="p" sx={{ fontSize: 14 }}>
+          +
+          {' '}
+          {`${days} ${hours} : ${minutes} : ${seconds}`}
+        </Typography>
+      </Alert>
       )}
-    </div>
+    </Typography>
   );
 }
 

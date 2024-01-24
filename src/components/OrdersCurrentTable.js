@@ -19,7 +19,12 @@ import {
   TextField,
   Container,
   TablePagination,
+  IconButton,
 } from '@mui/material';
+import {
+  DeleteRounded, CheckCircleRounded, SentimentDissatisfied,
+  SentimentSatisfiedAlt, ArrowUpward, ArrowDownward, SortRounded,
+} from '@mui/icons-material';
 import OrderContext from '../context/OrderContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import CurrentTime from './OrdersTableTimer';
@@ -35,6 +40,7 @@ function CurrentOrderTable() {
   const [expandedRow, setExpandedRow] = useState(null);
   const [searchValue, setSearchValue] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+  const [pickUpDateTimeFilter, setPickUpDateTimeFilter] = useState('');
 
   const { currentUser } = useCurrentUserContext();
 
@@ -94,9 +100,9 @@ function CurrentOrderTable() {
     }
   };
 
-  const handleSearchChange = (event) => {
-    setSearchValue(event.target.value);
-  };
+  // const handleSearchChange = (event) => {
+  //   setSearchValue(event.target.value);
+  // };
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -156,6 +162,43 @@ function CurrentOrderTable() {
   //     .slice(startIndex, endIndex);
   // }, [orders, searchValue, sortConfig, page, rowsPerPage]);
 
+  // const sortedData = useMemo(() => {
+  //   const startIndex = page * rowsPerPage;
+  //   const endIndex = startIndex + rowsPerPage;
+  //   const searchValueWithoutHyphens = searchValue.replace(/-/g, '');
+  //   return orders
+  //     .filter(
+  //       (row) => {
+  //         // Remove hyphens from the phone number for search comparison
+  //         const phoneNumberWithoutHyphens = row.phone.replace(/-/g, '');
+  //         return row.invoiceNumber.toString().toLowerCase().includes(
+  //           searchValueWithoutHyphens.toLowerCase(),
+  //         ) || row.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
+  //           || phoneNumberWithoutHyphens.toLowerCase().includes(
+  //             searchValueWithoutHyphens.toLowerCase(),
+  //           );
+  //       },
+  //     )
+  //     .sort((a, b) => {
+  //       if (sortConfig.key !== null) {
+  //         if (a[sortConfig.key] < b[sortConfig.key]) {
+  //           return sortConfig.direction === 'ascending' ? -1 : 1;
+  //         }
+  //         if (a[sortConfig.key] > b[sortConfig.key]) {
+  //           return sortConfig.direction === 'ascending' ? 1 : -1;
+  //         }
+  //       }
+  //       return 0;
+  //     })
+  //     .slice(startIndex, endIndex);
+  // }, [orders, searchValue, sortConfig, page, rowsPerPage]);
+
+  const handleSearchChange = (event) => {
+    const { value } = event.target;
+    setSearchValue(value);
+    setPickUpDateTimeFilter(value); // Update pickUpDateTimeFilter with the search value
+  };
+
   const sortedData = useMemo(() => {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
@@ -163,17 +206,18 @@ function CurrentOrderTable() {
     return orders
       .filter(
         (row) => {
-          // Remove hyphens from the phone number for search comparison
+          // Filter by invoiceNumber, name, phone, and pickUpDateTime
           const phoneNumberWithoutHyphens = row.phone.replace(/-/g, '');
-          return row.invoiceNumber.toString().toLowerCase().includes(
-            searchValueWithoutHyphens.toLowerCase(),
-          ) || row.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
-            || phoneNumberWithoutHyphens.toLowerCase().includes(
-              searchValueWithoutHyphens.toLowerCase(),
-            );
+          return row.invoiceNumber.toString().toLowerCase()
+            .includes(searchValueWithoutHyphens.toLowerCase())
+            || row.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
+            || phoneNumberWithoutHyphens.toLowerCase()
+              .includes(searchValueWithoutHyphens.toLowerCase())
+            || row.pickUpDateTime.toLowerCase().includes(pickUpDateTimeFilter.toLowerCase());
         },
       )
       .sort((a, b) => {
+        // Sort by the selected key and direction
         if (sortConfig.key !== null) {
           if (a[sortConfig.key] < b[sortConfig.key]) {
             return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -185,117 +229,143 @@ function CurrentOrderTable() {
         return 0;
       })
       .slice(startIndex, endIndex);
-  }, [orders, searchValue, sortConfig, page, rowsPerPage]);
+  }, [orders, searchValue, pickUpDateTimeFilter, sortConfig, page, rowsPerPage]);
 
   return (
-    <Container>
-      <Box>
-        <TextField
-          label="Search"
-          variant="outlined"
-          value={searchValue}
-          onChange={handleSearchChange}
+
+    <Box>
+      <TextField
+        label="Search"
+        variant="outlined"
+        value={searchValue}
+        onChange={handleSearchChange}
+      />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">
+                <Typography component="div">
+                  Invoice Number
+                  <IconButton type="button" onClick={() => handleSort('invoiceNumber')} size="small">
+                    {sortConfig.key !== 'invoiceNumber' && <SortRounded />}
+                    {sortConfig.key === 'invoiceNumber' && (
+                      <span>
+                        {sortConfig.direction === 'ascending' ? <ArrowUpward /> : <ArrowDownward />}
+                      </span>
+                    )}
+                  </IconButton>
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography component="div">
+                  Customer Name
+                  <IconButton type="button" onClick={() => handleSort('name')} size="small">
+                    {sortConfig.key !== 'name' && <SortRounded />}
+                    {sortConfig.key === 'name' && (
+                      <span>
+                        {sortConfig.direction === 'ascending' ? <ArrowUpward /> : <ArrowDownward />}
+                      </span>
+                    )}
+                  </IconButton>
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                Phone
+              </TableCell>
+              <TableCell align="center">
+                <Typography component="div">
+                  Order Date/Time
+                  <IconButton type="button" onClick={() => handleSort('orderTimeLog')} size="small">
+                    {sortConfig.key !== 'orderTimeLog' && <SortRounded />}
+                    {sortConfig.key === 'orderTimeLog' && (
+                      <span>
+                        {sortConfig.direction === 'ascending' ? <ArrowUpward /> : <ArrowDownward />}
+                      </span>
+                    )}
+                  </IconButton>
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography component="div">
+                  Pickup Date/Time
+                  <IconButton type="button" onClick={() => handleSort('pickUpDateTime')} size="small">
+                    {sortConfig.key !== 'pickUpDateTime' && <SortRounded />}
+                    {sortConfig.key === 'pickUpDateTime' && (
+                      <span>
+                        {sortConfig.direction === 'ascending' ? <ArrowUpward /> : <ArrowDownward />}
+                      </span>
+                    )}
+                  </IconButton>
+                </Typography>
+              </TableCell>
+              <TableCell align="center">Time Left</TableCell>
+              <TableCell align="center">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedData.map((row) => (
+              <Fragment key={row.invoiceNumber}>
+                <TableRow onClick={() => handleRowClick(row)}>
+                  <TableCell>{row.invoiceNumber}</TableCell>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.phone}</TableCell>
+                  <TableCell>
+                    {new Intl.DateTimeFormat('en-US', {
+                      weekday: 'short',
+                      year: '2-digit',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                    }).format(new Date(row.orderTimeLog))}
+                  </TableCell>
+                  <TableCell>
+                    {new Intl.DateTimeFormat('en-US', {
+                      weekday: 'short',
+                      year: '2-digit',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                    }).format(new Date(row.pickUpDateTime))}
+                  </TableCell>
+
+                  <TableCell><CountdownTimer targetDateTime={row.pickUpDateTime} /></TableCell>
+                  <TableCell>
+                    <IconButton>
+                      <CheckCircleRounded onClick={(e) => { e.stopPropagation(); }} />
+                    </IconButton>
+                    <IconButton onClick={(e) => { e.stopPropagation(); deleteOrder(row); }}>
+                      <DeleteRounded />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+                    <Collapse in={expandedRow === row} timeout="auto" unmountOnExit>
+                      <Box margin={1}>
+                        <OrdersTableEntryInfo order={row} />
+                      </Box>
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
+              </Fragment>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          component="div"
+          count={orders.length} // Total number of rows
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">
-                  <div>
-                    Invoice Number
-                    <button type="button" onClick={() => handleSort('invoiceNumber')}>
-                      {sortConfig.key === 'invoiceNumber' && (
-                      <span>
-                        {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                      </span>
-                      )}
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell align="center">
-                  <div>
-                    Customer Name
-                    <button type="button" onClick={() => handleSort('name')}>
-                      {sortConfig.key === 'name' && (
-                      <span>
-                        {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                      </span>
-                      )}
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell align="center">
-                  Phone
-                </TableCell>
-                <TableCell align="center">
-                  <div>
-                    Order Date/Time
-                    <button type="button" onClick={() => handleSort('orderTimeLog')}>
-                      {sortConfig.key === 'orderTimeLog' && (
-                      <span>
-                        {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                      </span>
-                      )}
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell align="center">
-                  <div>
-                    Pickup Date/Time
-                    <button type="button" onClick={() => handleSort('pickUpDateTime')}>
-                      {sortConfig.key === 'pickUpDateTime' && (
-                      <span>
-                        {sortConfig.direction === 'ascending' ? '↑' : '↓'}
-                      </span>
-                      )}
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell align="center">Time Left</TableCell>
-                <TableCell align="center">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedData.map((row) => (
-                <Fragment key={row.invoiceNumber}>
-                  <TableRow onClick={() => handleRowClick(row)}>
-                    <TableCell>{row.invoiceNumber}</TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                    <TableCell>{row.orderTimeLog}</TableCell>
-                    <TableCell>{row.pickUpDateTime}</TableCell>
-                    <TableCell><CountdownTimer targetDateTime={row.pickUpDateTime} /></TableCell>
-                    <TableCell>
-                      <Button onClick={() => deleteOrder(row)}>
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-                      <Collapse in={expandedRow === row} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                          <OrdersTableEntryInfo order={row} />
-                        </Box>
-                      </Collapse>
-                    </TableCell>
-                  </TableRow>
-                </Fragment>
-              ))}
-            </TableBody>
-          </Table>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 50, 100]}
-            component="div"
-            count={orders.length} // Total number of rows
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </TableContainer>
-      </Box>
-    </Container>
+      </TableContainer>
+    </Box>
+
   );
 }
 
