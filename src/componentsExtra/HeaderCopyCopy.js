@@ -8,10 +8,10 @@ import {
 } from '@mui/material';
 import { ShoppingCartOutlined, MenuRounded } from '@mui/icons-material';
 import GastonMacaronLogo from '../images/logos_icons/gaston_macaron_small_logo.png';
-import Sidebar from './Sidebar';
+import Sidebar from '../components/Sidebar';
 import CartIcon from '../images/cart.svg';
-import UserDetails from './UserDetails';
-import './Header.css';
+import UserDetails from '../components/UserDetails';
+import '../components/Header.css';
 
 function Header({ cart }) {
   const [isNavBar, setIsNavBar] = useState(null);

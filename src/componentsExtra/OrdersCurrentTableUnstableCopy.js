@@ -22,7 +22,6 @@ import {
   TablePagination,
   IconButton,
   ButtonGroup,
-  Snackbar,
 } from '@mui/material';
 import {
   DeleteRounded, CheckCircleRounded, SentimentDissatisfied, Info, Check,
@@ -30,7 +29,6 @@ import {
 } from '@mui/icons-material';
 import OrderContext from '../context/OrderContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
-import DashboardContext from '../context/DashboardContext';
 import CurrentTime from './OrdersTableTimer';
 import CountdownTimer from './OrdersTableCountdown';
 import OrdersTableEntryInfo from './OrdersTableDetail';
@@ -44,8 +42,6 @@ function CurrentOrderTable() {
   const [orders, setOrders] = useState([]);
   const [expandedRow, setExpandedRow] = useState(null);
 
-  const [readyOnTime, setReadyOnTime] = useState(true);
-
   const [searchValue, setSearchValue] = useState('');
   const [sortingMethod, setSortMethod] = useState({ key: null, direction: 'ascending' });
   const [pickUpDateTimeFilter, setPickUpDateTimeFilter] = useState('');
@@ -54,10 +50,6 @@ function CurrentOrderTable() {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const {
-    setArchievedOrders, submitReadiedOrder, archievedOrders,
-  } = useContext(DashboardContext);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -112,7 +104,7 @@ function CurrentOrderTable() {
 
     const interval = setInterval(() => {
       loadOrders();
-    }, 1000000000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [currentUser.access, loadOrders]);
@@ -124,14 +116,6 @@ function CurrentOrderTable() {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const handleReady = (e, row) => {
-    const currentTime = new Date();
-    const isReadyOnTime = currentTime < new Date(row.pickUpDateTime);
-    setReadyOnTime(isReadyOnTime);
-    submitReadiedOrder(e, { ...row, readyOnTime: isReadyOnTime });
-    deleteOrder(row);
   };
 
   const handleRowClick = (row) => {
@@ -302,28 +286,21 @@ function CurrentOrderTable() {
                       minute: 'numeric',
                     }).format(new Date(row.pickUpDateTime))}
                   </TableCell>
+
                   <TableCell align="center">
-                    <CountdownTimer
-                      targetDateTime={row.pickUpDateTime}
-                    />
+                    <CountdownTimer targetDateTime={row.pickUpDateTime} />
                   </TableCell>
                   <TableCell align="center">
                     <ButtonGroup orientation="vertical" variant="text" size="small">
                       <Button
                         startIcon={<Check />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReady(e, row);
-                        }}
+                        onClick={(e) => { e.stopPropagation(); }}
                       >
                         Ready
                       </Button>
                       <Button
                         startIcon={<DeleteRounded />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteOrder(row);
-                        }}
+                        onClick={(e) => { e.stopPropagation(); deleteOrder(row); }}
                       >
                         Delete
                       </Button>

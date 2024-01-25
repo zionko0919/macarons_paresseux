@@ -210,6 +210,7 @@ function Cart({
         pickUpTime,
         pickUpDateTime,
         invoiceNumber,
+        currentCoupon: currentCoupon.length === 0 ? false : currentCoupon,
       });
       dispatch({ type: CartTypes.EMPTY });
       setShowSuccessAlert(true);
@@ -261,7 +262,7 @@ function Cart({
   // console.log(showTimeSelectionError);
 
   return (
-    <div className="cart-component">
+    <Container className="cart-component">
       <Alert
         visible={showSuccessAlert}
         type="success"
@@ -444,7 +445,7 @@ function Cart({
           </form>
         </>
       )}
-    </div>
+    </Container>
   );
 }
 

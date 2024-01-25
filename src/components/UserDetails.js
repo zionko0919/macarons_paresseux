@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import CurrentUserContext from '../context/CurrentUserContext';
-import Profile from '../images/profile.svg';
 import './UserDetails.css';
 
 function UserDetails() {
@@ -25,7 +24,6 @@ function UserDetails() {
             {currentUser.access === 'admin'
               ? <Link to="/orders">Dashboard</Link>
               : null}
-            <img src={Profile} alt="profile" />
             <p>{currentUser.username}</p>
             <button type="button" onClick={logout}>
               Log Out

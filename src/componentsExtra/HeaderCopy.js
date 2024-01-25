@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import GastonMacaronLogo from '../images/logos_icons/gaston_macaron_small_logo.png';
-import Sidebar from './Sidebar';
+import Sidebar from '../components/Sidebar';
 import CartIcon from '../images/cart.svg';
-import UserDetails from './UserDetails';
-import './Header.css';
+import UserDetails from '../components/UserDetails';
+import '../components/Header.css';
 // import './HeaderCopy.css';
 
 function Header({ cart }) {

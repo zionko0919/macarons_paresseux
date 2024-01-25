@@ -21,7 +21,7 @@ import { packMacListReducer, initialPackMacListState, PackMacListTypes } from '.
 import CurrentUserContext from './context/CurrentUserContext';
 import OrderContext from './context/OrderContext';
 import Login from './components/Login';
-import Orders from './components/Orders';
+import Dashboard from './components/Orders';
 
 const storageKey = 'cart';
 
@@ -192,44 +192,44 @@ function App() {
           value={OrderContextValues}
         >
           <Header cart={cart} />
-          <Container>
-            {drinkItems.length === 0 || macItems.length === 0 || packItems.legnth === 0
-              ? <div>Loading...</div>
-              : (
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route
-                    path="/orders"
-                    element={(
-                      <Orders />
+          {/* <Container> */}
+          {drinkItems.length === 0 || macItems.length === 0 || packItems.legnth === 0
+            ? <div>Loading...</div>
+            : (
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/orders/*"
+                  element={(
+                    <Dashboard />
               )}
-                  />
-                  <Route
-                    path="/cart"
-                    element={(
-                      <Cart
-                        cart={cart}
-                        dispatch={dispatch}
-                      />
+                />
+                <Route
+                  path="/cart"
+                  element={(
+                    <Cart
+                      cart={cart}
+                      dispatch={dispatch}
+                    />
                 )}
-                  />
-                  <Route
-                    path="/all_menu/*"
-                    element={(
-                      <AllMenu />
+                />
+                <Route
+                  path="/all_menu/*"
+                  element={(
+                    <AllMenu />
                 )}
-                  />
-                  <Route
-                    path="/ordernow/*"
-                    element={(
-                      <OrderNow />
+                />
+                <Route
+                  path="/ordernow/*"
+                  element={(
+                    <OrderNow />
                 )}
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              )}
-          </Container>
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            )}
+          {/* </Container> */}
           <Footer />
         </OrderContext.Provider>
       </CurrentUserContext.Provider>

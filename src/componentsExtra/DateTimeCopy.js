@@ -5,7 +5,7 @@ import React, {
 } from 'react';
 import { Select } from '@radix-ui/themes';
 import OrderContext from '../context/OrderContext';
-import Alert from './Alert';
+import Alert from '../components/Alert';
 
 function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
   const {
@@ -18,7 +18,7 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
   } = useContext(OrderContext);
 
   // const [showTimeSelectionError, setShowTimeSelectionError] = useState(false);
-  const currentDateTime = useMemo(() => new Date(), []); // Initialize currentDateTime using useMemo
+  const currentDateTime = useMemo(() => new Date(), []);
 
   const dateStamps = Array.from({ length: 7 }, (_, i) => {
     const today = new Date();
@@ -27,12 +27,12 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
   });
 
   const startTime = new Date();
-  startTime.setHours(10, 0, 0, 0); // Set the start time to 10:00 AM
+  startTime.setHours(10, 0, 0, 0);
 
   const endTime = new Date();
-  endTime.setHours(20, 30, 0, 0); // Set the end time to 8:30 PM
+  endTime.setHours(20, 30, 0, 0);
 
-  const interval = 30; // 30 minutes
+  const interval = 30;
 
   const timeStamps = [];
 
@@ -65,14 +65,11 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
   const handleDateChange = (value) => {
     setPickUpDate(value);
     if (value === 'date0') {
-      // If the selected date is today
       const selectedDateTime = new Date(`${pickUpDateString} ${pickUpTime}`);
       // console.log(selectedDateTime);
       if (selectedDateTime < currentDateTime) {
-        // Display an alert if the selected time is in the past
         setShowTimeSelectionError(true);
       } else {
-        // Hide the alert
         setShowTimeSelectionError(false);
       }
     }
@@ -80,16 +77,13 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
 
   const handleTimeChange = (value) => {
     if (value === 'ASAP') {
-      // If ASAP is selected, hide the alert and set the selected time
       setShowTimeSelectionError(false);
       setPickUpTime(value);
     } else {
       const selectedDateTime = new Date(`${pickUpDateString} ${value}`);
       if (selectedDateTime < currentDateTime) {
-        // Display an alert if the selected time is in the past
         setShowTimeSelectionError(true);
       } else {
-        // Hide the alert and set the selected time
         setShowTimeSelectionError(false);
         setPickUpTime(value);
       }
@@ -105,13 +99,10 @@ function DateTime({ showTimeSelectionError, setShowTimeSelectionError }) {
 
   useEffect(() => {
     if (pickUpDate === 'date0') {
-      // If the selected date is today
       const selectedDateTime = new Date(`${pickUpDateString} ${pickUpTime}`);
       if (selectedDateTime < currentDateTime) {
-        // Display an alert if the selected time is in the past
         setShowTimeSelectionError(true);
       } else {
-        // Hide the alert
         setShowTimeSelectionError(false);
       }
     }
