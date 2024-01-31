@@ -6,18 +6,14 @@ import {
   useEffect, useState, useContext, useMemo, useCallback,
 } from 'react';
 import {
-  Container, Box, Typography, Paper, Button, Alert,
+  Container, Box, Typography, Paper, Button,
 } from '@mui/material';
 import { Link, Route, Routes } from 'react-router-dom';
 import OrderContext from '../context/OrderContext';
 import DashboardContext from '../context/DashboardContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
-import CurrentOrderTable from './OrdersCurrentTable';
-import CurrentQueue from './CurrentQueue';
-import ArchiveOrderViewer from './ArchiveOrders';
-import ProductManagement from './ProductManagement';
-import ServiceManagement from './ServiceManagement';
-import OperationManagement from './OperationManagement';
+// import CurrentOrderTable from './OrdersCurrentTable';
+// import CurrentQueue from './CurrentQueue';
 // import './Orders.css';
 
 function Dashboard() {
@@ -38,6 +34,7 @@ function Dashboard() {
   useEffect(
     () => {
       if (currentUser.access === 'admin') {
+        // loadOrders();
         const ws = new WebSocket(`${(
           window.location.protocol === 'https:' ? 'wss://' : 'ws://'
         )}${window.location.host}/ws-cafe`);
@@ -55,7 +52,6 @@ function Dashboard() {
           console.log('disconnected');
         };
         return () => {
-          ws.close();
           setCurrentOrders([]);
         };
       }
@@ -113,58 +109,24 @@ function Dashboard() {
 
   return (
     <DashboardContext.Provider value={DashboardContextValues}>
-
-      {currentUser.access !== 'admin'
-        ? (
-          <Container maxWidth="xl">
-            <Box marginTop={3}>
-
-              <Alert color="error" variant="filled">
-                Access Denied
-              </Alert>
-            </Box>
-          </Container>
-        ) : (
-          <Container maxWidth="xl">
-            <Box variant="outlined">
-              <Typography variant="h5">Dashboard #ToDo</Typography>
-              <Box>
-                <Link to="/orders">Dashboard Home</Link>
-              </Box>
-              <Box>
-                <Link to="/orders/current_orders">Current Order Queue</Link>
-              </Box>
-              <Box>
-                <Link to="/orders/archive_orders">Archive Orders</Link>
-              </Box>
-              <Box>
-                <Link to="/orders/operation_management">Operation Management</Link>
-              </Box>
-              <Box>
-                <Link to="/orders/product_management">Product Management</Link>
-              </Box>
-              <Box>
-                <Link to="/orders/service_management">Service Management</Link>
-              </Box>
-            </Box>
-            <Routes>
-              <Route path="/archive_orders" element={<ArchiveOrderViewer />} />
-            </Routes>
-            <Routes>
-              <Route path="/current_orders" element={<CurrentQueue />} />
-            </Routes>
-            <Routes>
-              <Route path="/product_management" element={<ProductManagement />} />
-            </Routes>
-            <Routes>
-              <Route path="/service_management" element={<ServiceManagement />} />
-            </Routes>
-            <Routes>
-              <Route path="/operation_management" element={<OperationManagement />} />
-            </Routes>
-          </Container>
-        )}
-
+      <Container maxWidth="xl">
+        <Box variant="outlined">
+          <Typography variant="h5">Dashboard #ToDo</Typography>
+          <Box>
+            <Link to="/orders">Dashboard Home</Link>
+          </Box>
+          <Box>
+            <Link to="/orders/current_orders">Current Order Queue</Link>
+          </Box>
+          <Box>
+            <Link to="/orders/archive_orders">Archive Orders</Link>
+          </Box>
+        </Box>
+        <Routes>
+          {/* <Route path="/current_orders" element={<CurrentQueue />} /> */}
+          {/* <CurrentQueue /> */}
+        </Routes>
+      </Container>
     </DashboardContext.Provider>
   );
 }

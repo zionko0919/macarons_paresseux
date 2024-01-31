@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import {
@@ -22,13 +23,20 @@ import {
   TablePagination,
   IconButton,
   ButtonGroup,
-  Grid,
+  Snackbar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControl,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+  FormLabel,
 } from '@mui/material';
 import {
-  DeleteRounded, CheckCircleRounded, SentimentDissatisfied, Info, Check,
-  SentimentSatisfiedAlt, ArrowUpward, ArrowDownward, SortRounded, Close, Edit,
+  DeleteRounded, CheckCircleRounded, SentimentDissatisfied, Info, Check, Edit,
+  SentimentSatisfiedAlt, ArrowUpward, ArrowDownward, SortRounded, Close, CurrencyExchange,
 } from '@mui/icons-material';
-import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import OrderContext from '../context/OrderContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import DashboardContext from '../context/DashboardContext';
@@ -36,14 +44,15 @@ import CurrentTime from './OrdersTableTimer';
 import CountdownTimer from './OrdersTableCountdown';
 import OrdersTableEntryInfo from './OrdersTableDetail';
 import CurrentTimeClock from './CurrentTimeClock';
+import ExchangeModal from './ExchangeModal';
 
-function CurrentOrderTable() {
+function ArchieveOrderTable() {
   const {
     macItems, drinkItems, packItems, optionalItems,
   } = useContext(OrderContext);
 
   const [orders, setOrders] = useState([]);
-  const [expandedRow, setExpandedRow] = useState(null);
+  const [expandedRow, setExpandedRow] = useState(false);
 
   const [readyOnTime, setReadyOnTime] = useState(true);
 
@@ -71,43 +80,14 @@ function CurrentOrderTable() {
 
   const loadOrders = useCallback(async () => {
     try {
-      const result = await axios.get('../api/orders');
+      const result = await axios.get('../api/archiveOrders');
       const newExpandedRow = result.data.find((order) => order.id === expandedRow?.id);
       setOrders(result.data);
-      setExpandedRow(newExpandedRow || null);
+      setExpandedRow(newExpandedRow || false);
     } catch (error) {
       console.error(error);
     }
   }, [expandedRow?.id]);
-
-  useEffect(
-    () => {
-      if (currentUser.access === 'admin') {
-        const ws = new WebSocket(`${(
-          window.location.protocol === 'https:' ? 'wss://' : 'ws://'
-        )}${window.location.host}/ws-cafe`);
-        ws.onopen = () => {
-          console.log('connected');
-        };
-        ws.onerror = (e) => {
-          console.error(e);
-        };
-        ws.onmessage = (message) => {
-          const newOrders = JSON.parse(message.data);
-          setOrders(newOrders);
-        };
-        ws.onclose = () => {
-          console.log('disconnected');
-        };
-        return () => {
-          ws.close();
-          setOrders([]);
-        };
-      }
-      return () => { };
-    },
-    [currentUser],
-  );
 
   useEffect(() => {
     if (currentUser.access === 'admin') {
@@ -125,49 +105,34 @@ function CurrentOrderTable() {
     try {
       await axios.delete(`../api/orders/${order.id}`);
       loadOrders();
-      enqueueSnackbar('Delete Order Successful', { variant: 'success' });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Something failed', { variant: 'error' });
     }
   };
 
-  const handleReady = async (e, row) => {
-    try {
-      const orderStatus = 'PAID';
-      const currentTime = new Date();
-      const isReadyOnTime = currentTime < new Date(row.pickUpDateTime);
-      let delayedTimeAmount = 0;
-      if (!isReadyOnTime) {
-        delayedTimeAmount = currentTime - (new Date(row.pickUpDateTime));
-      }
-      setReadyOnTime(isReadyOnTime);
-      submitReadiedOrder(e, {
-        ...row,
-        readyOnTime: isReadyOnTime,
-        delayedTimeAmount,
-        orderStatus,
-      });
-      await axios.delete(`../api/orders/${row.id}`);
-      loadOrders();
-      const message = isReadyOnTime
-        ? `Order ${row.invoiceNumber} is Ready on time`
-        : `Order ${row.invoiceNumber} is LATE`;
-      const variant = isReadyOnTime ? 'success' : 'warning';
-      enqueueSnackbar(message, { variant });
-    } catch (error) {
-      console.error(error);
-      enqueueSnackbar('Something failed', { variant: 'error' });
-    }
+  const handleReady = (e, row) => {
+    const currentTime = new Date();
+    const isReadyOnTime = currentTime < new Date(row.pickUpDateTime);
+    setReadyOnTime(isReadyOnTime);
+    submitReadiedOrder(e, { ...row, readyOnTime: isReadyOnTime });
+    deleteOrder(row);
   };
 
   const handleRowClick = (row) => {
     if (expandedRow === row) {
-      setExpandedRow(null);
+      setExpandedRow(false);
+      console.log('close row');
     } else {
       setExpandedRow(row);
+      console.log('open row');
     }
   };
+
+  // // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  // const [rowEntryExpand, setRowEntryExpand] = useState(false);
+  // const rowEntryClick = () => {
+  //   setRowEntryExpand(!rowEntryExpand);
+  // };
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -191,6 +156,35 @@ function CurrentOrderTable() {
     const { value } = event.target;
     setSearchValue(value);
     setPickUpDateTimeFilter(value);
+  };
+
+  const [apiError, setApiError] = useState('');
+  const handleReturn = async (e, row) => {
+    e.preventDefault();
+    try {
+      const orderStatus = 'RETURNED';
+      const returnedDate = new Date();
+      await axios.put(
+        `../api/archiveOrders/${row.id}`,
+        {
+          ...row,
+          orderStatus,
+          returnedDate,
+        },
+      );
+      loadOrders();
+    } catch (error) {
+      console.error(error);
+      setApiError(error?.response?.data?.error || 'Unknown Error');
+    }
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClickOpen = () => {
+    setIsOpen(true);
+  };
+  const handleClickClose = () => {
+    setIsOpen(false);
   };
 
   const sortedData = useMemo(() => {
@@ -222,29 +216,33 @@ function CurrentOrderTable() {
       })
       .slice(startIndex, endIndex);
   }, [orders, searchValue, pickUpDateTimeFilter, sortingMethod, page, rowsPerPage]);
+
+  const timeConversion = (timeInMiliSec) => {
+    const convertedSeconds = Math.floor(timeInMiliSec / 1000);
+    const hours = Math.floor(convertedSeconds / 3600);
+    const minutes = Math.floor((convertedSeconds % 3600) / 60);
+    const seconds = convertedSeconds % 60;
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
+
   return (
     <Paper>
-      <Grid container spacing={1}>
-        <Grid item xs={3}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            value={searchValue}
-            fullWidth
-            onChange={handleSearchChange}
-          />
-        </Grid>
-        <Grid item xs={7} />
-        <Grid item xs={2}>
-          <CurrentTimeClock />
-        </Grid>
-      </Grid>
+      <Container>
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={searchValue}
+          fullWidth
+          onChange={handleSearchChange}
+        />
+        <CurrentTimeClock />
+      </Container>
       <TableContainer component={Paper} elevation={24} sx={{ overflowX: 'initial' }}>
-        <Table size="small" stickyHeader>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell align="center">
-                <Typography component="div">
+                <Typography component="p">
                   Invoice Number
                   <IconButton type="button" onClick={() => handleSort('invoiceNumber')} size="small">
                     {sortingMethod.key !== 'invoiceNumber' && <SortRounded />}
@@ -257,7 +255,7 @@ function CurrentOrderTable() {
                 </Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography component="div">
+                <Typography component="p">
                   Customer Name
                   <IconButton type="button" onClick={() => handleSort('name')} size="small">
                     {sortingMethod.key !== 'name' && <SortRounded />}
@@ -270,12 +268,12 @@ function CurrentOrderTable() {
                 </Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography component="div">
+                <Typography component="p">
                   Phone
                 </Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography component="div">
+                <Typography component="p">
                   Order Date/Time
                   <IconButton type="button" onClick={() => handleSort('orderTimeLog')} size="small">
                     {sortingMethod.key !== 'orderTimeLog' && <SortRounded />}
@@ -288,7 +286,7 @@ function CurrentOrderTable() {
                 </Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography component="div">
+                <Typography component="p">
                   Pickup Date/Time
                   <IconButton type="button" onClick={() => handleSort('pickUpDateTime')} size="small">
                     {sortingMethod.key !== 'pickUpDateTime' && <SortRounded />}
@@ -301,12 +299,22 @@ function CurrentOrderTable() {
                 </Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography component="div">
-                  Time Left
+                <Typography component="p">
+                  Ready in Time
                 </Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography component="div">
+                <Typography component="p">
+                  Delayed Time
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography component="p">
+                  Status
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography component="p">
                   Actions
                 </Typography>
               </TableCell>
@@ -340,44 +348,44 @@ function CurrentOrderTable() {
                     }).format(new Date(row.pickUpDateTime))}
                   </TableCell>
                   <TableCell align="center">
-                    <CountdownTimer
-                      targetDateTime={row.pickUpDateTime}
-                    />
+                    {row.readyOnTime ? 'Yes' : 'Late'}
                   </TableCell>
                   <TableCell align="center">
-                    <SnackbarProvider maxSnack={5} />
-                    <ButtonGroup size="small">
-                      <Tooltip title="READY" placement="top">
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleReady(e, row);
-                          }}
-                        >
-                          <Check />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="DELETE" placement="top">
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteOrder(row);
-                          }}
-                        >
-                          <DeleteRounded />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="EDIT" placement="top">
+                    {timeConversion(row.delayedTimeAmount)}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.orderStatus}
+                  </TableCell>
 
-                        <IconButton>
-                          <Edit />
-                        </IconButton>
-                      </Tooltip>
+                  <TableCell align="center">
+                    <ButtonGroup variant="text">
+                      <Button
+                        startIcon={<CurrencyExchange />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // handleReturn(e, row);
+                          handleClickOpen();
+                        }}
+                        size="small"
+                      >
+                        RETURN
+                      </Button>
+                      <ExchangeModal isOpen={isOpen} onClose={handleClickClose} />
+
+                      <Button
+                        startIcon={<Edit />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        size="small"
+                      >
+                        EDIT
+                      </Button>
                     </ButtonGroup>
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                     <Collapse in={expandedRow === row} timeout="auto" unmountOnExit>
                       <Box margin={1}>
                         <OrdersTableEntryInfo order={row} />
@@ -403,4 +411,4 @@ function CurrentOrderTable() {
   );
 }
 
-export default CurrentOrderTable;
+export default ArchieveOrderTable;

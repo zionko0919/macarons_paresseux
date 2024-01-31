@@ -2,7 +2,9 @@
 /* eslint-disable no-unused-vars */
 import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Button, IconButton } from '@mui/material';
+import {
+  Button, IconButton, TableCell, TableRow, Typography,
+} from '@mui/material';
 import { Delete, MoreHoriz } from '@mui/icons-material';
 import OrderContext from '../context/OrderContext';
 import { CartTypes } from '../reducers/cartReducer';
@@ -42,7 +44,7 @@ function CartRow({
   const handleItemPriceWithGiftOption = () => {
     let itemPrice = (item.salPrice ?? item.price);
     if (cartItem.giftOption && cartItem.giftOption.isGiftOptionSelected) {
-      itemPrice += 1.5;
+      itemPrice += 2.0;
     }
     itemPrice *= cartItem.quantity;
     return itemPrice;
@@ -51,19 +53,23 @@ function CartRow({
   // console.log(cartItem.subItem);
   // console.log(cartItem.giftOption);
   return (
-    <tr>
-      <td>{cartItem.quantity}</td>
-      <td>{item.title}</td>
-      <td>
-        $
-        {handleItemPriceWithGiftOption().toFixed(2)}
-      </td>
-      <td>
-        {!cartItem.giftOption ? 'n/a' : null}
-        {cartItem.giftOption && (cartItem.giftOption.isGiftOptionSelected ? 'Yes' : 'No')}
-      </td>
+    <TableRow>
+      <TableCell align="center"><Typography variant="p">{cartItem.quantity}</Typography></TableCell>
+      <TableCell align="center"><Typography variant="p">{item.title}</Typography></TableCell>
+      <TableCell align="center">
+        <Typography variant="p">
+          $
+          {handleItemPriceWithGiftOption().toFixed(2)}
+        </Typography>
+      </TableCell>
+      <TableCell align="center">
+        <Typography variant="p">
+          {!cartItem.giftOption ? 'n/a' : null}
+          {cartItem.giftOption && (cartItem.giftOption.isGiftOptionSelected ? 'Yes' : 'No')}
+        </Typography>
+      </TableCell>
       {cartItem.category === 'pack' ? (
-        <td>
+        <TableCell align="center">
           <IconButton type="button" onClick={handleViewMoreModalOpen}>
             <MoreHoriz />
           </IconButton>
@@ -74,14 +80,14 @@ function CartRow({
             onClose={handleViewMoreModalClose}
             giftOption={cartItem.giftOption}
           />
-        </td>
-      ) : <td>n/a</td>}
-      <td>
+        </TableCell>
+      ) : <TableCell align="center"><Typography variant="p">n/a</Typography></TableCell>}
+      <TableCell align="center">
         <IconButton type="button" onClick={removeItemFromCart}>
           <Delete />
         </IconButton>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
 
@@ -90,6 +96,7 @@ CartRow.propTypes = {
     itemId: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
     category: PropTypes.string.isRequired,
+    orderStaus: PropTypes.string,
     subItem: PropTypes.arrayOf(PropTypes.shape({
       itemId: PropTypes.string.isRequired,
       quantity: PropTypes.number.isRequired,

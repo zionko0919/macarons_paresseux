@@ -43,6 +43,7 @@ export const cartReducer = (state, action) => {
         {
           itemId: action.itemId,
           category: action.category,
+          orderStatus: null,
           quantity: 1,
           key: Date.now(),
           subItem: action.macList,

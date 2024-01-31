@@ -5,7 +5,9 @@ import {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, IconButton, TextField, Container, Box, InputBase, Paper, Alert as AlertMUI,
+  Button, IconButton, TextField, Container, Box, InputBase, Paper, Grid,
+  Alert as AlertMUI, TableHead, TableCell, Typography, Table, TableContainer, TableBody,
+  TableRow, ButtonGroup, Stack,
 } from '@mui/material';
 import { Check, Replay, InfoOutlined } from '@mui/icons-material';
 import OrderContext from '../context/OrderContext';
@@ -150,13 +152,18 @@ function Cart({
 
   const taxRate = useMemo(
     () => {
-      const taxPercentage = parseInt(zipCode.substring(0, 1) || '0', 10) + 1;
-      return taxPercentage / 100;
+      const texasTaxRate = 6.25;
+      const countyTaxRate = 0;
+      const austinTaxRate = 1;
+      // const taxPercentage = parseInt(zipCode.substring(0, 1) || '0', 10) + 1;
+      // return (taxPercentage) / 100;
+      return (texasTaxRate + countyTaxRate + austinTaxRate) / 100;
     },
-    [zipCode],
+    // [zipCode],
+    [],
   );
 
-  // const apiKey = '3qMWDxIFQDjuMGl7G0dUnw==CSKNGN3OaFZ9r3nI'; // Replace with your actual API key
+  // const apiKey = ''; // Replace with your actual API key
 
   // async function getSalesTax() {
   //   try {
@@ -282,60 +289,110 @@ function Cart({
         <div>Your cart is empty.</div>
       ) : (
         <>
-          <table>
-            <thead>
-              <tr>
-                <th>Quantity</th>
-                <th>Item</th>
-                <th>Price</th>
-                <th>Gift Box</th>
-                <th>More Info</th>
-                <th>Remove</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => (
-                <CartRow
+          <Container maxWidth="md">
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableCell align="center" width="10%"><Typography variant="p">Quantity</Typography></TableCell>
+                  <TableCell align="center"><Typography variant="p">Item</Typography></TableCell>
+                  <TableCell align="center"><Typography variant="p">Price</Typography></TableCell>
+                  <TableCell align="center"><Typography variant="p">Gift Box</Typography></TableCell>
+                  <TableCell align="center"><Typography variant="p">More Info</Typography></TableCell>
+                  <TableCell align="center"><Typography variant="p">Remove</Typography></TableCell>
+                </TableHead>
+                <TableBody>
+                  {cart.map((item) => (
+                    <CartRow
                   // key={item.itemId}
-                  key={item.key}
-                  cartItem={item}
-                  dispatch={dispatch}
-                />
-              ))}
-            </tbody>
-          </table>
-          <div>
-            Discount: $
-            {couponDiscountPrice.toFixed(2)}
-            {' '}
-            (
-            {couponDiscountPercentage.toFixed(1)}
-            %)
-          </div>
-          <div>
-            Subtotal: $
-            {discountedSubTotal.toFixed(2)}
-          </div>
-          { zipCode.length === 5
-            ? (
-              <>
-                <div>
-                  Tax (
-                  { (taxRate * 100).toFixed(3) }
-                  %): $
-                  { taxAmount.toFixed(2) }
-                </div>
-                <div>
-                  Total: $
-                  { total.toFixed(2) }
-                </div>
-              </>
-            ) : (
+                      key={item.key}
+                      cartItem={item}
+                      dispatch={dispatch}
+                    />
+                  ))}
+                </TableBody>
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={4} />
+                    <TableCell align="right">
+                      <Typography variant="p" fontWeight="bold">
+                        Discount
+                        (
+                        {couponDiscountPercentage.toFixed(1)}
+                        %):
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="p" fontWeight="bold">
+                        - $
+                        {' '}
+                        {couponDiscountPrice.toFixed(2)}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={4} />
 
-              <AlertMUI icon={<InfoOutlined fontSize="inherit" />} severity="error" variant="filled">
-                Enter your ZIP Code to get the total price.
-              </AlertMUI>
-            )}
+                    <TableCell align="right">
+                      <Typography variant="p" fontWeight="bold">
+                        Subtotal:
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="p" fontWeight="bold">
+                        $
+                        {' '}
+                        {discountedSubTotal.toFixed(2)}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  { zipCode.length === 5
+                    ? (
+                      <>
+                        <TableRow>
+                          <TableCell colSpan={4} />
+                          <TableCell align="right">
+                            <Typography variant="p" fontWeight="bold">
+                              Tax (
+                              { (taxRate * 100).toFixed(3) }
+                              %):
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="right">
+                            <Typography variant="p" fontWeight="bold">
+                              + $
+                              {' '}
+                              { taxAmount.toFixed(2) }
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell colSpan={4} />
+
+                          <TableCell align="right">
+                            <Typography variant="p" fontWeight="bold">
+                              Total:
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="right">
+                            <Typography variant="p" fontWeight="bold">
+                              $
+                              {' '}
+                              { total.toFixed(2) }
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    ) : (
+                      <TableCell colSpan={6}>
+                        <AlertMUI icon={<InfoOutlined fontSize="inherit" />} severity="error" variant="filled">
+                          Enter your billing ZIP Code to proceed.
+                        </AlertMUI>
+                      </TableCell>
+                    )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Container>
           <h2>Promo Code</h2>
           <Container>
             <Box
@@ -344,31 +401,38 @@ function Cart({
                 '& > :not(style)': { m: 1 },
               }}
             >
-              <TextField
-                label="Promo Code"
-                type="text"
-                value={currentCoupon}
-                onChange={(event) => setCouponCodeForDiscount(event.target.value)}
-                disabled={isCouponInputDisabled}
-              />
-              <Button
-                type="button"
-                size="large"
-                variant="outlined"
-                onClick={applyCouponCodes}
-                disabled={isButtonDisabled}
-              >
-                <Check />
-              </Button>
-              <Button
-                type="button"
-                size="large"
-                variant="outlined"
-                onClick={resetCouponCodes}
-                hidden
-              >
-                <Replay />
-              </Button>
+              <Grid container spacing={2}>
+                <Grid item>
+                  <TextField
+                    size="small"
+                    label="Promo Code"
+                    type="text"
+                    value={currentCoupon}
+                    onChange={(event) => setCouponCodeForDiscount(event.target.value)}
+                    disabled={isCouponInputDisabled}
+                  />
+                </Grid>
+                <Grid item>
+                  <Stack spacing={1} direction="row">
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      onClick={applyCouponCodes}
+                      disabled={isButtonDisabled}
+                    >
+                      <Check />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      onClick={resetCouponCodes}
+                      hidden
+                    >
+                      <Replay />
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Grid>
             </Box>
           </Container>
           <Alert visible={couponSuccessAlert} type="success">
@@ -380,47 +444,64 @@ function Cart({
             {couponErrorMessage}
           </Alert>
           <h2>Store Pick-Up</h2>
-          <DateTime
-            showTimeSelectionError={showTimeSelectionError}
-            setShowTimeSelectionError={setShowTimeSelectionError}
-          />
+          <Container>
+            <Box component="text">
+              <DateTime
+                showTimeSelectionError={showTimeSelectionError}
+                setShowTimeSelectionError={setShowTimeSelectionError}
+              />
+            </Box>
+          </Container>
           <h2>Checkout</h2>
-          <form onSubmit={submitOrder}>
-            <label htmlFor="name">
-              Name
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(event) => onNameChange(event.target.value)}
-                required
-              />
-            </label>
-            <label htmlFor="phone">
-              Phone Number
-              <input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(event) => setFormattedPhone(event.target.value)}
-                aria-label="After a phone number is entered, you will automatically be moved to ZIP Code"
-              />
-            </label>
-            <label htmlFor="zipcode">
-              Billing ZIP Code
-              <input
-                id="zipcode"
-                type="text"
-                maxLength="5"
-                inputMode="numeric"
-                value={zipCode}
-                onChange={(event) => setZipCode(event.target.value)}
-                required
-                ref={zipRef}
-              />
-            </label>
-            <label htmlFor="payment">
-              Card Number
+          <Container>
+            <form onSubmit={submitOrder}>
+              <label htmlFor="name">
+                Name
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(event) => onNameChange(event.target.value)}
+                  required
+                />
+              </label>
+              <label htmlFor="phone">
+                Phone Number
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(event) => setFormattedPhone(event.target.value)}
+                  aria-label="After a phone number is entered, you will automatically be moved to ZIP Code"
+                />
+              </label>
+              <label htmlFor="zipcode">
+                Billing ZIP Code
+                <input
+                  id="zipcode"
+                  type="text"
+                  maxLength="5"
+                  inputMode="numeric"
+                  value={zipCode}
+                  onChange={(event) => setZipCode(event.target.value)}
+                  required
+                  ref={zipRef}
+                />
+              </label>
+              <label htmlFor="payment">
+                Card Number
+                <input
+                  id="cardnumber"
+                  type="text"
+                  maxLength="16"
+                  inputMode="numeric"
+                  value={cardNumber}
+                  onChange={(event) => setCardNumber(event.target.value)}
+                />
+              </label>
+              <button type="submit" disabled={!isFormValid || isSubmitting || showTimeSelectionError}>
+                Place Order
+              </button>
               {cardNumber.length === 0
                 ? (
                   <Alert visible={setCardNumberAlert} type="warning">
@@ -429,20 +510,8 @@ function Cart({
                     You can proceed without a card number.
                   </Alert>
                 ) : null }
-
-              <input
-                id="cardnumber"
-                type="text"
-                maxLength="16"
-                inputMode="numeric"
-                value={cardNumber}
-                onChange={(event) => setCardNumber(event.target.value)}
-              />
-            </label>
-            <button type="submit" disabled={!isFormValid || isSubmitting || showTimeSelectionError}>
-              Place Order
-            </button>
-          </form>
+            </form>
+          </Container>
         </>
       )}
     </Container>

@@ -22,7 +22,7 @@ function Footer() {
         mt: 'auto', // Push the footer to the bottom
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Grid container spacing={3}>
           <Grid item xs={12} sm={8}>
             <Typography variant="h6" color="text.primary" gutterBottom>

@@ -28,7 +28,7 @@ function Header({ cart }) {
 
   return (
     <AppBar position="static" color="default" className="app-bar-component">
-      <Container>
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* <Box className="logo-image-box" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
               <img
