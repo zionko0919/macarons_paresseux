@@ -68,7 +68,7 @@ import CountdownTimer from '../components/OrdersTableCountdown';
 import OrdersTableEntryInfo from '../components/OrdersTableDetail';
 import CurrentTimeClock from '../components/CurrentTimeClock';
 import ArchieveOrderStatusInfo from '../components/ArchiveOrderStatusInfoTable';
-import ItemExchangeTable from '../components/ItemExchangeTable';
+// import ItemExchangeTable from '../components/ItemExchangeTable';
 // import ExchangeDialog from './ExchangeModal';
 
 function RowClikableHeader({ row }) {
@@ -692,7 +692,7 @@ function RowClikableHeader({ row }) {
               (row.orderStatus === 'EXCHANGED' || row.orderStatus === 'REFUNDED')
                 ? (
                   <Box margin={1}>
-                    <ItemExchangeTable order={row} />
+                    {/* <ItemExchangeTable order={row} /> */}
                   </Box>
                 )
                 : null

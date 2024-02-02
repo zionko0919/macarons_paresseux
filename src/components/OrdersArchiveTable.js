@@ -609,7 +609,7 @@ function RowClikableHeader({ row }) {
               (row.orderStatus === 'EXCHANGED' || row.orderStatus === 'REFUNDED')
                 ? (
                   <Box margin={1}>
-                    <ItemExchangeTable order={row} />
+                    {/* <ItemExchangeTable order={row} /> */}
                   </Box>
                 )
                 : null

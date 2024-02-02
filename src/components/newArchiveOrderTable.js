@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import PropTypes from 'prop-types';
 import axios from 'axios';
 import {
   useState, useContext, useCallback, useEffect, useMemo, Fragment,
 } from 'react';
+import PropTypes from 'prop-types';
 import {
   Grid, Paper, Table, TableContainer, TableHead, TableBody, TableRow, TableCell,
   TablePagination, TextField, Typography, IconButton, ButtonGroup, Collapse, Box, Menu, MenuItem,
@@ -20,9 +20,7 @@ import ArchiveOrderExchangeDialog from './ArchiveOrderExchangeDialog';
 import OrdersTableEntryInfo from './OrdersTableDetail';
 import ItemExchangeTable from './ItemExchangeTable';
 
-function BasicOrderInfoRowEntry({ rowData }) {
-  const [apiError, setApiError] = useState('');
-
+function BasicOrderInfoRowEntry({ rowData, loadUpdates }) {
   // convert ms to hh:mm:ss_________________________________________________________
   const timeConverter = (timeInMiliSec) => {
     const convertedSeconds = Math.floor(timeInMiliSec / 1000);
@@ -49,6 +47,7 @@ function BasicOrderInfoRowEntry({ rowData }) {
   // _______________________________________________________________________________
 
   // Edit Button Handler____________________________________________________________
+  const [apiError, setApiError] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const editMenuOpen = Boolean(anchorEl);
   const editMenuClickHandler = (e) => {
@@ -58,52 +57,56 @@ function BasicOrderInfoRowEntry({ rowData }) {
     setAnchorEl(null);
   };
 
-  const moveRowDataToActiveQueue = useCallback(async (e, orderData) => {
+  const moveRowDataToActiveQueue = useCallback(async (e, order) => {
     e.preventDefault();
     try {
       await axios.post('../api/orders', {
-        invoiceNumber: orderData.invoiceNumber,
-        name: orderData.name,
-        phone: orderData.phone,
-        zipCode: orderData.zipCode,
-        orderTimeLog: orderData.orderTimeLog,
-        pickUpDateString: orderData.pickUpDateString,
-        pickUpTime: orderData.pickUpTime,
-        pickUpDateTime: orderData.pickUpDateTime,
-        items: orderData.items,
-        subTotal: orderData.subTotal,
-        couponCodeName: orderData.currentCoupon,
-        couponDiscountPercentage: orderData.couponDiscountPercentage,
-        couponDiscountPrice: orderData.couponDiscountPrice,
-        discountedSubTotal: orderData.discountedSubTotal,
-        taxRate: orderData.taxRate,
-        taxAmount: orderData.taxAmount,
-        total: orderData.total,
+        invoiceNumber: order.invoiceNumber,
+        name: order.name,
+        phone: order.phone,
+        zipCode: order.zipCode,
+        orderTimeLog: order.orderTimeLog,
+        pickUpDateString: order.pickUpDateString,
+        pickUpTime: order.pickUpTime,
+        pickUpDateTime: order.pickUpDateTime,
+        items: order.items,
+        subTotal: order.subTotal,
+        couponCodeName: order.currentCoupon,
+        couponDiscountPercentage: order.couponDiscountPercentage,
+        couponDiscountPrice: order.couponDiscountPrice,
+        discountedSubTotal: order.discountedSubTotal,
+        taxRate: order.taxRate,
+        taxAmount: order.taxAmount,
+        total: order.total,
       });
-      await axios.delete(`../api/archiveOrders/${orderData.id}`);
-      enqueueSnackbar('move to active queue: success', { variant: 'success' });
+      await axios.delete(`../api/archiveOrders/${order.id}`);
+      loadUpdates(order);
+      enqueueSnackbar('Move to active queue: Success', { variant: 'success' });
     } catch (error) {
       console.error(error);
       setApiError(error?.response?.data?.error || 'Unknown Error');
-      enqueueSnackbar('move to active queue: error', { variant: 'error' });
+      enqueueSnackbar('mMve to active queue: Fail', { variant: 'error' });
       console.log(apiError);
     }
-  }, [setApiError, apiError]);
+  }, [setApiError, apiError, loadUpdates]);
 
   const deleteRowDataForever = async (order) => {
     try {
       await axios.delete(`../api/archiveOrders/${order.id}`);
-      enqueueSnackbar('delete order: success', { variant: 'success' });
+      loadUpdates(order);
+      enqueueSnackbar('Delete: Success', { variant: 'success' });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Something failed', { variant: 'error' });
+      enqueueSnackbar('Delete: Fail', { variant: 'error' });
+      setApiError(error?.response?.data?.error || 'Unknown Error');
+      console.log(apiError);
     }
   };
 
   // _______________________________________________________________________________
 
   // api request to update order info_______________________________________________
-  const ExchangeAndRefundHandler = async () => {
+  const exchangeAndRefundHandler = async () => {
     try {
       const orderStatus = 'REFUNDED';
       const updatedRow = {
@@ -120,10 +123,10 @@ function BasicOrderInfoRowEntry({ rowData }) {
         })),
       };
       await axios.put(`../api/orders/${rowData.id}`, updatedRow);
-      enqueueSnackbar(`Refund for order ${rowData.invoiceNumber} successful`, { variant: 'success' });
+      enqueueSnackbar(`Refund for order ${rowData.invoiceNumber}: Success`, { variant: 'success' });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Refund failed: Error', { variant: 'error' });
+      enqueueSnackbar(`Refund for order ${rowData.invoiceNumber}: Fail`, { variant: 'error' });
     }
   };
   // ________________________________________________________________________________
@@ -239,10 +242,11 @@ function BasicOrderInfoRowEntry({ rowData }) {
               <OrdersTableEntryInfo order={rowData} />
             </Box>
             {
-              (rowData.orderStatus === 'EXCHANGED' || rowData.orderStatus === 'REFUNDED')
+              (rowData.anyReturns)
                 ? (
                   <Box margin={1}>
-                    <ItemExchangeTable order={rowData} />
+                    #Need to fix this part
+                    {/* <ItemExchangeTable order={rowData} /> */}
                   </Box>
                 )
                 : null
@@ -256,52 +260,100 @@ function BasicOrderInfoRowEntry({ rowData }) {
 }
 
 function NewArchiveTable() {
-  const [archiveOrder, setArchiveOrder] = useState([]);
+  const { currentUser } = useCurrentUserContext();
   const [searchValue, setSearchValue] = useState('');
   const [sortingMethod, setSortMethod] = useState({ key: null, direction: 'ascending' });
   const [pickUpDateTimeFilter, setPickUpDateTimeFilter] = useState('');
-  const { setArchiveOrders, submitReadiedOrder, archiveOrders } = useContext(DashboardContext);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // ______________________footer pagination and rows/page handlers___________________________
   const [page, setPage] = useState(0);
-  const tablefooterPageChangeHandler = (event, newPage) => setPage(newPage);
-  const tableFooterRowsPerPageHandler = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  const tablefooterPageChangeHandler = (e, newPage) => setPage(newPage);
+  const tableFooterRowsPerPageHandler = (e) => {
+    setRowsPerPage(parseInt(e.target.value, 10));
     setPage(0);
   };
   // _________________________________________________________________________________________
 
   // ______________________load archive order list from the backend___________________________
-  const [orders, setOrders] = useState([]);
-  const { currentUser } = useCurrentUserContext();
-  const loadOrders = useCallback(async () => {
-    try {
-      const result = await axios.get('../api/archiveOrders');
-      // const newExpandedRow = result.data.find((order) => order.id === expandedRow?.id);
-      setOrders(result.data);
-      // setExpandedRow(newExpandedRow || false);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const [archiveOrders, setArchiveOrders] = useState([]);
+  const [apiError, setApiError] = useState('');
+  useEffect(
+    () => {
+      if (currentUser.access === 'admin') {
+        const ws = new WebSocket(`${(
+          window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+        )}${window.location.host}/ws-cafe/`);
+        ws.onopen = () => {
+          // console.log('WebSocket Connected');
+        };
+        ws.onerror = (e) => {
+          console.error(e);
+        };
+        ws.onmessage = (message) => {
+          // console.log('OrdersCurrentTable Component:');
+          // console.log('Received WebSocket message:', message.data);
+          try {
+            const parsedMessage = JSON.parse(message.data);
+            if (parsedMessage.type === 'archiveOrders') {
+              const oldOrders = parsedMessage.data;
+              setArchiveOrders(oldOrders);
+            }
+          } catch (error) {
+            console.error('Error: ', error);
+            enqueueSnackbar('Loading Data: Failed', { variant: 'error' });
+            setApiError(error?.response?.data?.error || 'Unknown Error');
+            console.log(apiError);
+          }
+        };
+        ws.onclose = () => {
+          console.log('WebSocket Disconnected');
+        };
+        return () => {
+          ws.close();
+          setArchiveOrders([]);
+        };
+      }
+      return () => {};
+    },
+    [currentUser, apiError],
+  );
 
-  useEffect(() => {
-    if (currentUser.access === 'admin') {
-      loadOrders();
-    }
-    const interval = setInterval(loadOrders, 3000);
-    return () => clearInterval(interval);
-  }, [currentUser.access, loadOrders]);
+  const loadUpdatedArchiveOrders = (order) => {
+    const ws = new WebSocket(`${(
+      window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+    )}${window.location.host}/ws-cafe/`);
 
-  const deleteOrder = async (order) => {
-    try {
-      await axios.delete(`../api/orders/${order.id}`);
-      loadOrders();
-    } catch (error) {
-      console.error(error);
-    }
+    ws.onopen = () => {
+      console.log('WebSocket Connected');
+      // Send a message to the WebSocket server indicating that an order was deleted
+      ws.send(JSON.stringify({ type: 'orderDeleted', orderId: order.id }));
+    };
+
+    ws.onmessage = (message) => {
+      console.log('OrdersCurrentTable Component:');
+      console.log('Received WebSocket message:', message.data);
+      try {
+        const parsedMessage = JSON.parse(message.data);
+        if (parsedMessage.type === 'archiveOrders') {
+          const oldOrders = parsedMessage.data;
+          setArchiveOrders(oldOrders);
+        }
+      } catch (error) {
+        console.error('Error: ', error);
+        enqueueSnackbar('Loading Data: Failed', { variant: 'error' });
+        setApiError(error?.response?.data?.error || 'Unknown Error');
+        console.log(apiError);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket Disconnected');
+      ws.close();
+      setArchiveOrders([]);
+    };
   };
+
   // _________________________________________________________________________________________
 
   // _______________________________sort, filter, serach______________________________________
@@ -311,7 +363,7 @@ function NewArchiveTable() {
       direction = 'descending';
     }
     setSortMethod({ key, direction });
-    setOrders([...orders].sort((a, b) => {
+    setArchiveOrders([...archiveOrders].sort((a, b) => {
       if (key === 'pickUpDateTime' || key === 'orderTimeLog') {
         const dateA = new Date(a[key]).getTime();
         const dateB = new Date(b[key]).getTime();
@@ -323,8 +375,8 @@ function NewArchiveTable() {
     }));
   };
 
-  const searchChangeHandler = (event) => {
-    const { value } = event.target;
+  const searchChangeHandler = (e) => {
+    const { value } = e.target;
     setSearchValue(value);
     setPickUpDateTimeFilter(value);
   };
@@ -333,18 +385,18 @@ function NewArchiveTable() {
     const startIndex = page * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     const searchValueWithoutHyphens = searchValue.replace(/-/g, '');
-    return orders
-      .filter((rowData) => {
-        const phoneNumberWithoutHyphens = rowData.phone.replace(/-/g, '');
+    return archiveOrders
+      .filter((order) => {
+        const phoneNumberWithoutHyphens = order.phone.replace(/-/g, '');
         return (
-          rowData.invoiceNumber.toString().toLowerCase().includes(
+          order.invoiceNumber.toString().toLowerCase().includes(
             searchValueWithoutHyphens.toLowerCase(),
           )
-          || rowData.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
+          || order.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
           || phoneNumberWithoutHyphens.toLowerCase().includes(
             searchValueWithoutHyphens.toLowerCase(),
           )
-          || rowData.pickUpDateTime.toLowerCase().includes(
+          || order.pickUpDateTime.toLowerCase().includes(
             pickUpDateTimeFilter.toLowerCase(),
           )
         );
@@ -361,11 +413,12 @@ function NewArchiveTable() {
         return 0;
       })
       .slice(startIndex, endIndex);
-  }, [orders, searchValue, pickUpDateTimeFilter, sortingMethod, page, rowsPerPage]);
+  }, [archiveOrders, searchValue, pickUpDateTimeFilter, sortingMethod, page, rowsPerPage]);
   // _________________________________________________________________________________________
 
   return (
     <Paper>
+      <SnackbarProvider />
       <Grid container spacing={1}>
         <Grid item xs={3}>
           <TextField
@@ -375,14 +428,12 @@ function NewArchiveTable() {
             fullWidth
             onChange={searchChangeHandler}
           />
-
         </Grid>
         <Grid item xs={7} />
         <Grid item xs={2}>
           <CurrentTimeClock />
         </Grid>
       </Grid>
-      <SnackbarProvider />
       <TableContainer component={Paper} elevation={24} sx={{ overflowX: 'initial' }}>
         <Table size="small" stickyHeader>
           <TableHead>
@@ -492,14 +543,17 @@ function NewArchiveTable() {
           </TableHead>
           <TableBody>
             {sortedDataRows.map((rowData) => (
-              <BasicOrderInfoRowEntry rowData={rowData} />
+              <BasicOrderInfoRowEntry
+                rowData={rowData}
+                loadUpdates={loadUpdatedArchiveOrders}
+              />
             ))}
           </TableBody>
         </Table>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
-          count={orders.length}
+          count={archiveOrders.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={tablefooterPageChangeHandler}

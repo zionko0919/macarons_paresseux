@@ -4,31 +4,15 @@ import {
   useEffect, useState, useContext, useMemo, Fragment, useCallback,
 } from 'react';
 import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tooltip,
-  Paper,
-  Checkbox,
-  Typography,
-  Collapse,
-  Box,
-  TextField,
-  Container,
-  TablePagination,
-  IconButton,
-  ButtonGroup,
-  Grid,
+  Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip,
+  Paper, Checkbox, Typography, Collapse, Box, TextField, Container, TablePagination,
+  IconButton, ButtonGroup, Grid,
 } from '@mui/material';
 import {
   DeleteRounded, CheckCircleRounded, SentimentDissatisfied, Info, Check,
   SentimentSatisfiedAlt, ArrowUpward, ArrowDownward, SortRounded, Close, Edit,
 } from '@mui/icons-material';
-import { SnackbarProvider, enqueueSnackbar } from 'notistack';
+import { SnackbarProvider, enqueueSnackbar, useSnackbar } from 'notistack';
 import OrderContext from '../context/OrderContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import DashboardContext from '../context/DashboardContext';
@@ -38,129 +22,141 @@ import OrdersTableEntryInfo from './OrdersTableDetail';
 import CurrentTimeClock from './CurrentTimeClock';
 
 function CurrentOrderTable() {
-  const {
-    macItems, drinkItems, packItems, optionalItems,
-  } = useContext(OrderContext);
-
-  const [orders, setOrders] = useState([]);
-  const [expandedRow, setExpandedRow] = useState(null);
-
-  const [readyOnTime, setReadyOnTime] = useState(true);
-
-  const [searchValue, setSearchValue] = useState('');
-  const [sortingMethod, setSortMethod] = useState({ key: null, direction: 'ascending' });
-  const [pickUpDateTimeFilter, setPickUpDateTimeFilter] = useState('');
-
+  const [apiError, setApiError] = useState('');
   const { currentUser } = useCurrentUserContext();
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const {
     setArchiveOrders, submitReadiedOrder, archiveOrders,
   } = useContext(DashboardContext);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const loadOrders = useCallback(async () => {
-    try {
-      const result = await axios.get('../api/orders');
-      const newExpandedRow = result.data.find((order) => order.id === expandedRow?.id);
-      setOrders(result.data);
-      setExpandedRow(newExpandedRow || null);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [expandedRow?.id]);
-
+  // const { activeOrders, setActiveOrders } = useContext(DashboardContext);
+  const [orders, setOrders] = useState([]);
   useEffect(
     () => {
       if (currentUser.access === 'admin') {
         const ws = new WebSocket(`${(
           window.location.protocol === 'https:' ? 'wss://' : 'ws://'
-        )}${window.location.host}/ws-cafe`);
+        )}${window.location.host}/ws-cafe/`);
         ws.onopen = () => {
-          console.log('connected');
+          console.log('WebSocket Connected');
         };
         ws.onerror = (e) => {
           console.error(e);
         };
         ws.onmessage = (message) => {
-          const newOrders = JSON.parse(message.data);
-          setOrders(newOrders);
+          console.log('OrdersCurrentTable Component:');
+          console.log('Received WebSocket message:', message.data);
+          try {
+            const parsedMessage = JSON.parse(message.data);
+            if (parsedMessage.type === 'currentOrders') {
+              const newOrders = parsedMessage.data;
+              setOrders(newOrders);
+            }
+            // const newOrders = JSON.parse(message.data);
+            // console.log('Parsed orders: ', newOrders);
+            // setOrders(newOrders);
+          } catch (error) {
+            console.error('Error: ', error);
+            enqueueSnackbar('Loading Data: Failed', { variant: 'error' });
+            setApiError(error?.response?.data?.error || 'Unknown Error');
+            console.log(apiError);
+          }
         };
         ws.onclose = () => {
-          console.log('disconnected');
+          console.log('WebSocket Disconnected');
         };
         return () => {
           ws.close();
           setOrders([]);
         };
       }
-      return () => { };
+      return () => {};
     },
-    [currentUser],
+    [currentUser, apiError],
   );
 
-  useEffect(() => {
-    if (currentUser.access === 'admin') {
-      loadOrders();
-    }
+  const loadUpdatedActiveOrders = (order) => {
+    const ws = new WebSocket(`${(
+      window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+    )}${window.location.host}/ws-cafe/`);
 
-    const interval = setInterval(() => {
-      loadOrders();
-    }, 1000000000);
+    ws.onopen = () => {
+      console.log('WebSocket Connected');
+      // Send a message to the WebSocket server indicating that an order was deleted
+      ws.send(JSON.stringify({ type: 'orderDeleted', orderId: order.id }));
+    };
 
-    return () => clearInterval(interval);
-  }, [currentUser.access, loadOrders]);
+    ws.onmessage = (message) => {
+      console.log('OrdersCurrentTable Component:');
+      console.log('Received WebSocket message:', message.data);
+      try {
+        const parsedMessage = JSON.parse(message.data);
+        if (parsedMessage.type === 'currentOrders') {
+          const newOrders = parsedMessage.data;
+          setOrders(newOrders);
+        }
+      } catch (error) {
+        console.error('Error: ', error);
+        enqueueSnackbar('Loading Data: Fail', { variant: 'error' });
+        setApiError(error?.response?.data?.error || 'Unknown Error');
+        console.log(apiError);
+      }
+    };
 
-  const deleteOrder = async (order) => {
+    ws.onclose = () => {
+      console.log('WebSocket Disconnected');
+      ws.close();
+      setOrders([]);
+    };
+  };
+
+  const deleteOrder = async (e, order) => {
+    e.preventDefault();
     try {
+      // Delete the order via REST API
       await axios.delete(`../api/orders/${order.id}`);
-      loadOrders();
-      enqueueSnackbar('Delete Order Successful', { variant: 'success' });
+      loadUpdatedActiveOrders(order);
+      enqueueSnackbar('Delete: Success', { variant: 'success' });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Something failed', { variant: 'error' });
+      enqueueSnackbar('Delete: Fail', { variant: 'error' });
+      setApiError(error?.response?.data?.error || 'Unknown Error');
+      console.log(apiError);
     }
   };
 
-  const handleReady = async (e, row) => {
+  const [readyOnTime, setReadyOnTime] = useState(true);
+  const handleReady = async (e, order) => {
+    e.preventDefault();
     try {
       const orderStatus = 'PAID';
       const currentTime = new Date();
-      const isReadyOnTime = currentTime < new Date(row.pickUpDateTime);
+      const isReadyOnTime = currentTime < new Date(order.pickUpDateTime);
       let delayedTimeAmount = 0;
       if (!isReadyOnTime) {
-        delayedTimeAmount = currentTime - (new Date(row.pickUpDateTime));
+        delayedTimeAmount = currentTime - (new Date(order.pickUpDateTime));
       }
       setReadyOnTime(isReadyOnTime);
       submitReadiedOrder(e, {
-        ...row,
+        ...order,
         readyOnTime: isReadyOnTime,
         delayedTimeAmount,
         orderStatus,
       });
-      await axios.delete(`../api/orders/${row.id}`);
-      loadOrders();
+      await axios.delete(`../api/orders/${order.id}`);
       const message = isReadyOnTime
-        ? `Order ${row.invoiceNumber} is Ready on time`
-        : `Order ${row.invoiceNumber} is LATE`;
+        ? `Order ${order.invoiceNumber} - Ready - ON TIME`
+        : `Order ${order.invoiceNumber} - Ready - LATE`;
       const variant = isReadyOnTime ? 'success' : 'warning';
+      loadUpdatedActiveOrders(order);
       enqueueSnackbar(message, { variant });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Something failed', { variant: 'error' });
+      enqueueSnackbar('Error - Ready - Fail', { variant: 'error' });
+      setApiError(error?.response?.data?.error || 'Unknown Error');
+      console.log(apiError);
     }
   };
 
+  const [expandedRow, setExpandedRow] = useState(null);
   const handleRowClick = (row) => {
     if (expandedRow === row) {
       setExpandedRow(null);
@@ -168,6 +164,21 @@ function CurrentOrderTable() {
       setExpandedRow(row);
     }
   };
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleChangePage = (e, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(parseInt(e.target.value, 10));
+    setPage(0);
+  };
+
+  const [searchValue, setSearchValue] = useState('');
+  const [sortingMethod, setSortMethod] = useState({ key: null, direction: 'ascending' });
+  const [pickUpDateTimeFilter, setPickUpDateTimeFilter] = useState('');
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -187,8 +198,8 @@ function CurrentOrderTable() {
     }));
   };
 
-  const handleSearchChange = (event) => {
-    const { value } = event.target;
+  const handleSearchChange = (e) => {
+    const { value } = e.target;
     setSearchValue(value);
     setPickUpDateTimeFilter(value);
   };
@@ -199,14 +210,14 @@ function CurrentOrderTable() {
     const searchValueWithoutHyphens = searchValue.replace(/-/g, '');
     return orders
       .filter(
-        (row) => {
-          const phoneNumberWithoutHyphens = row.phone.replace(/-/g, '');
-          return row.invoiceNumber.toString().toLowerCase()
+        (order) => {
+          const phoneNumberWithoutHyphens = order.phone.replace(/-/g, '');
+          return order.invoiceNumber.toString().toLowerCase()
             .includes(searchValueWithoutHyphens.toLowerCase())
-            || row.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
+            || order.name.toLowerCase().includes(searchValueWithoutHyphens.toLowerCase())
             || phoneNumberWithoutHyphens.toLowerCase()
               .includes(searchValueWithoutHyphens.toLowerCase())
-            || row.pickUpDateTime.toLowerCase().includes(pickUpDateTimeFilter.toLowerCase());
+            || order.pickUpDateTime.toLowerCase().includes(pickUpDateTimeFilter.toLowerCase());
         },
       )
       .sort((a, b) => {
@@ -222,8 +233,10 @@ function CurrentOrderTable() {
       })
       .slice(startIndex, endIndex);
   }, [orders, searchValue, pickUpDateTimeFilter, sortingMethod, page, rowsPerPage]);
+
   return (
     <Paper>
+      <SnackbarProvider />
       <Grid container spacing={1}>
         <Grid item xs={3}>
           <TextField
@@ -313,12 +326,12 @@ function CurrentOrderTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedData.map((row) => (
-              <Fragment key={row.invoiceNumber}>
-                <TableRow onClick={() => handleRowClick(row)}>
-                  <TableCell align="center">{row.invoiceNumber}</TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
-                  <TableCell align="center">{row.phone}</TableCell>
+            {sortedData.map((order) => (
+              <Fragment key={order.invoiceNumber}>
+                <TableRow onClick={() => handleRowClick(order)}>
+                  <TableCell align="center">{order.invoiceNumber}</TableCell>
+                  <TableCell align="center">{order.name}</TableCell>
+                  <TableCell align="center">{order.phone}</TableCell>
                   <TableCell align="center">
                     {new Intl.DateTimeFormat('en-US', {
                       weekday: 'short',
@@ -327,7 +340,7 @@ function CurrentOrderTable() {
                       day: 'numeric',
                       hour: 'numeric',
                       minute: 'numeric',
-                    }).format(new Date(row.orderTimeLog))}
+                    }).format(new Date(order.orderTimeLog))}
                   </TableCell>
                   <TableCell align="center">
                     {new Intl.DateTimeFormat('en-US', {
@@ -337,21 +350,20 @@ function CurrentOrderTable() {
                       day: 'numeric',
                       hour: 'numeric',
                       minute: 'numeric',
-                    }).format(new Date(row.pickUpDateTime))}
+                    }).format(new Date(order.pickUpDateTime))}
                   </TableCell>
                   <TableCell align="center">
                     <CountdownTimer
-                      targetDateTime={row.pickUpDateTime}
+                      targetDateTime={order.pickUpDateTime}
                     />
                   </TableCell>
                   <TableCell align="center">
-                    <SnackbarProvider maxSnack={5} />
                     <ButtonGroup size="small">
                       <Tooltip title="READY" placement="top">
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleReady(e, row);
+                            handleReady(e, order);
                           }}
                         >
                           <Check />
@@ -361,7 +373,7 @@ function CurrentOrderTable() {
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
-                            deleteOrder(row);
+                            deleteOrder(order);
                           }}
                         >
                           <DeleteRounded />
@@ -378,9 +390,9 @@ function CurrentOrderTable() {
                 </TableRow>
                 <TableRow>
                   <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-                    <Collapse in={expandedRow === row} timeout="auto" unmountOnExit>
+                    <Collapse in={expandedRow === order} timeout="auto" unmountOnExit>
                       <Box margin={1}>
-                        <OrdersTableEntryInfo order={row} />
+                        <OrdersTableEntryInfo order={order} />
                       </Box>
                     </Collapse>
                   </TableCell>

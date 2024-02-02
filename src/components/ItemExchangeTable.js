@@ -39,7 +39,7 @@ function ItemExchangeTableRow({ item }) {
     second: 'numeric',
     hour12: true,
     timeZone: 'America/Chicago', // Central Time (US)
-  }).format(new Date(item.exchangeDate));
+  }).format(new Date());
 
   return (
     <TableRow>
@@ -47,18 +47,20 @@ function ItemExchangeTableRow({ item }) {
         {itemTitle}
       </TableCell>
       <TableCell>
-        {item.quantity}
+        #ToDo
+        {/* {item.exchangeTotalNum + item.refundTotalNum} */}
       </TableCell>
       <TableCell>
-        {formattedExchangeDate}
+        #Todo
+        {/* {formattedExchangeDate} */}
       </TableCell>
       <TableCell>
-        {item.orderStatus}
+        #Todo
       </TableCell>
       <TableCell>
         $
         {' '}
-        {itemRefundAmount.toFixed(2)}
+        {/* {itemRefundAmount.toFixed(2)} */}
       </TableCell>
     </TableRow>
   );
@@ -79,6 +81,9 @@ function ItemExchangeTable({ order }) {
               <Typography variant="p">Item</Typography>
             </TableCell>
             <TableCell>
+              <Typography variant="p">Refund</Typography>
+            </TableCell>
+            <TableCell>
               <Typography variant="p">Quantity</Typography>
             </TableCell>
             <TableCell>
@@ -93,8 +98,8 @@ function ItemExchangeTable({ order }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {order.exchangeItemInfo.map((i) => (
-            <ItemExchangeTableRow item={i} />
+          {order.items.map((item) => (
+            <ItemExchangeTableRow item={item} />
           ))}
         </TableBody>
       </Table>

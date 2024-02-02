@@ -29,7 +29,7 @@ function SubitemTable({ subitem }) {
         <TableBody>
           {subitem.map((mac) => (
             <TableRow key={mac.itemId} component={Paper} variant="none">
-              <TableCell align="right">
+              <TableCell width="70%" align="right">
                 {(macItems.find((i) => i.itemId === mac.itemId)?.title)}
               </TableCell>
               <TableCell align="right" width="20%">

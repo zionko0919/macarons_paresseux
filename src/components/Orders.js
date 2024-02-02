@@ -12,7 +12,6 @@ import { Link, Route, Routes } from 'react-router-dom';
 import OrderContext from '../context/OrderContext';
 import DashboardContext from '../context/DashboardContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
-import CurrentOrderTable from './OrdersCurrentTable';
 import CurrentQueue from './CurrentQueue';
 import ArchiveOrderViewer from './ArchiveOrders';
 import ProductManagement from './ProductManagement';
@@ -27,7 +26,8 @@ function Dashboard() {
   } = useContext(OrderContext);
 
   // Start of current order related things --------------------------
-  const [currentOrders, setCurrentOrders] = useState([]);
+  const [activeOrders, setActiveOrders] = useState([]);
+  const [archiveOrders, setArchiveOrders] = useState([]);
 
   // const loadOrders = () => {
   //   axios.get('../api/orders')
@@ -40,23 +40,34 @@ function Dashboard() {
       if (currentUser.access === 'admin') {
         const ws = new WebSocket(`${(
           window.location.protocol === 'https:' ? 'wss://' : 'ws://'
-        )}${window.location.host}/ws-cafe`);
+        )}${window.location.host}/ws-cafe/`);
+
         ws.onopen = () => {
-          console.log('connected');
+          console.log('WebSocket Connected');
+          // ws.send(JSON.stringify({ type: connectionType }));
         };
         ws.onerror = (e) => {
-          console.error(e);
+          console.error('WebSocket Error:', e);
         };
         ws.onmessage = (message) => {
-          const newOrders = JSON.parse(message.data);
-          setCurrentOrders(newOrders);
+          const parsedMessage = JSON.parse(message.data);
+          if (parsedMessage.type === 'currentOrders') {
+            const newOrders = parsedMessage.data;
+            setActiveOrders(newOrders);
+          } else if (parsedMessage.type === 'archiveOrders') {
+            const oldOrders = parsedMessage.data;
+            setArchiveOrders(oldOrders);
+          }
+          // console.log('NEW: ', activeOrders);
+          // console.log('OLD: ', archiveOrders);
         };
         ws.onclose = () => {
-          console.log('disconnected');
+          console.log('WebSocket Disconnected');
         };
         return () => {
           ws.close();
-          setCurrentOrders([]);
+          setActiveOrders([]);
+          setArchiveOrders([]);
         };
       }
       return () => { };
@@ -75,13 +86,12 @@ function Dashboard() {
   // End of current order related things --------------------------
 
   // Start of archived order related things -----------------------
-  const [archiveOrders, setArchiveOrders] = useState({});
 
   const [isReadiedOrderSubmitting, setIsReadiedOrderSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  const submitReadiedOrder = useCallback(async (event, order) => {
-    event.preventDefault();
+  const submitReadiedOrder = useCallback(async (e, order) => {
+    e.preventDefault();
     setIsReadiedOrderSubmitting(true);
     setApiError('');
     try {
@@ -103,22 +113,24 @@ function Dashboard() {
       archiveOrders,
       setArchiveOrders,
       submitReadiedOrder,
+      activeOrders,
+      setActiveOrders,
     }),
     [
       archiveOrders,
       setArchiveOrders,
       submitReadiedOrder,
+      activeOrders,
+      setActiveOrders,
     ],
   );
 
   return (
     <DashboardContext.Provider value={DashboardContextValues}>
-
       {currentUser.access !== 'admin'
         ? (
           <Container maxWidth="xl">
             <Box marginTop={3}>
-
               <Alert color="error" variant="filled">
                 Access Denied
               </Alert>

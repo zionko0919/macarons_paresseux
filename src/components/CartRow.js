@@ -30,7 +30,9 @@ function CartRow({
   // console.log(cartItem.key);
 
   const removeItemFromCart = () => {
-    dispatch({ type: CartTypes.REMOVE, itemId: item.itemId, key: cartItem.key });
+    dispatch({
+      type: CartTypes.REMOVE, itemId: item.itemId, key: cartItem.key,
+    });
   };
 
   const [isViewMoreModalOpen, setIsViewMoreModalOpen] = useState(false);

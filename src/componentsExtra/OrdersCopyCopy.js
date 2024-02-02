@@ -31,34 +31,34 @@ function Dashboard() {
   //     .catch(console.error);
   // };
 
-  useEffect(
-    () => {
-      if (currentUser.access === 'admin') {
-        // loadOrders();
-        const ws = new WebSocket(`${(
-          window.location.protocol === 'https:' ? 'wss://' : 'ws://'
-        )}${window.location.host}/ws-cafe`);
-        ws.onopen = () => {
-          console.log('connected');
-        };
-        ws.onerror = (e) => {
-          console.error(e);
-        };
-        ws.onmessage = (message) => {
-          const newOrders = JSON.parse(message.data);
-          setCurrentOrders(newOrders);
-        };
-        ws.onclose = () => {
-          console.log('disconnected');
-        };
-        return () => {
-          setCurrentOrders([]);
-        };
-      }
-      return () => { };
-    },
-    [currentUser],
-  );
+  // useEffect(
+  //   () => {
+  //     if (currentUser.access === 'admin') {
+  //       // loadOrders();
+  //       const ws = new WebSocket(`${(
+  //         window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+  //       )}${window.location.host}/ws-cafe`);
+  //       ws.onopen = () => {
+  //         console.log('connected');
+  //       };
+  //       ws.onerror = (e) => {
+  //         console.error(e);
+  //       };
+  //       ws.onmessage = (message) => {
+  //         const newOrders = JSON.parse(message.data);
+  //         setCurrentOrders(newOrders);
+  //       };
+  //       ws.onclose = () => {
+  //         console.log('disconnected');
+  //       };
+  //       return () => {
+  //         setCurrentOrders([]);
+  //       };
+  //     }
+  //     return () => { };
+  //   },
+  //   [currentUser],
+  // );
 
   const deleteOrder = async (order) => {
     try {

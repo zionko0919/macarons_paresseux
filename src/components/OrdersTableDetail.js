@@ -19,6 +19,7 @@ import {
 import OrderContext from '../context/OrderContext';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import SubitemTable from './OrdersItemSubitems';
+import PaymentTableForOrders from './PaymentTableForOrders';
 
 function OrdersTableEntryInfo({ order }) {
   const {
@@ -65,17 +66,22 @@ function OrdersTableEntryInfo({ order }) {
           <Table size="small">
             <TableHead>
               <TableRow component={Paper} variant="none">
-                <TableCell align="center" width="40%">Item</TableCell>
-                <TableCell align="center" width="15%">Quantity</TableCell>
-                <TableCell align="center" width="15%">Price (ea.)</TableCell>
-                <TableCell align="center" width="15%">Gift-wrap</TableCell>
+                <TableCell align="center" width="15%">Date</TableCell>
+                <TableCell align="center" width="30%">Item</TableCell>
+                <TableCell align="center" width="10%">Quantity</TableCell>
+                <TableCell align="center" width="10%">Price (ea.)</TableCell>
+                <TableCell align="center" width="10%">Gift-wrap</TableCell>
                 <TableCell align="center" width="15%">Total</TableCell>
+                <TableCell align="center" width="10%">Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {drinkOrderItems.map((item) => (
                 <Fragment key={item.itemId}>
                   <TableRow>
+                    <TableCell align="center">
+                      #Date Todo
+                    </TableCell>
                     <TableCell align="center">
                       {drinkItems.find((i) => i.itemId === item.itemId)?.title}
                     </TableCell>
@@ -95,12 +101,18 @@ function OrdersTableEntryInfo({ order }) {
                       ) || {}).price || 0) + (item.giftOption
                       && item.giftOption.isGiftOptionSelected ? 2 : 0)).toFixed(2)}
                     </TableCell>
+                    <TableCell align="center">
+                      #Status ToDo
+                    </TableCell>
                   </TableRow>
                 </Fragment>
               ))}
               {packOrderItems.map((item) => (
                 <Fragment key={item.itemId}>
                   <TableRow>
+                    <TableCell align="center">
+                      #Date Todo
+                    </TableCell>
                     <TableCell align="center">
                       {packItems.find((i) => i.itemId === item.itemId)?.title}
                     </TableCell>
@@ -120,10 +132,13 @@ function OrdersTableEntryInfo({ order }) {
                       ) || {}).price || 0) + (item.giftOption
                       && item.giftOption.isGiftOptionSelected ? 2 : 0)).toFixed(2)}
                     </TableCell>
+                    <TableCell align="center">
+                      #Status ToDo
+                    </TableCell>
                   </TableRow>
                   {item.category === 'pack' && (
                     <TableRow>
-                      <TableCell align="right" colSpan={5}>
+                      <TableCell align="right" colSpan={2}>
                         <SubitemTable subitem={item.subItem} />
                         {item.giftOption && item.giftOption.isGiftOptionSelected && (
                           <TableContainer component={Paper} variant="none">
@@ -151,52 +166,7 @@ function OrdersTableEntryInfo({ order }) {
         </TableContainer>
       </Box>
       <Box marginTop={2}>
-        <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">Billing ZIPcode</TableCell>
-                <TableCell align="right">Subtotal</TableCell>
-                <TableCell align="right">
-                  Discounts (
-                  {order.couponDiscountPercentage.toFixed(1)}
-                  %)
-                </TableCell>
-                <TableCell align="right">
-                  Sales Tax (
-                  {(order.taxRate * 100).toFixed(3)}
-                  %)
-                </TableCell>
-                <TableCell align="right">Final Price</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell align="center">{order.zipCode}</TableCell>
-                <TableCell align="right">
-                  $
-                  {' '}
-                  {order.subTotal.toFixed(2)}
-                </TableCell>
-                <TableCell align="right">
-                  - $
-                  {' '}
-                  {order.couponDiscountPrice.toFixed(2)}
-                </TableCell>
-                <TableCell align="right">
-                  + $
-                  {' '}
-                  {order.taxAmount.toFixed(2)}
-                </TableCell>
-                <TableCell align="right">
-                  $
-                  {' '}
-                  {order.total.toFixed(2)}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <PaymentTableForOrders order={order} />
       </Box>
     </Box>
   );

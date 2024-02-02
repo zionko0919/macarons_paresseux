@@ -33,7 +33,11 @@ export const cartReducer = (state, action) => {
         return [
           ...state,
           {
-            itemId: action.itemId, category: action.category, quantity: 1, key: action.itemId,
+            itemId: action.itemId,
+            category: action.category,
+            isExchangedOrReturned: false,
+            quantity: 1,
+            key: action.itemId,
           },
         ];
       }
@@ -43,7 +47,7 @@ export const cartReducer = (state, action) => {
         {
           itemId: action.itemId,
           category: action.category,
-          orderStatus: null,
+          isExchangedOrReturned: false,
           quantity: 1,
           key: Date.now(),
           subItem: action.macList,

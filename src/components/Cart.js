@@ -69,7 +69,7 @@ function Cart({
     let itemPrice = detailItem.salePrice ?? detailItem.price;
 
     if (item.giftOption && item.giftOption.isGiftOptionSelected) {
-      itemPrice += 1.5;
+      itemPrice += 2.0;
     }
 
     return item.quantity * itemPrice + acc;
@@ -207,12 +207,12 @@ function Cart({
         zipCode,
         total,
         orderTimeLog,
-        couponDiscountPercentage,
-        couponDiscountPrice,
-        subTotal,
-        discountedSubTotal,
-        taxAmount,
-        taxRate,
+        // couponDiscountPercentage,
+        // couponDiscountPrice,
+        // subTotal,
+        // discountedSubTotal,
+        // taxAmount,
+        // taxRate,
         pickUpDateString,
         pickUpTime,
         pickUpDateTime,
