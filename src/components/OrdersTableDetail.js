@@ -80,7 +80,9 @@ function OrdersTableEntryInfo({ order }) {
                 <Fragment key={item.itemId}>
                   <TableRow>
                     <TableCell align="center">
-                      #Date Todo
+                      {(item.date).toLocaleString('en-US', {
+                        timeZone: 'America/Chicago', month: 'numeric', day: 'numeric', hour12: false,
+                      })}
                     </TableCell>
                     <TableCell align="center">
                       {drinkItems.find((i) => i.itemId === item.itemId)?.title}
@@ -94,7 +96,6 @@ function OrdersTableEntryInfo({ order }) {
                       {item.giftOption && item.giftOption.isGiftOptionSelected ? 'O' : 'X'}
                     </TableCell>
                     <TableCell align="center">
-                      {/* Using optional chaining to safely access item price */}
                       $
                       {((item.quantity || 0) * ((drinkItems.find(
                         (i) => i.itemId === item.itemId,
@@ -102,7 +103,7 @@ function OrdersTableEntryInfo({ order }) {
                       && item.giftOption.isGiftOptionSelected ? 2 : 0)).toFixed(2)}
                     </TableCell>
                     <TableCell align="center">
-                      #Status ToDo
+                      {item.itemStatus}
                     </TableCell>
                   </TableRow>
                 </Fragment>
@@ -111,7 +112,9 @@ function OrdersTableEntryInfo({ order }) {
                 <Fragment key={item.itemId}>
                   <TableRow>
                     <TableCell align="center">
-                      #Date Todo
+                      {(item.date).toLocaleString('en-US', {
+                        timeZone: 'America/Chicago', month: 'numeric', day: 'numeric', hour12: false,
+                      })}
                     </TableCell>
                     <TableCell align="center">
                       {packItems.find((i) => i.itemId === item.itemId)?.title}
@@ -125,7 +128,6 @@ function OrdersTableEntryInfo({ order }) {
                       {item.giftOption && item.giftOption.isGiftOptionSelected ? 'O' : 'X'}
                     </TableCell>
                     <TableCell align="center">
-                      {/* Using optional chaining to safely access item price */}
                       $
                       {((item.quantity || 0) * ((packItems.find(
                         (i) => i.itemId === item.itemId,
@@ -133,7 +135,7 @@ function OrdersTableEntryInfo({ order }) {
                       && item.giftOption.isGiftOptionSelected ? 2 : 0)).toFixed(2)}
                     </TableCell>
                     <TableCell align="center">
-                      #Status ToDo
+                      {item.itemStatus}
                     </TableCell>
                   </TableRow>
                   {item.category === 'pack' && (
